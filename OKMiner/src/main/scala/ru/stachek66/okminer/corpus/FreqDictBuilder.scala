@@ -1,4 +1,4 @@
-package ru.stachek66.okminer.keywords.corpus
+package ru.stachek66.okminer.corpus
 
 /**
  * @author alexeyev
