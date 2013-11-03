@@ -19,16 +19,8 @@ object RussianTokenizer {
   def tokenize(string: String) {
     val stream = russian.tokenStream(null, new StringReader(string))
 
-    def tok(rstream: TokenStream): List[String] = {
-      val result = if (rstream.incrementToken()) {
-        rstream.getAttribute(classOf[TermAttribute]).toString :: tok(rstream)
-      }
-      else {
-        List()
-      }
-      rstream.reset()
-      result
-    }
+    while (stream)
+
     tok(stream)
   }
 
