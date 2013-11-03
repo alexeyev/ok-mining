@@ -12,7 +12,7 @@ object RussianStemmer {
   require(new File("tools").exists())
 
   def stem(word: String): String = {
-    "echo '%s'" format word.toLowerCase #|
+    "echo '%s'" format word #|
       "./tools/stemwords -l russian" linesIterator
   }.next()
 
@@ -20,5 +20,4 @@ object RussianStemmer {
     words.map(
       word => stem(word)
     )
-
 }
