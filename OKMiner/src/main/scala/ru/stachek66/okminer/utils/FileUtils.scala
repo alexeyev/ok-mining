@@ -7,7 +7,7 @@ import java.io.File
  */
 object FileUtils {
 
-  def slurpFile(file: File) =
+  def asStringWithoutNewLines(file: File) =
     io.Source.fromFile(file).getLines().mkString(" ")
 
 }

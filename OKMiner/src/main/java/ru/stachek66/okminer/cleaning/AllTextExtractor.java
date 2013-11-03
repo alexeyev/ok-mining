@@ -3,6 +3,7 @@ package ru.stachek66.okminer.cleaning;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -10,11 +11,10 @@ import java.net.URL;
  */
 public class AllTextExtractor {
 
-    private AllTextExtractor() {
-    }
+    private AllTextExtractor() {}
 
     public static String getText(URL url) throws IOException {
-        return Jsoup.parse(url, 2 * 1000).text();
+        return Jsoup.parse(url, 20 * 1000).text();
     }
 
 }

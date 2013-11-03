@@ -19,7 +19,6 @@ public class StructuredExtractor {
 
     public StructuredExtractor(final URL url) throws IOException {
         this.doc = Jsoup.parse(url, TIMEOUT);
-//        System.out.println(doc);
     }
 
     public List<String> getLinksFromPosts() {
@@ -56,6 +55,18 @@ public class StructuredExtractor {
             }
         }
         return text.replaceAll("\n", " ");
+    }
+
+    public List<String> getLinkedTexts() {
+        final LinkedList<String> textsCollector = new LinkedList<String>();
+        for (String url : getLinksFromPosts()) {
+            try {
+                textsCollector.add(AllTextExtractor.getText(new URL(url)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return textsCollector;
     }
 
 }

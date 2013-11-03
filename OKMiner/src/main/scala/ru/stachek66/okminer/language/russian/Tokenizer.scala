@@ -1,4 +1,4 @@
-package ru.stachek66.okminer.language
+package ru.stachek66.okminer.language.russian
 
 import java.io.StringReader
 import org.apache.lucene.analysis.tokenattributes.TermAttribute
@@ -8,7 +8,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
  * @author alexeyev
  */
-object RussianTokenizer {
+object Tokenizer {
 
   private lazy val russian = new RussianAnalyzer()
 

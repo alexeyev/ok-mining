@@ -1,4 +1,4 @@
-package ru.stachek66.okminer.language
+package ru.stachek66.okminer.language.russian
 
 import java.io.File
 import scala.sys.process._
@@ -7,7 +7,7 @@ import scala.sys.process._
  * Snowball stemmer wrapper
  * @author alexeyev
  */
-object RussianStemmer {
+object Stemmer {
 
   require(new File("tools").exists())
 
