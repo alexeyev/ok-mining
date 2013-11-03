@@ -40,7 +40,11 @@ object LoaderScript {
       link =>
         try {
           val se: StructuredExtractor = new StructuredExtractor(new URL(link))
-          val writer = new BufferedWriter(new FileWriter(counter + ".txt"))
+          val writer =
+            new BufferedWriter(
+              new FileWriter(
+                ru.stachek66.okminer.corpus.directory.getName + "/" +
+                  counter + ".txt"))
           writer.write(
             communityToCorpusEntity(
               buildCommunity(se)))
