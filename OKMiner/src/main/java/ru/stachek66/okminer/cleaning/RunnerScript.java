@@ -1,4 +1,4 @@
-package ru.stachek66.okminer;
+package ru.stachek66.okminer.cleaning;
 
 import java.io.IOException;
 import java.net.URL;
