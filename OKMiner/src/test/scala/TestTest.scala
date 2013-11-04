@@ -1,4 +1,5 @@
 import org.scalatest.FunSuite
+import ru.stachek66.okminer.language.russian.Stemmer
 
 /**
  * TODO: create nice descriptive tests
@@ -6,8 +7,8 @@ import org.scalatest.FunSuite
  */
 class TestTest extends FunSuite {
 
-  test("testtest") {
-    assert("alles" != "gut")
+  test("stemmer") {
+    assert(Stemmer.stem("красивого") === "красив")
   }
 
 }

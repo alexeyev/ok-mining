@@ -2,6 +2,7 @@ package ru.stachek66.okminer.corpus
 
 import ru.stachek66.okminer.utils.FileUtils
 import ru.stachek66.okminer.language.russian.{Tokenizer, StopWordsFilter, Stemmer}
+import java.io.File
 
 /**
  * @author alexeyev
@@ -17,7 +18,7 @@ object CorpusStats {
       listFiles().
       filter(_.isFile).
       map {
-      file =>
+      file: File =>
         file.getName ->
           stem(
             stopFilter(
@@ -31,6 +32,9 @@ object CorpusStats {
 
   def docsInCorpus(term: String): Int =
     bags.count {
-      case (doc, bag) => bag.contains(term)
+      case (doc, bag) =>
+        bag.contains(
+          stem(
+            tokenize(term).mkString("")))
     }
 }

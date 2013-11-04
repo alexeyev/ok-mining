@@ -11,13 +11,8 @@ object Stemmer {
 
   require(new File("tools").exists())
 
-  def stem(word: String): String = {
-    "echo '%s'" format word #|
-      "./tools/stemwords -l russian" linesIterator
-  }.next()
+  def stem(word: String): String =
+    ("echo %s".format(word) #| "./tools/stemwords -l russian").!!
 
-  def stem(words: Iterable[String]): Iterable[String] =
-    words.map(
-      word => stem(word)
-    )
+  def stem(words: Iterable[String]): Iterable[String] = words.map(stem(_))
 }

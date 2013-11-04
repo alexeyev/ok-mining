@@ -25,7 +25,8 @@ public class StructuredExtractor {
         final LinkedList<String> links = new LinkedList<String>();
         for (Element atag : doc.select("#middleLeftColumn").select("a")) {
             final String href = atag.attr("href");
-            if (href.contains("http")) {
+            if (href.contains("http") &&
+                    !href.contains("odnoklassniki")) {
                 links.add(
                         href.
                                 replaceAll(".*http", "http").
