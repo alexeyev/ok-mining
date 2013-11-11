@@ -6,5 +6,6 @@ import java.io.File
  * @author alexeyev
  */
 package object corpus {
-  lazy val directory = new File("corpus/")
+  lazy val rawCorpusDirectory = new File("corpus/")
+  lazy val tfIdfDirectory = new File("index/")
 }

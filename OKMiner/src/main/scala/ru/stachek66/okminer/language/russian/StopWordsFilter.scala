@@ -18,8 +18,14 @@ object StopWordsFilter {
     }.toSet
 
 
-  def filter(words: Iterable[String]): Iterable[String] =
-    words.map(_.replace("ё", "е")).filter(stopList.contains(_))
+  def filter(words: Iterable[String]): Iterable[String] = {
+    println("filtering " + words)
+    words.map(_.replace("ё", "е")).
+      filter(_.length > 2).
+      filter(!_.matches("\\d+")).
+      filter(!stopList.contains(_))
+
+  }
 
 
   def main(args: Array[String]) {

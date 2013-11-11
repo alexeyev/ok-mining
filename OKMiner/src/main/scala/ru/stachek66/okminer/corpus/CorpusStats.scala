@@ -1,8 +1,8 @@
 package ru.stachek66.okminer.corpus
 
-import ru.stachek66.okminer.utils.FileUtils
-import ru.stachek66.okminer.language.russian.{Tokenizer, StopWordsFilter, Stemmer}
 import java.io.File
+import ru.stachek66.okminer.language.russian.{Tokenizer, Stemmer}
+import ru.stachek66.okminer.utils.FileUtils
 
 /**
  * @author alexeyev
@@ -10,21 +10,25 @@ import java.io.File
 object CorpusStats {
 
   import Stemmer._
-  import StopWordsFilter.{filter => stopFilter}
   import Tokenizer._
+  import ru.stachek66.okminer.language.russian.StopWordsFilter.{filter => stopFilter}
 
-  lazy val bags: Map[String, Set[String]] = {
-    directory.
+  lazy val bags: Map[String, Map[String, Int]] = {
+    tfIdfDirectory.
       listFiles().
       filter(_.isFile).
       map {
-      file: File =>
+      file: File => {
+        println("Reading " + file.getName)
         file.getName ->
-          stem(
-            stopFilter(
-              tokenize(
-                FileUtils.asStringWithoutNewLines(file)))).toSet
-
+          FileUtils.asString(file).split("\n").
+            map {
+            pair => {
+              val splitted = pair.split("\t")
+              splitted(0) -> splitted(1).toInt
+            }
+          }.toMap
+      }
     }.toMap
   }
 
@@ -33,8 +37,6 @@ object CorpusStats {
   def docsInCorpus(term: String): Int =
     bags.count {
       case (doc, bag) =>
-        bag.contains(
-          stem(
-            tokenize(term).mkString("")))
+        bag.keySet.contains(stem(tokenize(term).mkString("")))
     }
 }

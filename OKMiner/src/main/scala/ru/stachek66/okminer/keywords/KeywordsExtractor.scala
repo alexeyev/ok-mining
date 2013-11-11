@@ -19,8 +19,8 @@ class KeywordsExtractor {
 object Test {
   @deprecated
   def main(args: Array[String]) {
-    println(CorpusStats.docsInCorpus)
+//    println(CorpusStats.docsInCorpus)
     println(CorpusStats.bags)
-    println(CorpusStats.docsInCorpus("скачаю"))
+//    println(CorpusStats.docsInCorpus("скачаю"))
   }
 }
