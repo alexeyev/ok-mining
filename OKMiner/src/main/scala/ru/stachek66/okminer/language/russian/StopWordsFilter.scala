@@ -19,12 +19,11 @@ object StopWordsFilter {
 
 
   def filter(words: Iterable[String]): Iterable[String] = {
-    println("filtering " + words)
+    println("filtering this: " + words)
     words.map(_.replace("ё", "е")).
       filter(_.length > 2).
       filter(!_.matches("\\d+")).
       filter(!stopList.contains(_))
-
   }
 
 

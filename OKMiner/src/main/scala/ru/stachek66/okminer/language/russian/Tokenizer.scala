@@ -17,7 +17,7 @@ object Tokenizer {
    * @param string
    */
   def tokenize(string: String): Iterable[String] = {
-    println("tokenizing " + string)
+    println("tokenizing this: " + string)
     val stream = russian.tokenStream(null, new StringReader(string))
     val result = ArrayBuffer[String]()
     stream.reset()
