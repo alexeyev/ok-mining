@@ -38,6 +38,6 @@ object CorpusStats {
   def docsInCorpus(term: String): Int =
     bags.count {
       case (doc, bag) =>
-        bag.keySet.contains(stem(tokenize(term).mkString("")))
+        bag.keySet.contains(tokenize(term).mkString(""))
     }
 }
