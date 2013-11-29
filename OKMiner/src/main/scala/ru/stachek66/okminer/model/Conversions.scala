@@ -19,7 +19,7 @@ object Conversions {
 
   def communityToCorpusEntity(community: Community): String =
     List(
-      community.description,
+      community.description, community.description,
       community.posts,
       community.linkedTexts.map(_.mkString(" ")).getOrElse("")
     ).mkString(" ")
