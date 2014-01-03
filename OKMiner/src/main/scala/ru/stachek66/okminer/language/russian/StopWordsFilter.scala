@@ -17,6 +17,8 @@ object StopWordsFilter {
         line.split("\\|")(0).trim
     }.toSet
 
+  @deprecated
+  def getList = stopList
 
   def filter(words: Iterable[String]): Iterable[String] = {
     words.map(_.replace("ё", "е")).
