@@ -89,17 +89,6 @@ object TopicTool {
       }
       System.out.println(out)
     }
-
-    // Create a new instance with high probability of topic 0
-    val topicZeroText = new StringBuilder()
-    val iterator = topicSortedWords.get(0).iterator()
-
-    var rank = 0
-    while (iterator.hasNext && rank < 5) {
-      val idCountPair = iterator.next()
-      topicZeroText.append(dataAlphabet.lookupObject(idCountPair.getID) + " ")
-      rank += 1
-    }
   }
 
 }
