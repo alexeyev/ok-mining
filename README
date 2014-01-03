@@ -1,5 +1,7 @@
 My thesis project files.
 
-I'm trying to tag Odnoklassniki.ru communities.
-Code may be buggy and unsafe, but I'm not aimed at creating a stable product yet,
-because I have very little time left.
+I'm trying to find out which companies/people are associated with which tech trends on the Web. The tool I'm trying to make work is to be able to extract NEs and trends from a document.
+
+Like: NE "Google" in the context of "Robotics".
+
+So, having a corpus of tech blog posts with timestamps one will be able to find out which company does something in some field at a given period of time. Poo-tee-weet?
