@@ -5,3 +5,7 @@ I'm trying to find out which companies/people are associated with which tech tre
 Like: NE "Google" in the context of "Robotics".
 
 So, having a corpus of tech blog posts with timestamps one will be able to find out which company does something in some field at a given period of time. Poo-tee-weet?
+-------
+
+3.01.2014: moved from OK-mining to Russian trends mining: initial code for companies matching + topic modeling.
+4.01.2014: requested Habrahabr companies' feeds.
