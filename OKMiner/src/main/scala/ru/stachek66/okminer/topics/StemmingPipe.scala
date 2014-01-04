@@ -9,7 +9,7 @@ import scala.collection.JavaConversions._
 /**
  * @author alexeyev
  */
-class LemmatizationPipe extends Pipe {
+class StemmingPipe extends Pipe {
 
   private val log = LoggerFactory.getLogger(this.getClass)
 

@@ -10,6 +10,7 @@ import java.util.regex._
 import java.util
 
 /**
+ * Experiment: needs tuning
  * Adapted Mr McCallum's tutorial
  */
 object TopicTool {
@@ -17,7 +18,7 @@ object TopicTool {
   private def buildPipeList: util.ArrayList[Pipe] = {
     val pipeList = new ArrayList[Pipe]()
     pipeList.add(new CharSequenceLowercase())
-    pipeList.add(new LemmatizationPipe())
+    pipeList.add(new StemmingPipe())
     pipeList.add(new TokenSequenceRemoveStopwords(
       new File("tools/clean_stopwords.txt"),
       "UTF-8",

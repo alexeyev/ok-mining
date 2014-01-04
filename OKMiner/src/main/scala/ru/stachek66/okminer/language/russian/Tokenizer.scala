@@ -1,8 +1,14 @@
 package ru.stachek66.okminer.language.russian
 
 import java.io.StringReader
-import org.apache.lucene.analysis.tokenattributes.TermAttribute
-import org.apache.lucene.morphology.russian.RussianAnalyzer
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute
+import ru.stachek66.okminer.Meta
+
+//import org.apache.lucene.analysis.tokenattributes.TermAttribute
+//import org.apache.lucene.morphology.russian.RussianAnalyzer
+
+import org.apache.lucene.analysis.ru.RussianAnalyzer
+import org.apache.lucene.util._
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -10,7 +16,8 @@ import scala.collection.mutable.ArrayBuffer
  */
 object Tokenizer {
 
-  private lazy val russian = new RussianAnalyzer()
+  //todo: version to properties
+  private lazy val russian = new RussianAnalyzer(Meta.luceneVersion)
 
   /**
    * Lucene tokenizer applied to text.
@@ -21,8 +28,10 @@ object Tokenizer {
     val result = ArrayBuffer[String]()
     stream.reset()
     while (stream.incrementToken()) {
-      result += stream.getAttribute(classOf[TermAttribute]).term()
+      result +=
+        stream.getAttribute(classOf[CharTermAttribute]).toString
     }
+    stream.close()
     result
   }
 }
