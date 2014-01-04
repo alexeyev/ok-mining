@@ -22,7 +22,7 @@ object CorpusStats {
         println("Reading " + file.getName)
         file.getName ->
           FileUtils.asString(file).split("\n").
-            filter(!_.equals("")).
+            filterNot(_.equals("")).
             map {
             pair => {
               val splitted = pair.split("\t")

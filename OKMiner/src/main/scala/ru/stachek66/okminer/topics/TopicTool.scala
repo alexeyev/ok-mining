@@ -5,9 +5,9 @@ import cc.mallet.pipe.iterator._
 import cc.mallet.topics._
 import cc.mallet.types._
 import java.io._
+import java.util
 import java.util._
 import java.util.regex._
-import java.util
 
 /**
  * Experiment: needs tuning
@@ -45,7 +45,17 @@ object TopicTool {
     // beta_w = 0.01
     //  Note that the first parameter is passed as the sum over topics, while
     //  the second is the parameter for a single dimension of the Dirichlet prior.
-    val numTopics = 2
+    val numTopics = 3
+
+    /**
+     * COPY-and-PASTE
+     * Simple parallel threaded implementation of LDA,
+     * following Newman, Asuncion, Smyth and Welling, Distributed Algorithms for Topic Models
+     * JMLR (2009), with SparseLDA sampling scheme and data structure from
+     * Yao, Mimno and McCallum, Efficient Methods for Topic Model Inference on Streaming Document Collections, KDD (2009).
+     *
+     * @author David Mimno, Andrew McCallum
+     */
     val model = new ParallelTopicModel(numTopics, 1.0, 0.1)
 
     model.addInstances(instances)
@@ -56,7 +66,7 @@ object TopicTool {
 
     // Run the model for 50 iterations and stop (this is for testing only,
     //  for real applications, use 1000 to 2000 iterations)
-    model.setNumIterations(300)
+    model.setNumIterations(200)
     model.estimate()
 
     // Show the words and topics in the first instance
