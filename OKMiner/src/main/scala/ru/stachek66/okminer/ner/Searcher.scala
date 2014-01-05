@@ -17,7 +17,7 @@ import org.apache.lucene.queryparser.classic.QueryParser
  */
 object Searcher {
 
-  private val companyField = "name"
+  val companyField = "name"
 
   private def addToIndex(iw: IndexWriter, company: String) {
     val doc = new Document()

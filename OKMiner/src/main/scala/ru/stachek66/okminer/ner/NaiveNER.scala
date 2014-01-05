@@ -10,52 +10,43 @@ import org.slf4j.LoggerFactory
 object NaiveNER extends App {
   private val log = LoggerFactory.getLogger("testing-ner")
 
-  def isDigits(s: String) = s.forall(Character.isDigit(_))
-
   val tokens =
     Lexer.split(
       FileUtils.asStringWithoutNewLines(
         new java.io.File("test.txt")))
 
-  val triples =
-    tokens.zip(tokens.tail.zip(tokens.tail.tail)).
-      map {
-      case (one, (two, three)) =>
-        (one, two, three)
-    }
-
   val duples =
-    tokens.zip(tokens.tail).filterNot(t => isDigits(t._1) && isDigits(t._2))
-
-
-  log.info("3-token search")
-
-//  triples.foreach(
-//    t => {
-//      val res = Searcher.magicFind("%s %s %s".format(t._1, t._2, t._3), 2)
-//      if (res.nonEmpty)
-//        println(res)
-//    }
-//  )
+    tokens.zip(tokens.tail).
+      filterNot(
+      t =>
+        HeuristicsHelper.isDigits(t._1) &&
+          HeuristicsHelper.isDigits(t._2))
 
   log.info("2-token search")
 
-  duples.foreach(
-    t => {
-      val res = Searcher.fuzzyFind("%s %s".format(t._1, t._2), 1)
+  val companiesFromDuples = {
+    for {
+      d <- duples
+      res = Searcher.fuzzyFind("%s %s".format(d._1, d._2), 1)
       if (res.nonEmpty)
-        println(t, res)
+    } yield {
+      log.info(d + " " + res.head)
+      res.head.getField(Searcher.companyField).stringValue()
     }
-  )
+  } toSet
 
   log.info("One-token search")
 
-  tokens.foreach(
-    t => {
-      val res = Searcher.magicFind("%s".format(t), 7f)
-      if (res.nonEmpty) {
-        println(t, res)
-      }
+  val companiesFromTokens = {
+    for {
+      t <- tokens
+      res = Searcher.magicFind("%s".format(t), 7f)
+      if res.nonEmpty
+    } yield {
+      log.info(res.toString())
+      res.head._2.getField(Searcher.companyField).stringValue()
     }
-  )
+  } toSet
+
+  println(companiesFromDuples ++ companiesFromTokens)
 }
