@@ -39,10 +39,10 @@ object Searcher {
     iw.close()
   }
 
-  fillIndex(new File("techcrunch.txt"))
+  fillIndex(new File("habrahabr.txt"))
 
 
-  def find(freeTextQuery: String, maxEditDistance: Int): Iterable[Document] = {
+  def fuzzyFind(freeTextQuery: String, maxEditDistance: Int): Iterable[Document] = {
 
     /*
      * Sadly, one can't use FuzzyQuery: max edit distance = 2
@@ -83,7 +83,7 @@ object Searcher {
   /**
    * Exact match
    */
-  def find(freeTextQuery: String, relevanceThreshold: Float): Iterable[(Float, Document)] = {
+  def magicFind(freeTextQuery: String, relevanceThreshold: Float): Iterable[(Float, Document)] = {
 
     val reader = IndexReader.open(index)
     val searcher = new IndexSearcher(reader)

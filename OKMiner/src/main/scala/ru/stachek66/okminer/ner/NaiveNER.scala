@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory
 object NaiveNER extends App {
   private val log = LoggerFactory.getLogger("testing-ner")
 
+  def isDigits(s: String) = s.forall(Character.isDigit(_))
+
   val tokens =
     Lexer.split(
       FileUtils.asStringWithoutNewLines(
@@ -23,24 +25,24 @@ object NaiveNER extends App {
     }
 
   val duples =
-    tokens.zip(tokens.tail)
+    tokens.zip(tokens.tail).filterNot(t => isDigits(t._1) && isDigits(t._2))
 
 
   log.info("3-token search")
 
-  triples.foreach(
-    t => {
-      val res = Searcher.find("%s %s %s".format(t._1, t._2, t._3), 2)
-      if (res.nonEmpty)
-        println(res)
-    }
-  )
+//  triples.foreach(
+//    t => {
+//      val res = Searcher.magicFind("%s %s %s".format(t._1, t._2, t._3), 2)
+//      if (res.nonEmpty)
+//        println(res)
+//    }
+//  )
 
   log.info("2-token search")
 
   duples.foreach(
     t => {
-      val res = Searcher.find("%s %s".format(t._1, t._2), 1)
+      val res = Searcher.fuzzyFind("%s %s".format(t._1, t._2), 1)
       if (res.nonEmpty)
         println(t, res)
     }
@@ -50,7 +52,7 @@ object NaiveNER extends App {
 
   tokens.foreach(
     t => {
-      val res = Searcher.find("%s".format(t), 7f)
+      val res = Searcher.magicFind("%s".format(t), 7f)
       if (res.nonEmpty) {
         println(t, res)
       }
