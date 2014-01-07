@@ -17,9 +17,15 @@
         <slf4j.v>1.7.5</slf4j.v>
         <commons.collections.v>3.2.1</commons.collections.v>
         <mallet.v>2.0.7</mallet.v>
+        <ant.v>1.9.2</ant.v>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>${ant.v}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queryparser</artifactId>
