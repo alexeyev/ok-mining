@@ -1,7 +1,7 @@
 package ru.stachek66.okminer.corpus
 
-import java.io.File
-import ru.stachek66.okminer.language.russian.{Tokenizer, Stemmer}
+import org.slf4j.LoggerFactory
+import ru.stachek66.okminer.language.russian.Tokenizer
 import ru.stachek66.okminer.utils.FileUtils
 
 /**
@@ -9,29 +9,30 @@ import ru.stachek66.okminer.utils.FileUtils
  */
 object CorpusStats {
 
-  import Stemmer._
   import Tokenizer._
   import ru.stachek66.okminer.language.russian.StopWordsFilter.{filter => stopFilter}
 
+  private val log = LoggerFactory.getLogger(this.getClass)
+
   lazy val bags: Map[String, Map[String, Int]] = {
-    tfIdfDirectory.
-      listFiles().
-      filter(_.isFile).
-      map {
-      file: File => {
-        println("Reading " + file.getName)
-        file.getName ->
-          FileUtils.asString(file).split("\n").
-            filterNot(_.equals("")).
-            map {
-            pair => {
-              val splitted = pair.split("\t")
-              splitted(0) -> splitted(1).toInt
-            }
-          }.toMap
+    for {
+      file <- tfIdfDirectory.listFiles().toIterable
+      if file.isFile
+    } yield {
+      log.info("Reading " + file.getName)
+      file.getName -> {
+        {
+          for {
+            line <- FileUtils.asString(file).split("\n").toIterable
+            if !line.isEmpty
+            pair = line.split("\t")
+            word = pair(0)
+            freq = pair(1).toInt
+          } yield word -> freq
+        } toMap
       }
-    }.toMap
-  }
+    }
+  } toMap
 
   def docsInCorpus: Int = bags.keys.size
 
