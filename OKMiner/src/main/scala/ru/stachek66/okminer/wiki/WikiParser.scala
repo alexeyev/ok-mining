@@ -15,18 +15,20 @@ object WikiParser extends App {
 
   val wxsp = WikiXMLParserFactory.getSAXParser(
     "../ruwiki-latest-pages-articles-multistream.xml")
-  val writer = new FileWriter("wiki-links-russian-from-parser.txt")
+  val writer = new FileWriter("../wiki-russian-to-english.txt")
 
   try {
     wxsp.setPageCallback(
       new PageCallbackHandler {
         def process(page: WikiPage) {
           clog.tick()
-          if (page.getLinks.nonEmpty)
-                                                         //          if (
-          // page.getTranslatedTitle("en") != null)
+          //          if (page.getLinks.nonEmpty)
+          val translation = page.getTranslatedTitle("en")
+          if (translation != null) {
+            writer.write("%s;%s\n".format(page.getTitle, translation))
+          }
           //            log.info(" " + page.getTranslatedTitle("en") +" " + page.getID + " " + page.getLinks)
-            writer.write("%s;%s\n".format(page.getTitle.trim, page.getLinks.map("\"%s\"".format(_)).mkString(",")))
+          //            writer.write("%s;%s\n".format(page.getTitle.trim, page.getLinks.map("\"%s\"".format(_)).mkString(",")))
 
         }
       }
