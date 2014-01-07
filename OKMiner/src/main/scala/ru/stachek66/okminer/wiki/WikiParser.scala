@@ -25,7 +25,7 @@ object WikiParser extends App {
           //          if (page.getLinks.nonEmpty)
           val translation = page.getTranslatedTitle("en")
           if (translation != null) {
-            writer.write("%s;%s\n".format(page.getTitle, translation))
+            writer.write("%s;%s\n".format(page.getTitle.trim, translation.trim))
           }
           //            log.info(" " + page.getTranslatedTitle("en") +" " + page.getID + " " + page.getLinks)
           //            writer.write("%s;%s\n".format(page.getTitle.trim, page.getLinks.map("\"%s\"".format(_)).mkString(",")))
