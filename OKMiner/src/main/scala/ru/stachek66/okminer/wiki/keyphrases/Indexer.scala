@@ -1,34 +1,35 @@
-package ru.stachek66.okminer.wiki
+package ru.stachek66.okminer.wiki.keyphrases
 
 import org.apache.lucene.document.{Field, TextField, Document}
 import org.apache.lucene.index.IndexWriter
 import org.slf4j.LoggerFactory
+import ru.stachek66.okminer.wiki.fetchers.{LinksFetcher, TextFetcher}
 
 /**
  * @author alexeyev
  */
-class WikiIndexer {
+class Indexer {
+  //todo: make safe
 
   private val log = LoggerFactory.getLogger(this.getClass)
 
-  private def addToIndex(iw: IndexWriter, title: String, text: String) {
+  private def addToIndex(iw: IndexWriter, words: String) {
     val doc = new Document()
-    doc.add(new TextField(IndexProperties.titleField, title, Field.Store.YES))
-    doc.add(new TextField(IndexProperties.textField, text, Field.Store.YES))
+    doc.add(new TextField(IndexProperties.textField, words, Field.Store.YES))
     iw.addDocument(doc)
   }
 
   private def fillIndex() {
     val iw = new IndexWriter(IndexProperties.index, IndexProperties.config)
-    new WikiTextAndLinkFetcher().fetch {
-      case (title, text, links) =>
-          addToIndex(iw, title, text)
+    new LinksFetcher().fetch {
+      case links => addToIndex(iw, links.mkString(" "))
     }
     iw.close()
   }
 
   def doIndex() {
-    log.info("Starting indexing.")
+    log.info("Starting indexing links.")
     fillIndex()
+    log.info("Indexing links done.")
   }
 }

@@ -1,30 +1,25 @@
-package ru.stachek66.okminer.wiki
+package ru.stachek66.okminer.wiki.fetchers
 
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.language.russian.Lexer
 import ru.stachek66.okminer.wiki.utils.Helper
+import ru.stachek66.okminer.wiki.WikiVisitor
 
-/**
- * @author alexeyev
- */
-trait Fetcher[T] {
-  def fetch(handler: T => Unit): Unit
-}
 
 /**
  * title, text, links
  */
-class WikiTextAndLinkFetcher extends Fetcher[(String, String, Iterable[String])] {
+class TextFetcher extends Fetcher[(String, String)] {
   private val log = LoggerFactory.getLogger("wiki-fetcher")
 
-  override def fetch(handler: ((String, String, Iterable[String])) => Unit) {
+  override def fetch(handler: ((String, String)) => Unit) {
     new WikiVisitor().visit {
       page => {
         if (!page.isRedirect && !page.isDisambiguationPage && !page.isStub && !page.isSpecialPage) {
           val text =
             Lexer.split(
               page.getTitle.toLowerCase + " " + page.getText.toLowerCase).mkString(" ")
-          handler(page.getTitle.trim, text, List() /*Helper.getLinkSet(page.getWikiText)*/)
+          handler(page.getTitle.trim, text)
         }
       }
     }

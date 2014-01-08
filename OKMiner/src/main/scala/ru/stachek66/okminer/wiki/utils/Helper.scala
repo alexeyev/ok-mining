@@ -31,11 +31,20 @@ object Helper {
     list.toList
   }
 
-  def getLinkSet(text: String): Iterable[String] = {
+  def getTitleFormLinkSet(text: String): Iterable[String] = {
     val pipeLinks = getPipeLinksMap(text)
     (
       getNonPipeLinks(text) ++
         pipeLinks.values
+      ).toSet
+  }
+
+  def getAllFormsLinkSet(text: String): Iterable[String] = {
+    val pipeLinks = getPipeLinksMap(text)
+    (
+      getNonPipeLinks(text) ++
+        pipeLinks.values ++
+        pipeLinks.keys
       ).toSet
   }
 }
