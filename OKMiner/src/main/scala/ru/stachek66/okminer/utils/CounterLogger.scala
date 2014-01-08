@@ -25,6 +25,8 @@ class CounterLogger(log: Logger, step: Int, pattern: String) {
     }
   }
 
+  def getCounter = counter
+
   @volatile
   private var counter: Long = 0
   @volatile
