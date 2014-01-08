@@ -13,7 +13,7 @@ object IndexProperties {
   //todo: rewrite
   val textField = "text"
   val titleField = "title"
-  private val analyzer: Analyzer = new RussianAnalyzer(Meta.luceneVersion)
+  val analyzer: Analyzer = new RussianAnalyzer(Meta.luceneVersion)
   val index = new RAMDirectory()
   val config = new IndexWriterConfig(Meta.luceneVersion, analyzer)
 }

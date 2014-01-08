@@ -20,10 +20,12 @@ class WikiTextAndLinkFetcher extends Fetcher[(String, String, Iterable[String])]
   override def fetch(handler: ((String, String, Iterable[String])) => Unit) {
     new WikiVisitor().visit {
       page => {
-        val text =
-          Lexer.split(
-            page.getTitle.toLowerCase + " " + page.getText.toLowerCase).mkString(" ")
-        handler(page.getTitle.trim, text, Helper.getLinkSet(page.getWikiText.toLowerCase()))
+        if (!page.isRedirect && !page.isDisambiguationPage && !page.isStub && !page.isSpecialPage) {
+          val text =
+            Lexer.split(
+              page.getTitle.toLowerCase + " " + page.getText.toLowerCase).mkString(" ")
+          handler(page.getTitle.trim, text, List() /*Helper.getLinkSet(page.getWikiText)*/)
+        }
       }
     }
   }

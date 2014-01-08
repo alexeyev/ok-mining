@@ -33,9 +33,9 @@ object Helper {
 
   def getLinkSet(text: String): Iterable[String] = {
     val pipeLinks = getPipeLinksMap(text)
-    (getNonPipeLinks(text) ++
-      pipeLinks.values
+    (
+      getNonPipeLinks(text) ++
+        pipeLinks.values
       ).toSet
   }
-
 }

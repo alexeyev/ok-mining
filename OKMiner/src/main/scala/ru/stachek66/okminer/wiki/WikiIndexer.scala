@@ -1,15 +1,13 @@
 package ru.stachek66.okminer.wiki
 
-import java.io.File
 import org.apache.lucene.document.{Field, TextField, Document}
 import org.apache.lucene.index.IndexWriter
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.language.russian.Lexer
 
 /**
  * @author alexeyev
  */
-object WikiIndexer {
+class WikiIndexer {
 
   private val log = LoggerFactory.getLogger(this.getClass)
 
@@ -22,16 +20,15 @@ object WikiIndexer {
 
   private def fillIndex() {
     val iw = new IndexWriter(IndexProperties.index, IndexProperties.config)
-
     new WikiTextAndLinkFetcher().fetch {
       case (title, text, links) =>
-        addToIndex(iw, title, text)
-        log.info(links.toString())
+          addToIndex(iw, title, text)
     }
     iw.close()
   }
 
-  def main(args: Array[String]) {
+  def doIndex() {
+    log.info("Starting indexing.")
     fillIndex()
   }
 }
