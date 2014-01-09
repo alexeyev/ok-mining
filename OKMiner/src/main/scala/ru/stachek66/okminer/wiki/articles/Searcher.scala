@@ -1,6 +1,6 @@
 package ru.stachek66.okminer.wiki.articles
 
-import org.apache.lucene.index.{Term, IndexReader}
+import org.apache.lucene.index.IndexReader
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{TopScoreDocCollector, IndexSearcher}
 import org.slf4j.LoggerFactory
@@ -17,7 +17,6 @@ object Searcher {
 
   private lazy val reader = Try {
     IndexReader.open(IndexProperties.index)
-    //    throw new Exception
   } match {
     case Failure(f) =>
       log.error("No index found", f)
@@ -39,12 +38,16 @@ object Searcher {
   private val qp = new QueryParser(Meta.luceneVersion, IndexProperties.textField, IndexProperties.analyzer)
 
   def getHitsCount(keyphrase: String): Int = {
-    val collector = TopScoreDocCollector.create(1500, true)
+    val collector = TopScoreDocCollector.create(500000, true)
     searcher.search(qp.parse(keyphrase), collector)
     collector.topDocs().
       scoreDocs.length
     //        map(doc => searcher.doc(doc.doc).
     //        getField("text")).toList
+  }
+
+  def main(args: Array[String]) {
+    println(getHitsCount("королевство польское"))
   }
 }
 

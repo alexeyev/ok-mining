@@ -33,10 +33,10 @@ object Searcher {
   private val qp = new QueryParser(Meta.luceneVersion, IndexProperties.textField, IndexProperties.analyzer)
 
   def getHitsCount(keyphrase: String): Int = {
-    val collector = TopScoreDocCollector.create(1500, true)
+    val collector = TopScoreDocCollector.create(500000, true)
     searcher.search(qp.parse(keyphrase), collector)
     val hits = collector.topDocs().scoreDocs
-    log.info(hits.map(d => searcher.doc(d.doc)).toList.mkString("\n"))
+//    log.info(hits.map(d => searcher.doc(d.doc)).toList.mkString("\n"))
     hits.length
   }
 
