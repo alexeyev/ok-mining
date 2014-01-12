@@ -9,6 +9,7 @@ import java.io.File
  *
  * @author alexeyev
  */
+@deprecated
 object Stemmer {
   //todo: use mystem
   require(new File("tools").exists())

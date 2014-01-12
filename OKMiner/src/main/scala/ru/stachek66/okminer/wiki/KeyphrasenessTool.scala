@@ -5,13 +5,15 @@ package ru.stachek66.okminer.wiki
  */
 object KeyphrasenessTool extends App {
 
-  val phrase = "математическая лингвистика"
-  println(keyphrases.Searcher.getHitsCount(phrase))
-  println(articles.Searcher.getHitsCount(phrase))
+  val phrase = "интеллектуальный анализ данных"
+  println(keyphrases.Searcher.tryPhrase(phrase).size)
+  println(articles.Searcher.tryPhrase(phrase).size)
+//  println(keyphrases.Searcher.tryPhrase(phrase).mkString("\n"))
+  //  println(articles.Searcher.getHitsCount(phrase))
 
   println()
-
-  val phrase0 = "математическая ярость топора"
-  println(keyphrases.Searcher.getHitsCount(phrase0))
-  println(articles.Searcher.getHitsCount(phrase0))
+  //
+  //  val phrase0 = "математическая ярость топора"
+  //  println(keyphrases.Searcher.getHitsCount(phrase0))
+  //  println(articles.Searcher.getHitsCount(phrase0))
 }
