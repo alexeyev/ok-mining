@@ -24,7 +24,7 @@ object Tokenizer {
    * @param string
    */
   def tokenize(string: String): Iterable[String] = {
-    val stream = russian.tokenStream(null, new StringReader(string))
+    val stream = russian.tokenStream("", new StringReader(string))
     val result = ArrayBuffer[String]()
     stream.reset()
     while (stream.incrementToken()) {

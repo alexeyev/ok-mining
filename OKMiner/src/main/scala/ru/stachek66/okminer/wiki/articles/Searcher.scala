@@ -65,7 +65,7 @@ object Searcher {
 
     val pq = new PhraseQuery()
     val splitted = Tokenizer.tokenize(keyphrase)
-    log.info("Query: [%s]".format(splitted.mkString(" ")))
+    log.debug("Query: [%s]".format(splitted.mkString(" ")))
     for (t <- splitted) {
       pq.add(new Term(IndexProperties.textField, t))
     }
