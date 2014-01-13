@@ -2,7 +2,7 @@ package ru.stachek66.okminer.wiki.articles
 
 import org.apache.lucene.index.{Term, IndexReader}
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.search.{PhraseQuery, TopScoreDocCollector, IndexSearcher}
+import org.apache.lucene.search.{Query, PhraseQuery, TopScoreDocCollector, IndexSearcher}
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
 import scala.util.{Success, Try, Failure}
@@ -29,40 +29,14 @@ object Searcher {
       new Indexer().doIndex()
       IndexReader.open(IndexProperties.index)
     case Success(r) =>
-      log.info("Index found. v: " + new Date(r.getVersion))
+      log.info("Index found. v: " + r.getVersion)
       r
   }
-
-  //  println("Number of docs in index : " + r eader.maxDoc())
-  //  val t = new Term("text", "королевство")
-  //  val df = reader.docFreq(t)
-  //  println("DF = " + df)
-
 
   private val searcher = new IndexSearcher(reader)
   private val qp = new QueryParser(Meta.luceneVersion, IndexProperties.textField, IndexProperties.analyzer)
 
-//  def getHitsCount(keyphrase: String): Int = {
-//    val collector = TopScoreDocCollector.create(500000, true)
-//    searcher.search(qp.parse(keyphrase), collector)
-//    collector.topDocs().
-//      scoreDocs.length
-//
-//  }
-//
-//  def getResultsAsStrings(keyphrase: String) = {
-//    val collector =
-//      TopScoreDocCollector.create(500000, true)
-//    searcher.search(qp.parse(keyphrase), collector)
-//    collector.topDocs().
-//      scoreDocs.
-//      map(doc => searcher.doc(doc.doc).getField("text").stringValue()).
-//      toList
-//  }
-
-
-  def tryPhrase(keyphrase: String) = {
-
+  private def buildQuery(keyphrase: String): Query = {
     val pq = new PhraseQuery()
     val splitted = Tokenizer.tokenize(keyphrase)
     log.debug("Query: [%s]".format(splitted.mkString(" ")))
@@ -70,18 +44,24 @@ object Searcher {
       pq.add(new Term(IndexProperties.textField, t))
     }
     pq.setSlop(0)
+    pq
+  }
 
+  def getHitsCount(keyphrase: String): Int = {
+    val pq = buildQuery(keyphrase)
+    val collector = TopScoreDocCollector.create(500, true)
+    searcher.search(pq, collector)
+    collector.topDocs().scoreDocs.length
+  }
+
+  def tryPhrase(keyphrase: String) = {
+    val pq = buildQuery(keyphrase)
     val collector = TopScoreDocCollector.create(500000, true)
     searcher.search(pq, collector)
-
     collector.topDocs().
       scoreDocs.
       map(doc => searcher.doc(doc.doc).getField("text").stringValue()).
       toList
-  }
-
-  def main(args: Array[String]) {
-//    println(getHitsCount("королевство польское"))
   }
 }
 

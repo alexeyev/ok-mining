@@ -1,13 +1,13 @@
 package ru.stachek66.okminer.wiki.keyphrases
 
+import java.util.Date
 import org.apache.lucene.index.{Term, IndexReader}
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{PhraseQuery, TopScoreDocCollector, IndexSearcher}
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
+import ru.stachek66.okminer.language.russian.Tokenizer
 import scala.util.{Success, Failure, Try}
-import ru.stachek66.okminer.language.russian.{Tokenizer, Stemmer, Lexer}
-import java.util.Date
 
 /**
  * @author alexeyev
@@ -28,7 +28,7 @@ object Searcher {
       new Indexer().doIndex()
       IndexReader.open(IndexProperties.index)
     case Success(r) =>
-      log.info("Keyphrases index found. Version: " + new Date(r.getVersion))
+      log.info("Keyphrases index found. Version: " + r.getVersion)
       r
   }
 
@@ -38,7 +38,7 @@ object Searcher {
     IndexProperties.textField,
     IndexProperties.analyzer)
 
-  def tryPhrase(keyphrase: String) = {
+  def buildQuery(keyphrase: String) = {
     val pq = new PhraseQuery()
     val splitted = Tokenizer.tokenize(keyphrase)
     log.debug("Query: [%s]".format(splitted.mkString(" ")))
@@ -46,15 +46,25 @@ object Searcher {
       pq.add(new Term(IndexProperties.textField, t))
     }
     pq.setSlop(0)
+    pq
+  }
 
+  def getHitsCount(keyphrase: String): Int = {
+    val pq = buildQuery(keyphrase)
+    val collector = TopScoreDocCollector.create(5000, true)
+    searcher.search(pq, collector)
+    collector.topDocs().scoreDocs.length
+  }
+
+  def tryPhrase(keyphrase: String) = {
+    val pq = buildQuery(keyphrase)
     val collector = TopScoreDocCollector.create(500000, true)
     searcher.search(pq, collector)
-
     val res = collector.topDocs().
       scoreDocs.
       map(doc => searcher.doc(doc.doc).getField("text").stringValue()).
       toList
-    log.info(res.toString())
+    log.debug(res.toString())
     res
   }
 }
