@@ -12,4 +12,8 @@ object KeyphrasenessCalculator {
     val all = articles.Searcher.tryPhrase(phrase)
     keys.size / (all.size + 0.01)
   }
+
+  def main(args:Array[String]) {
+    keyphrases.Searcher.tryPhrase("нурофен")
+  }
 }

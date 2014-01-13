@@ -36,11 +36,11 @@ object FullPipeLineTool extends App {
 
   val splitted = Lexer.split(testText)
   //todo: lemmatization?
-//  val filtered = StopWordsFilter.filter(splitted.map(_.toLowerCase()))
+  val filtered = StopWordsFilter.filter(splitted.map(_.toLowerCase()))
 
   val tokens =
     for {
-      word <- splitted
+      word <- filtered
       tokenized <- Tokenizer.tokenize(word).headOption
 
     } yield {
@@ -50,10 +50,9 @@ object FullPipeLineTool extends App {
 
   val duples = tokens.zip(tokens.tail)
 
-  //  duples.foreach(d => println(d + "\n"))
-  val triples = duples.zip(tokens.tail.tail)
-  val tetrics = triples.zip(tokens.tail.tail.tail)
-  val pentics = tetrics.zip(tokens.tail.tail.tail.tail)
+//  val triples = duples.zip(tokens.tail.tail)
+//  val tetrics = triples.zip(tokens.tail.tail.tail)
+//  val pentics = tetrics.zip(tokens.tail.tail.tail.tail)
 
   val dResults: Iterable[(String, String, Double)] = {
     duples.map {
@@ -80,5 +79,5 @@ object FullPipeLineTool extends App {
     }
   }.flatten
 
-  log.info(dResults.toSeq.sortBy(-_._3).take(5).mkString("\n"))
+  log.info(dResults.toSeq.sortBy(-_._3).take(50).mkString("\n"))
 }

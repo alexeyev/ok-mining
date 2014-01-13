@@ -27,6 +27,7 @@ class Indexer {
       case (title, text) =>
           addToIndex(iw, title, text, "0")
     }
+    iw.commit()
     iw.close()
   }
 

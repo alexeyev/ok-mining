@@ -27,6 +27,7 @@ class Indexer {
           link => addToIndex(iw, link)
         }
     }
+    iw.commit()
     iw.close()
   }
 

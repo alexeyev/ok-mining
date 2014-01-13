@@ -7,7 +7,7 @@ import java.io.{File, FileWriter}
 import org.slf4j.LoggerFactory
 
 /**
- * All normalized words that can be analyzed.
+ * All normalized words that are allowed to be analyzed.
  * @author alexeyev
  */
 object Vocabulary extends App {
