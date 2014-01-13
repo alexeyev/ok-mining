@@ -38,14 +38,6 @@ object Searcher {
     IndexProperties.textField,
     IndexProperties.analyzer)
 
-//  def getHitsCount(keyphrase: String): Int = {
-//    val collector = TopScoreDocCollector.create(500000, true)
-//    searcher.search(qp.parse(keyphrase), collector)
-//    val hits = collector.topDocs().scoreDocs
-//    //    log.info(hits.map(d => searcher.doc(d.doc)).toList.mkString("\n"))
-//    hits.length
-//  }
-
   def tryPhrase(keyphrase: String) = {
     val pq = new PhraseQuery()
     val splitted = Tokenizer.tokenize(keyphrase)
@@ -64,9 +56,5 @@ object Searcher {
       toList
     log.info(res.toString())
     res
-  }
-
-  def main(args: Array[String]) {
-//    println(getHitsCount("польское королевство"))
   }
 }

@@ -7,6 +7,7 @@ import java.io.{File, FileWriter}
 import org.slf4j.LoggerFactory
 
 /**
+ * All normalized words that can be analyzed.
  * @author alexeyev
  */
 object Vocabulary extends App {
@@ -26,12 +27,14 @@ object Vocabulary extends App {
     io.Source.fromFile(file).getLines().map(_.trim).toSet
 
   private def getFromDump = {
+    def heur(s: String) = s.replace("_", " ")
+
     val voc = collection.mutable.Set[String]()
     new WikiVisitor().visit(
       page =>
         if (!page.isRedirect && !page.isSpecialPage && !page.isDisambiguationPage) {
-          (Tokenizer.tokenize(page.getTitle) ++
-            page.getLinks.flatMap(Tokenizer.tokenize(_))).foreach(voc.add(_))
+          (Tokenizer.tokenize(heur(page.getTitle)) ++
+            page.getLinks.flatMap(t => Tokenizer.tokenize(heur(t)))).foreach(voc.add(_))
         }
     )
     voc.toSet
@@ -39,18 +42,12 @@ object Vocabulary extends App {
 
   private def flush() {
     val f = new File("tools/vocabulary.txt")
-    if (f.exists()) {
-      val fw = new FileWriter(f)
-      normalizedWords.foreach {
-        token =>
-          fw.write("%s\n".format(token))
-      }
-      fw.close()
-    } else {
-      log.error("Nothing to flush")
+    val fw = new FileWriter(f)
+    normalizedWords.foreach {
+      token =>
+        fw.write("%s\n".format(token))
     }
+    fw.close()
+    log.info("Flushing done.")
   }
-
-  println(normalizedWords)
-  flush()
 }
