@@ -61,11 +61,11 @@
             <artifactId>jsoup</artifactId>
             <version>${jsoup.v}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.lucene.morphology</groupId>
-            <artifactId>russian</artifactId>
-            <version>${russian.morphology.v}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.lucene.morphology</groupId>-->
+            <!--<artifactId>russian</artifactId>-->
+            <!--<version>${russian.morphology.v}</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
@@ -125,11 +125,11 @@
 
     <repositories>
 
-        <repository>
-            <id>russian-morphology.lucene.apache.org</id>
-            <name>Lucene Russian Morphology Repository for Maven</name>
-            <url>http://russianmorphology.googlecode.com/svn/repo/releases/</url>
-        </repository>
+        <!--<repository>-->
+            <!--<id>russian-morphology.lucene.apache.org</id>-->
+            <!--<name>Lucene Russian Morphology Repository for Maven</name>-->
+            <!--<url>http://russianmorphology.googlecode.com/svn/repo/releases/</url>-->
+        <!--</repository>-->
 
     </repositories>
 

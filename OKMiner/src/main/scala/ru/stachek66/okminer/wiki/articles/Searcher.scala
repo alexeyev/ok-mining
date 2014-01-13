@@ -42,13 +42,13 @@ object Searcher {
   private val searcher = new IndexSearcher(reader)
   private val qp = new QueryParser(Meta.luceneVersion, IndexProperties.textField, IndexProperties.analyzer)
 
-  def getHitsCount(keyphrase: String): Int = {
-    val collector = TopScoreDocCollector.create(500000, true)
-    searcher.search(qp.parse(keyphrase), collector)
-    collector.topDocs().
-      scoreDocs.length
-
-  }
+//  def getHitsCount(keyphrase: String): Int = {
+//    val collector = TopScoreDocCollector.create(500000, true)
+//    searcher.search(qp.parse(keyphrase), collector)
+//    collector.topDocs().
+//      scoreDocs.length
+//
+//  }
 //
 //  def getResultsAsStrings(keyphrase: String) = {
 //    val collector =
@@ -81,7 +81,7 @@ object Searcher {
   }
 
   def main(args: Array[String]) {
-    println(getHitsCount("королевство польское"))
+//    println(getHitsCount("королевство польское"))
   }
 }
 

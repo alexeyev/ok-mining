@@ -15,7 +15,7 @@ class LinksFetcher extends Fetcher[Iterable[String]] {
     new WikiVisitor().visit {
       page => {
         if (!page.isRedirect && !page.isDisambiguationPage && !page.isStub && !page.isSpecialPage) {
-          handler(Helper.getAllFormsLinkSet(page.getWikiText))
+          handler(Helper.getTitleFormLinkSet(page.getWikiText))
         }
       }
     }
