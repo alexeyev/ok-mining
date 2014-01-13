@@ -4,11 +4,14 @@ import ru.stachek66.okminer.wiki.WikiVisitor
 import ru.stachek66.okminer.language.russian.Tokenizer
 import scala.collection.JavaConversions._
 import java.io.{File, FileWriter}
+import org.slf4j.LoggerFactory
 
 /**
  * @author alexeyev
  */
 object Vocabulary extends App {
+
+  private val log = LoggerFactory.getLogger("voc")
 
   lazy val normalizedWords: Set[String] = {
     val f = new File("tools/vocabulary.txt")
@@ -35,13 +38,19 @@ object Vocabulary extends App {
   }
 
   private def flush() {
-    val fw = new FileWriter("tools/vocabulary.txt")
-    normalizedWords.foreach {
-      token =>
-        fw.write("%s\n".format(token))
+    val f = new File("tools/vocabulary.txt")
+    if (f.exists()) {
+      val fw = new FileWriter(f)
+      normalizedWords.foreach {
+        token =>
+          fw.write("%s\n".format(token))
+      }
+      fw.close()
+    } else {
+      log.error("Nothing to flush")
     }
-    fw.close()
   }
 
+  println(normalizedWords)
   flush()
 }
