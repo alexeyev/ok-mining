@@ -7,7 +7,7 @@ import java.io.File
  */
 package object wiki {
 //
-//  val dump = new File("../ruwiki-latest-pages-meta-current.xml")
+  val dump = new File("../ruwiki-latest-pages-meta-current.xml")
 
-  val dump = new File("../test_dump.xml")
+//  val dump = new File("../test_dump.xml")
 }

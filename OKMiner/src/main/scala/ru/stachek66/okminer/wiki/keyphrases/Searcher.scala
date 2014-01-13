@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
 import scala.util.{Success, Failure, Try}
 import ru.stachek66.okminer.language.russian.{Tokenizer, Stemmer, Lexer}
+import java.util.Date
 
 /**
  * @author alexeyev
@@ -27,6 +28,7 @@ object Searcher {
       new Indexer().doIndex()
       IndexReader.open(IndexProperties.index)
     case Success(r) =>
+      log.info("Keyphrases index found. Version: " + new Date(r.getVersion))
       r
   }
 
@@ -35,7 +37,6 @@ object Searcher {
     Meta.luceneVersion,
     IndexProperties.textField,
     IndexProperties.analyzer)
-
 
   def getHitsCount(keyphrase: String): Int = {
     val collector = TopScoreDocCollector.create(500000, true)
@@ -63,7 +64,7 @@ object Searcher {
     for (t <- splitted) {
       pq.add(new Term(IndexProperties.textField, t))
     }
-    pq.setSlop(2)
+    pq.setSlop(0)
 
     val collector = TopScoreDocCollector.create(500000, true)
     searcher.search(pq, collector)

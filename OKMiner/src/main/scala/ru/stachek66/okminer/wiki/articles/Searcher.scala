@@ -69,7 +69,7 @@ object Searcher {
     for (t <- splitted) {
       pq.add(new Term(IndexProperties.textField, t))
     }
-    pq.setSlop(2)
+    pq.setSlop(0)
 
     val collector = TopScoreDocCollector.create(500000, true)
     searcher.search(pq, collector)
