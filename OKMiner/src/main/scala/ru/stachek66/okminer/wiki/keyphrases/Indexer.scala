@@ -24,7 +24,10 @@ class Indexer {
     new LinksFetcher().fetch {
       case links =>
         links.foreach {
-          link => addToIndex(iw, link)
+          link => {
+            addToIndex(iw, link)
+            addToIndex(iw, "ek42")
+          }
         }
     }
     iw.commit()
