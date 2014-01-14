@@ -6,7 +6,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
  * @author alexeyev
  */
-object Parser extends App {
+object LangLinksSQLParser extends App {
 
   private val dump = new File("../extwiki-20131231-langlinks.sql")
   private val pattern = "\\((\\d+,'%s','[^']+')\\)"
@@ -14,7 +14,7 @@ object Parser extends App {
   private val rup = pattern.format("ru").r
   private val enp = pattern.format("en").r
 
-  private val map = collection.mutable.Map[Long, ArrayBuffer[String]]() withDefault (a => ArrayBuffer())
+  private val map = collection.mutable.Map[Long, ArrayBuffer[String]]()
 
   io.Source.fromFile(dump).getLines().foreach {
     line => if (line.contains("INSERT")) {
@@ -40,8 +40,6 @@ object Parser extends App {
             case None => map.put(id, ArrayBuffer(tal))
           }
         })
-      //      }
-      //      println(map)
     }
   }
 

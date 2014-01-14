@@ -6,8 +6,11 @@ import java.io.File
  * @author alexeyev
  */
 package object wiki {
-//
-  val dump = new File("../ruwiki-latest-pages-meta-current.xml")
+  //
+  val dumps = Map(
+    "ru" -> new File("../ruwiki-latest-pages-meta-current.xml"),
+    "en" -> new File("../enwiki-latest-pages-meta-current.xml")
+  )
 
-//  val dump = new File("../test_dump.xml")
+  //  val dump = new File("../test_dump.xml")
 }
