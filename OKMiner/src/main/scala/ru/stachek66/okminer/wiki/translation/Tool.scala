@@ -5,6 +5,6 @@ package ru.stachek66.okminer.wiki.translation
  */
 object Tool extends App {
 
-  println(new WikiXMLParser("ru").links)
+  println(new WikiXMLParser("ru", "en").links)
 
 }
