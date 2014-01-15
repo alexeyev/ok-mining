@@ -7,7 +7,7 @@ import java.io.FileWriter
  */
 object Tool extends App {
 
-  val fw = new FileWriter("ru-en-titles.tsv")
+  val fw = new FileWriter("../ru-en-titles.tsv")
   //oom danger
   val idToTitle = PageSQLParser.idToTitle
   for {

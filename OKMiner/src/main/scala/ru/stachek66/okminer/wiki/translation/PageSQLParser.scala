@@ -46,7 +46,6 @@ object PageSQLParser {
 
   //OOM danger (~5GiB)
   lazy val idToTitle = {
-    println(new File("../").listFiles())
     println(rudump)
     println(rudump.exists())
     parseFile(rudump, "utf8")
