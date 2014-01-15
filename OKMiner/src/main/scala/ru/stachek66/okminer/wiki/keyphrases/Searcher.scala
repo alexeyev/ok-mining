@@ -3,11 +3,15 @@ package ru.stachek66.okminer.wiki.keyphrases
 import java.util.Date
 import org.apache.lucene.index.{Term, IndexReader}
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.search.{PhraseQuery, TopScoreDocCollector, IndexSearcher}
+import org.apache.lucene.search._
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
 import ru.stachek66.okminer.language.russian.Tokenizer
 import scala.util.{Success, Failure, Try}
+import org.apache.lucene.analysis.ru.RussianAnalyzer
+import org.apache.lucene.analysis.standard.StandardAnalyzer
+import scala.util.Success
+import scala.util.Failure
 
 /**
  * @author alexeyev
@@ -58,13 +62,15 @@ object Searcher {
 
   def tryPhrase(keyphrase: String) = {
     val pq = buildQuery(keyphrase)
+    val l = keyphrase.split(" ").length
     val collector = TopScoreDocCollector.create(500000, true)
     searcher.search(pq, collector)
     val res = collector.topDocs().
       scoreDocs.
-      map(doc => searcher.doc(doc.doc).getField("text").stringValue()).
+      map(doc => (doc.score, searcher.doc(doc.doc).getField("text").stringValue())).
+      filter(p => p._2.split(" ").length == l).
       toList
-    log.debug(res.toString())
-    res
+    log.info(keyphrase + " => " + res.toString())
+    res.map(_._2)
   }
 }

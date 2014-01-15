@@ -7,6 +7,7 @@ import ru.stachek66.okminer.wiki.vocabulary.Vocabulary
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.util.{Success, Failure, Try}
+import ru.stachek66.okminer.wiki.keyphrases.Searcher
 
 /**
  * @author alexeyev
@@ -65,12 +66,15 @@ object FullPipeLineTool extends App {
     }
   }.flatten.toSet
 
-  val ress = {
-    buildResults(tokens)
-  }
+  //  tokens.foreach(
+  //    token => Searcher.tryPhrase(token)
+  //  )
 
-  log.info(ress.toSeq.sortBy(-_._2).take(50).mkString("\n"))
-  Thread.sleep(3000)
+  ////  System.exit(-1)
+  //  val ress = buildResults(tokens)
+  //
+  //  log.info(ress.toSeq.sortBy(-_._2).take(50).mkString("\n"))
+  //  Thread.sleep(3000)
 
   val dResults: Iterable[(String, Double)] = {
     buildResults(
