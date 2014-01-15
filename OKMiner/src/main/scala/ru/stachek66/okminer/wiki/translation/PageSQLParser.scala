@@ -8,6 +8,7 @@ import scala.util.{Success, Failure, Try}
  * @author alexeyev
  */
 object PageSQLParser {
+  //todo: maybe it is better to use xmldump, because it allows to filter crap!
 
   private val log = LoggerFactory.getLogger("")
 

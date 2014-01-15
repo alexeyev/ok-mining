@@ -13,8 +13,7 @@ object Tool extends App {
   for {
     (id, entitle) <- LangLinksSQLParser.idToEnTitle
   } {
-    fw.write("%s\t%s\t%s\n".format(id, idToTitle.get(id), entitle))
-    println(idToTitle.get(id), entitle)
+    fw.write("%s\t%s\t%s\n".format(id, idToTitle(id), entitle))
   }
   fw.close()
 
