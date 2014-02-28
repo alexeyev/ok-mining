@@ -7,7 +7,7 @@ package ru.stachek66.okminer.wiki
 object KeyphrasenessCalculator {
 
   def getKeyPhraseness(phrase: String): Double =
-    keyphrases.Searcher.getHitsCount(phrase) / (articles.Searcher.getHitsCount(phrase) + 0.01)
+    keyphrases.Searcher.getHitsCount(phrase) / (new articles.PhraseSearcher().getHitsCount(phrase) + 0.01)
 
   def main(args: Array[String]) {
     println(getKeyPhraseness("космическая пыль"))

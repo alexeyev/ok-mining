@@ -5,17 +5,14 @@ import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{Query, PhraseQuery, TopScoreDocCollector, IndexSearcher}
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
-import scala.util.{Success, Try, Failure}
-import ru.stachek66.okminer.wiki.keyphrases.{IndexProperties, Indexer}
-import java.util.Date
 import ru.stachek66.okminer.language.russian.Tokenizer
-import ru.stachek66.okminer.wiki.articles.IndexProperties
+import scala.util.{Success, Try, Failure}
 
 /**
  * Script searching for keyphrases in the whole text collection.
  * @author alexeyev
  */
-object Searcher {
+class PhraseSearcher {
 
   private val log = LoggerFactory.getLogger("wiki-text-searcher")
 
@@ -34,7 +31,6 @@ object Searcher {
   }
 
   private val searcher = new IndexSearcher(reader)
-  private val qp = new QueryParser(Meta.luceneVersion, IndexProperties.textField, IndexProperties.analyzer)
 
   private def buildQuery(keyphrase: String): Query = {
     val pq = new PhraseQuery()

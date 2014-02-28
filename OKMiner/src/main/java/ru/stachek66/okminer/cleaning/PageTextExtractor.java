@@ -8,13 +8,12 @@ import java.net.URL;
 /**
  * @author alexeyev
  */
-public class AllTextExtractor {
+public class PageTextExtractor {
 
-    private AllTextExtractor() {
+    private PageTextExtractor() {
     }
 
     public static String getText(URL url) throws IOException {
-        System.out.println((url));
         return Jsoup.parse(url, 20 * 1000).text();
     }
 

@@ -44,13 +44,13 @@ class KeywordsExtractor {
 }
 
 object TfIdfRunner {
-  @deprecated
-  def main(args: Array[String]) {
-    val rankedList = new KeywordsExtractor().getRanked(
-      FileUtils.asStringWithoutNewLines(new File("corpus/130.txt")),
-      new BasicTfIdf
-    )
-    val vector = rankedList.toList
-    for {v <- vector} println(v)
-  }
+//  @deprecated
+//  def main(args: Array[String]) {
+//    val rankedList = new KeywordsExtractor().getRanked(
+//      FileUtils.asStringWithoutNewLines(new File("corpus/130.txt")),
+//      new BasicTfIdf
+//    )
+//    val vector = rankedList.toList
+//    for {v <- vector} println(v)
+//  }
 }

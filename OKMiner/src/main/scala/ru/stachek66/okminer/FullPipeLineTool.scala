@@ -14,6 +14,8 @@ import ru.stachek66.okminer.wiki.keyphrases.Searcher
  */
 object FullPipeLineTool extends App {
 
+  //todo: try article as a request
+
   private val log = LoggerFactory.getLogger("test-tool")
 
   import ExecutionContext.Implicits.global
@@ -67,7 +69,7 @@ object FullPipeLineTool extends App {
   }.flatten.toSet
 
   //  tokens.foreach(
-  //    token => Searcher.tryPhrase(token)
+  //    token => PhraseSearcher.tryPhrase(token)
   //  )
 
   ////  System.exit(-1)
