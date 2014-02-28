@@ -31,7 +31,7 @@ object Lexer extends App {
     val lexer =
       new CharSequenceLexer(
         string.asInstanceOf[CharSequence],
-        Pattern.compile("[\\p{LD}]+([\\.-/][\\p{LD}]+)*"))
+        Pattern.compile("[\\p{LD}]+([\\.-][\\p{LD}]+)*"))
     val buffer = ArrayBuffer[String]()
     while (lexer.hasNext) {
       buffer += lexer.next.asInstanceOf[String]
