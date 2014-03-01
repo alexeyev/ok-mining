@@ -18,7 +18,7 @@ class WikiVisitor(file: File, clog: CounterLogger) {
 
   def this(file:File) = this()
 
-  val wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath)
+  private val wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath)
 
   def visit(handler: WikiPage => Unit) {
     try {

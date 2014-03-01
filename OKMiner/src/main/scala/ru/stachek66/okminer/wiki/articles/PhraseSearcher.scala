@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
 import ru.stachek66.okminer.language.russian.Tokenizer
 import scala.util.{Success, Try, Failure}
+import ru.stachek66.okminer.wiki.keyphrases.IndexProperties
+import ru.stachek66.okminer.wiki.articles.IndexProperties
 
 /**
  * Script searching for keyphrases in the whole text collection.
@@ -32,6 +34,8 @@ class PhraseSearcher {
 
   private val searcher = new IndexSearcher(reader)
 
+  val totalDocs = searcher.collectionStatistics(IndexProperties.textField).docCount()
+
   private def buildQuery(keyphrase: String): Query = {
     val pq = new PhraseQuery()
     val splitted = Tokenizer.tokenize(keyphrase)
@@ -56,7 +60,7 @@ class PhraseSearcher {
     searcher.search(pq, collector)
     collector.topDocs().
       scoreDocs.
-      map(doc => searcher.doc(doc.doc).getField("text").stringValue()).
+      map(doc => searcher.doc(doc.doc).getField(IndexProperties.textField).stringValue()).
       toList
   }
 }

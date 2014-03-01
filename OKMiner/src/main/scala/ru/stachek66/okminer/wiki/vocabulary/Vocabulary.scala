@@ -1,10 +1,11 @@
 package ru.stachek66.okminer.wiki.vocabulary
 
-import ru.stachek66.okminer.wiki.WikiVisitor
-import ru.stachek66.okminer.language.russian.Tokenizer
-import scala.collection.JavaConversions._
 import java.io.{File, FileWriter}
 import org.slf4j.LoggerFactory
+import ru.stachek66.okminer.language.russian.Tokenizer
+import ru.stachek66.okminer.wiki.WikiVisitor
+import ru.stachek66.okminer.wiki.utils._
+import scala.collection.JavaConversions._
 
 /**
  * All normalized words that are allowed to be analyzed.
@@ -16,26 +17,30 @@ object Vocabulary {
   private lazy val vocAsTxtFile = new File("tools/vocabulary.txt")
 
   lazy val normalizedWords: Set[String] = {
-    val f = vocAsTxtFile
-    if (f.exists()) {
-      getFromTxt(f)
-    } else {
-      getFromDump
-    }
+    if (vocAsTxtFile.exists() && io.Source.fromFile(vocAsTxtFile).getLines().nonEmpty) getFromTxt
+    else getFromDump
   }
 
-  private def getFromTxt(file: File) =
-    io.Source.fromFile(file).getLines().map(_.trim).toSet
+  private def getFromTxt = io.Source.fromFile(vocAsTxtFile).getLines().map(_.trim).toSet
 
+  /**
+   * Putting all titles and links fron wiki dump into the vocabulary in normalized form.
+   * It is expected that vocabulary fits into RAM.
+   */
   private def getFromDump = {
-    def heur(s: String) = s.replace("_", " ")
+    def normalize(s: String) = Tokenizer.tokenize(s.replace("_", " "))
 
+    val numberPattern = "\\d+".r.pattern
     val voc = collection.mutable.Set[String]()
     new WikiVisitor().visit(
       page =>
-        if (!page.isRedirect && !page.isSpecialPage && !page.isDisambiguationPage) {
-          (Tokenizer.tokenize(heur(page.getTitle)) ++ page.getLinks.flatMap(l => Tokenizer.tokenize(heur(l)))).
-            foreach(voc.add(_))
+        if (Helper.isCoolPage(page)) {
+          for {
+            token <- (normalize(page.getTitle) ++ page.getLinks.flatMap(l => normalize(l)))
+            if !numberPattern.matcher(token).matches()
+          } {
+            voc.add(token)
+          }
         }
     )
     voc.toSet

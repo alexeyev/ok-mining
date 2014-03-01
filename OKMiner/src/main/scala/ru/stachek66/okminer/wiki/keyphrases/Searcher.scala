@@ -17,7 +17,6 @@ import scala.util.Failure
  * @author alexeyev
  */
 object Searcher {
-  //todo:
 
   private val log = LoggerFactory.getLogger("wiki-links-searcher")
 
@@ -28,7 +27,9 @@ object Searcher {
     case Failure(f) =>
       log.error("No index found", f)
       IndexProperties.index.getDirectory.mkdirs()
-      log.info("Deleting old index: " + IndexProperties.index.getDirectory.listFiles().foreach(_.delete()))
+      log.info("Deleting old index... ")
+      IndexProperties.index.getDirectory.listFiles().foreach(_.delete())
+      log.info("Old index deleted.")
       new Indexer().doIndex()
       IndexReader.open(IndexProperties.index)
     case Success(r) =>
@@ -37,10 +38,12 @@ object Searcher {
   }
 
   private val searcher = new IndexSearcher(reader, null)
-  private val qp = new QueryParser(
-    Meta.luceneVersion,
-    IndexProperties.textField,
-    IndexProperties.analyzer)
+
+  val totalDocs = searcher.collectionStatistics(IndexProperties.textField).docCount()
+  //  private val qp = new QueryParser(
+  //    Meta.luceneVersion,
+  //    IndexProperties.textField,
+  //    IndexProperties.analyzer)
 
   def buildQuery(keyphrase: String) = {
     val pq = new PhraseQuery()

@@ -14,7 +14,7 @@ import scala.collection.mutable.ArrayBuffer
 /**
  * @author alexeyev
  */
-object Tokenizer extends App {
+object Tokenizer {//extends App {
 
   //todo: version to properties
   private lazy val russian = new RussianAnalyzer(Meta.luceneVersion)
@@ -34,7 +34,4 @@ object Tokenizer extends App {
     stream.close()
     result
   }
-
-
-  println(tokenize("Я сразу смазал карту будня, плеснувши краски из стакана"))
 }

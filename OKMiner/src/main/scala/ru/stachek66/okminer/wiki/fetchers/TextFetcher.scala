@@ -7,18 +7,18 @@ import ru.stachek66.okminer.wiki.WikiVisitor
 
 
 /**
- * title, text, links
+ * title, text
  */
 class TextFetcher extends Fetcher[(String, String)] {
-  private val log = LoggerFactory.getLogger("wiki-fetcher")
+  private val log = LoggerFactory.getLogger("wiki-text-fetcher")
 
   override def fetch(handler: ((String, String)) => Unit) {
     new WikiVisitor().visit {
       page => {
-        if (!page.isRedirect && !page.isDisambiguationPage && !page.isStub && !page.isSpecialPage) {
+        if (Helper.isCoolPage(page)) {
           val text =
             Lexer.split(
-              page.getTitle.toLowerCase + " " + page.getText.toLowerCase).mkString(" ")
+              page.getTitle.toLowerCase.replaceAll("_", " ") + " " + page.getText.toLowerCase).mkString(" ")
           handler(page.getTitle.trim, text)
         }
       }

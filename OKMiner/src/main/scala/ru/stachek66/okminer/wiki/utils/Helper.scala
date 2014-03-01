@@ -2,8 +2,10 @@ package ru.stachek66.okminer.wiki.utils
 
 import java.util.regex.Pattern
 import scala.collection.mutable.ArrayBuffer
+import edu.jhu.nlp.wikipedia.WikiPage
 
 /**
+ * Stuff for wiki markup processing.
  * @author alexeyev
  */
 object Helper {
@@ -47,4 +49,6 @@ object Helper {
         pipeLinks.keys
       ).toSet
   }
+
+  def isCoolPage(page: WikiPage) = !page.isRedirect && !page.isSpecialPage && !page.isDisambiguationPage && !page.isStub
 }
