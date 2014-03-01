@@ -10,12 +10,13 @@ import org.slf4j.LoggerFactory
  * All normalized words that are allowed to be analyzed.
  * @author alexeyev
  */
-object Vocabulary extends App {
+object Vocabulary {
 
   private val log = LoggerFactory.getLogger("voc")
+  private lazy val vocAsTxtFile = new File("tools/vocabulary.txt")
 
   lazy val normalizedWords: Set[String] = {
-    val f = new File("tools/vocabulary.txt")
+    val f = vocAsTxtFile
     if (f.exists()) {
       getFromTxt(f)
     } else {
@@ -33,21 +34,24 @@ object Vocabulary extends App {
     new WikiVisitor().visit(
       page =>
         if (!page.isRedirect && !page.isSpecialPage && !page.isDisambiguationPage) {
-          (Tokenizer.tokenize(heur(page.getTitle)) ++
-            page.getLinks.flatMap(t => Tokenizer.tokenize(heur(t)))).foreach(voc.add(_))
+          (Tokenizer.tokenize(heur(page.getTitle)) ++ page.getLinks.flatMap(l => Tokenizer.tokenize(heur(l)))).
+            foreach(voc.add(_))
         }
     )
     voc.toSet
   }
 
   private def flush() {
-    val f = new File("tools/vocabulary.txt")
-    val fw = new FileWriter(f)
+    val fw = new FileWriter(vocAsTxtFile)
     normalizedWords.foreach {
       token =>
         fw.write("%s\n".format(token))
     }
     fw.close()
     log.info("Flushing done.")
+  }
+
+  def main(args: Array[String]) {
+    flush()
   }
 }

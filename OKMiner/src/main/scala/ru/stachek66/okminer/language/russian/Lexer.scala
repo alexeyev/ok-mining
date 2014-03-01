@@ -16,6 +16,7 @@ import org.apache.lucene.util._
 import scala.collection.mutable.ArrayBuffer
 
 /**
+ * Plain regex-based lexer.
  * @author alexeyev
  */
 object Lexer extends App {

@@ -12,8 +12,7 @@ import java.io.File
 @deprecated
 object Stemmer {
   //todo: use mystem
-  require(new File("tools").exists())
-
+  //  require(new File("tools").exists())
   //  def stem(word: String): String =
   //    ("echo '%s'".format(word) #| "./tools/stemwords -l russian").!!
   //

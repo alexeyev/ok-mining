@@ -6,6 +6,8 @@ import ru.stachek66.okminer.utils.CounterLogger
 import java.io.File
 
 /**
+ * A wrapper over a lightweight wiki-parser
+ * for doing stuff with WikiPages.
  * @author alexeyev
  */
 class WikiVisitor(file: File, clog: CounterLogger) {
