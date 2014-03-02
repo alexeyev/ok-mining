@@ -16,9 +16,10 @@ object PageSQLParser {
   private val endump = new File("../enwiki-latest-page.sql")
   private val pattern = "\\((\\d+),\\d+,'([^']+)'".r
 
-  def parseFile(dump: File, enc: String): Map[Long, String] = {
+  def parseFile(dump: File, enc: String): (Map[Long, String], Map[String, Long]) = {
 
     val idToTitleMap = collection.mutable.Map[Long, String]()
+    val titleToIdMap = collection.mutable.Map[String, Long]()
 
     // due to malformed input, we have to use buffered reader  :(
     val br = new BufferedReader(new FileReader(dump))
@@ -33,35 +34,34 @@ object PageSQLParser {
             val spl = m.group(1).split(",")
             val id = spl(0).toLong
             val tal = m.group(2).replace("_", " ")
+            titleToIdMap.put(tal, id)
             idToTitleMap.put(id, tal)
           })
       }
     } match {
-      case Failure(e) =>
-        log.error("", e)
+      case Failure(e) => log.error("", e)
       case Success(s) => log.info("Line " + c)
     }
-    idToTitleMap.toMap
+    log.info("Converting to maps... " + idToTitleMap.size + " " + titleToIdMap.size)
+    (idToTitleMap.toMap, titleToIdMap.toMap)
   }
 
-  //OOM danger (~5GiB)
-  lazy val ruIdToTitle: Map[Long, String] = {
+  lazy val (ruIdToTitle, ruTitleToId): (Map[Long, String], Map[String, Long]) = {
     log.info("Does ru-dump exist? " + rudump.exists())
     if (rudump.exists()) parseFile(rudump, "utf8")
-    else Map()
+    else (Map(), Map())
   }
 
-  //OOM danger (~5GiB)
-  lazy val enIdToTitle: Map[Long, String] = {
-    log.info("Does ru-dump exist? " + endump.exists())
+  lazy val (enIdToTitle, enTitleToId): (Map[Long, String], Map[String, Long]) = {
+    log.info("Does en-dump exist? " + endump.exists())
     if (endump.exists()) parseFile(endump, "utf8")
-    else Map()
+    else (Map(), Map())
   }
 
   def flush() {
     val fw = new FileWriter("parsed/ru-id-title.tsv")
     for {
-      (id, title) <- idToTitle
+      (title, id) <- ruIdToTitle
     } {
       fw.write("%s\t%s\n".format(id, title))
     }

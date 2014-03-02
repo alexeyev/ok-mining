@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
  * @author alexeyev
  */
 object NaiveNER extends App {
+  //todo: rewrite so as mail.ru could be found
   private val log = LoggerFactory.getLogger("testing-ner")
 
   val tokens =
@@ -19,8 +20,7 @@ object NaiveNER extends App {
     tokens.zip(tokens.tail).
       filterNot(
       t =>
-        HeuristicsHelper.isDigits(t._1) &&
-          HeuristicsHelper.isDigits(t._2))
+        HeuristicsHelper.isDigits(t._1) && HeuristicsHelper.isDigits(t._2))
 
   log.info("2-token search")
 
@@ -28,25 +28,25 @@ object NaiveNER extends App {
     for {
       d <- duples
       res = Searcher.fuzzyFind("%s %s".format(d._1, d._2), 1)
-      if (res.nonEmpty)
+      if res.nonEmpty
     } yield {
       log.info(d + " " + res.head)
       res.head.getField(Searcher.companyField).stringValue()
     }
   } toSet
 
-  log.info("One-token search")
+  log.info("1-token search")
 
   val companiesFromTokens = {
     for {
       t <- tokens
-      res = Searcher.magicFind("%s".format(t), 7f)
+      res = Searcher.magicFind("%s".format(t), 6f)
       if res.nonEmpty
     } yield {
-      log.info(res.toString())
+      log.info(t + " -> " + res.toString())
       res.head._2.getField(Searcher.companyField).stringValue()
     }
   } toSet
 
-  println(companiesFromDuples ++ companiesFromTokens)
+  log.info("" + (companiesFromDuples ++ companiesFromTokens))
 }

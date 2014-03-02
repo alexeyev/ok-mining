@@ -17,7 +17,8 @@ object Tool extends App {
 //    println("%s\t%s\t%s\n".format(id, idToTitle.get(id).get, enTitle))
 //    fw.write("%s\t%s\t%s\n".format(id, idToTitle.get(id).get, enTitle))
 //  }
-  println(PageSQLParser.enIdToTitle.size)
+  println(PageSQLParser.ruIdToTitle)
+  println(PageSQLParser.enIdToTitle)
 //  println(LangLinksSQLParser.idToRuTitle.size)
 //  println(LangLinksSQLParser.idToEnTitle.size)
   fw.close()

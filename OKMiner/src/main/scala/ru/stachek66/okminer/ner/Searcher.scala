@@ -10,9 +10,10 @@ import org.apache.lucene.store.RAMDirectory
 import ru.stachek66.okminer.Meta
 import java.io.File
 import org.apache.lucene.queryparser.classic.QueryParser
+import org.slf4j.LoggerFactory
 
 /**
- * Experiment
+ * Experiment with companies' names.
  * @author alexeyev
  */
 object Searcher {
@@ -28,8 +29,10 @@ object Searcher {
   private val analyzer: Analyzer = new StandardAnalyzer(Meta.luceneVersion)
   private val index = new RAMDirectory()
   private val config = new IndexWriterConfig(Meta.luceneVersion, analyzer)
+  private val log = LoggerFactory.getLogger("company-searcher-experimental")
 
   def fillIndex(file: File) {
+    log.info("Filling companies' index...")
     val iw = new IndexWriter(index, config)
     io.Source.fromFile(file).getLines().
       foreach {
@@ -37,6 +40,7 @@ object Searcher {
         addToIndex(iw, line.trim)
     }
     iw.close()
+    log.info("Done.")
   }
 
   fillIndex(new File("habrahabr.txt"))
