@@ -15,8 +15,8 @@ object PageSQLParser {
 
   private val log = LoggerFactory.getLogger("")
 
-  private val rudump = new File("../ruwiki-latest-page.sql.gz")
-  private val endump = new File("../enwiki-latest-page.sql.gz")
+  private[translation] val rudump = new File("../ruwiki-latest-page.sql.gz")
+  private[translation] val endump = new File("../enwiki-latest-page.sql.gz")
 
 
   private val ruPrepared = new File("parsed/ru-id-title.tsv")
@@ -66,6 +66,7 @@ object PageSQLParser {
   }
 
   lazy val (ruIdToTitle, ruTitleToId): (Map[Long, String], Map[String, Long]) = {
+    log.info("Accessing ru map")
     if (!ruPrepared.exists()) {
       flushRu()
     }
@@ -73,6 +74,7 @@ object PageSQLParser {
   }
 
   lazy val (enIdToTitle, enTitleToId): (Map[Long, String], Map[String, Long]) = {
+    log.info("Accessing en map")
     if (!enPrepared.exists()) {
       flushEn()
     }

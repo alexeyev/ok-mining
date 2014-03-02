@@ -1,9 +1,12 @@
 package ru.stachek66.okminer.wiki.translation
 
-import java.io.{FileReader, BufferedReader, File}
+import java.io._
 import org.slf4j.LoggerFactory
 import scala.util.{Success, Failure, Try}
 import scala.util.matching.Regex
+import java.util.zip.GZIPInputStream
+import scala.util.Success
+import scala.util.Failure
 
 /**
  * PArses langlinks dump.
@@ -13,20 +16,20 @@ object LangLinksSQLParser {
 
   private val log = LoggerFactory.getLogger("")
 
-  private val rudump = new File("../ruwiki-latest-langlinks.sql")
-  private val endump = new File("../enwiki-latest-langlinks.sql")
+  private val rudump = new File("../ruwiki-latest-langlinks.sql.gz")
+  private val endump = new File("../enwiki-latest-langlinks.sql.gz")
   //  private val extdump = new File("../extwiki-20131231-langlinks.sql")
   private val pattern = "\\((\\d+,'%s','([^']+)')\\)"
 
   private val rup = pattern.format("ru").r
   private val enp = pattern.format("en").r
 
-  def parseFile(dump: File, enc: String, langRegex: Regex): Map[Long, String] = {
+  private def parseFile(dump: File, enc: String, langRegex: Regex): Map[Long, String] = {
 
     val map = collection.mutable.Map[Long, String]()
 
     // due to malformed input, we have to use buffered reader  :(
-    val br = new BufferedReader(new FileReader(dump))
+    val br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dump))))
     var counter = 0
 
     while (br.ready()) Try {
