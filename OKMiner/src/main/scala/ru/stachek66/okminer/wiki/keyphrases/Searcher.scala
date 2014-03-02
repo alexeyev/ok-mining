@@ -21,7 +21,7 @@ object Searcher {
   private val log = LoggerFactory.getLogger("wiki-links-searcher")
 
   private val reader = Try {
-    IndexReader.open(IndexProperties.index)
+    IndexReader.open(IndexProperties.index.accessIndex)
   } match {
     case Failure(f) =>
       log.error("No index found", f)
