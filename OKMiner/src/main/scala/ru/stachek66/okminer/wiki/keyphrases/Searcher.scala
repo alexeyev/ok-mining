@@ -14,6 +14,7 @@ import scala.util.Success
 import scala.util.Failure
 
 /**
+ * Поиск по вики-ссылкам
  * @author alexeyev
  */
 object Searcher {
@@ -24,7 +25,7 @@ object Searcher {
     IndexReader.open(IndexProperties.index.accessIndex)
   } match {
     case Failure(f) =>
-      log.error("No index found", f)
+      log.error("No index found, bye", f)
       throw new Error()
     case Success(r) =>
       log.info("Keyphrases index found. Version: " + r.getVersion)
@@ -53,17 +54,29 @@ object Searcher {
     collector.topDocs().scoreDocs.length
   }
 
-  def tryPhrase(keyphrase: String) = {
+  def tryPhrase(keyphrase: String): Iterable[String] = {
     val pq = buildQuery(keyphrase)
     val l = keyphrase.split(" ").length
     val collector = TopScoreDocCollector.create(500000, true)
     searcher.search(pq, collector)
-    val res = collector.topDocs().
-      scoreDocs.
-      map(doc => (doc.score, searcher.doc(doc.doc).getField("text").stringValue())).
-      filter(p => p._2.split(" ").length == l).
-      toList
+    val res = for {
+      scoreDoc <- collector.topDocs().scoreDocs.toIterable
+      if (scoreDoc.score > 3)
+      doc = searcher.doc(scoreDoc.doc)
+      link = doc.getField(IndexProperties.textField).stringValue()
+      if link.split(" ").length == l
+    } yield {
+      (scoreDoc.score, link)
+    }
     log.info(keyphrase + " => " + res.toString())
     res.map(_._2)
   }
+
+//  def main(args: Array[String]) {
+//    println(tryPhrase("облачное хранилище"))
+//    println(tryPhrase("облачное вычисления"))
+//    println(tryPhrase("интернет вещица"))
+//    println(tryPhrase("интернет вещей"))
+//    println(tryPhrase("смартфон "))
+//  }
 }

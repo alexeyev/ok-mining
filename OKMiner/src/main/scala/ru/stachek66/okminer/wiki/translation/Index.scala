@@ -81,10 +81,13 @@ class Searcher(index: Index) {
   }
 }
 
-object Tool extends App {
+object Tool {
+  //extends App {
 
   val index = new Index(new File("parsed/ru-en-sorted.tsv"), new File("indices/lang_index"))
   val s = new Searcher(index)
-  s.search("интернет вещей").foreach(println(_))
+  //s.search("интернет вещей").foreach(println(_))
+
+  def translate(text: String): Option[(String, String)] = s.search(text).headOption.map(_._2)
 
 }
