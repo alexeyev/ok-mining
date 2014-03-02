@@ -17,8 +17,7 @@ class TextFetcher extends Fetcher[(String, String)] {
       page => {
         if (Helper.isCoolPage(page)) {
           val text =
-            Lexer.split(
-              page.getTitle.toLowerCase.replaceAll("_", " ") + " " + page.getText.toLowerCase).mkString(" ")
+            "%s %s".format(page.getTitle.replaceAll("_", " "), page.getText)
           handler(page.getTitle.trim, text)
         }
       }

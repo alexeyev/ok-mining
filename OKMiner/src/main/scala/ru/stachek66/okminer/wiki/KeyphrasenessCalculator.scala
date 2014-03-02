@@ -1,12 +1,14 @@
 package ru.stachek66.okminer.wiki
 
+import ru.stachek66.okminer.wiki.articles.IndexProperties
+
 
 /**
  * @author alexeyev
  */
 object KeyphrasenessCalculator {
 
-  private lazy val phraseSearcher = new articles.PhraseSearcher()
+  private val phraseSearcher = new articles.PhraseSearcher(IndexProperties.index)
 
   /**
    * Relative TF with Laplacian smoothing.

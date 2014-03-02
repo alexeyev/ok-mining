@@ -1,32 +1,25 @@
 package ru.stachek66.okminer.wiki.articles
 
 import org.apache.lucene.index.{Term, IndexReader}
-import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{Query, PhraseQuery, TopScoreDocCollector, IndexSearcher}
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.Meta
 import ru.stachek66.okminer.language.russian.Tokenizer
 import scala.util.{Success, Try, Failure}
-import ru.stachek66.okminer.wiki.keyphrases.IndexProperties
-import ru.stachek66.okminer.wiki.articles.IndexProperties
 
 /**
  * Script searching for keyphrases in the whole text collection.
  * @author alexeyev
  */
-class PhraseSearcher {
+class PhraseSearcher(index: Index) {
 
   private val log = LoggerFactory.getLogger("wiki-text-searcher")
 
-  private lazy val reader = Try {
-    IndexReader.open(IndexProperties.index)
+  private val reader = Try {
+    IndexReader.open(index.index)
   } match {
     case Failure(f) =>
-      log.error("No index found", f)
-      IndexProperties.index.getDirectory.mkdirs()
-      log.info("Deleting old index: " + IndexProperties.index.getDirectory.listFiles().foreach(_.delete()))
-      new Indexer().doIndex()
-      IndexReader.open(IndexProperties.index)
+      log.error("No index found, bye", f)
+      throw new Error("Problem officer")
     case Success(r) =>
       log.info("Index found. v: " + r.getVersion)
       r
@@ -59,7 +52,7 @@ class PhraseSearcher {
     val collector = TopScoreDocCollector.create(500000, true)
     searcher.search(pq, collector)
     collector.topDocs().
-      scoreDocs.
+      scoreDocs.toIterable.
       map(doc => searcher.doc(doc.doc).getField(IndexProperties.textField).stringValue()).
       toList
   }

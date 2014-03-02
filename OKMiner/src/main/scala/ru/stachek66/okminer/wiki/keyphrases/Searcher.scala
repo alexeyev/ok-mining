@@ -20,18 +20,12 @@ object Searcher {
 
   private val log = LoggerFactory.getLogger("wiki-links-searcher")
 
-  private lazy val reader = Try {
+  private val reader = Try {
     IndexReader.open(IndexProperties.index)
-    //    throw new Exception
   } match {
     case Failure(f) =>
       log.error("No index found", f)
-      IndexProperties.index.getDirectory.mkdirs()
-      log.info("Deleting old index... ")
-      IndexProperties.index.getDirectory.listFiles().foreach(_.delete())
-      log.info("Old index deleted.")
-      new Indexer().doIndex()
-      IndexReader.open(IndexProperties.index)
+      throw new Error()
     case Success(r) =>
       log.info("Keyphrases index found. Version: " + r.getVersion)
       r
@@ -40,10 +34,6 @@ object Searcher {
   private val searcher = new IndexSearcher(reader, null)
 
   val totalDocs = searcher.collectionStatistics(IndexProperties.textField).docCount()
-  //  private val qp = new QueryParser(
-  //    Meta.luceneVersion,
-  //    IndexProperties.textField,
-  //    IndexProperties.analyzer)
 
   def buildQuery(keyphrase: String) = {
     val pq = new PhraseQuery()

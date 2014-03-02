@@ -3,9 +3,8 @@ package ru.stachek66.okminer.wiki.articles
 import java.io.File
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.ru.RussianAnalyzer
-import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.index.IndexWriterConfig
-import org.apache.lucene.store.{NIOFSDirectory, RAMDirectory}
+import org.apache.lucene.store.NIOFSDirectory
 import ru.stachek66.okminer.Meta
 
 /**
@@ -18,6 +17,7 @@ object IndexProperties {
   val idField = "id"
 
   val analyzer: Analyzer = new RussianAnalyzer(Meta.luceneVersion)
-  val index = new NIOFSDirectory(new File("indices/wiki_index"))
   val config = new IndexWriterConfig(Meta.luceneVersion, analyzer)
+  val index = new Index()
+
 }

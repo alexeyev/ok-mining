@@ -4,6 +4,8 @@ import org.apache.lucene.document.{Field, TextField, Document}
 import org.apache.lucene.index.IndexWriter
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.wiki.fetchers.LinksFetcher
+import org.apache.lucene.store.NIOFSDirectory
+import java.io.File
 
 /**
  * @author alexeyev

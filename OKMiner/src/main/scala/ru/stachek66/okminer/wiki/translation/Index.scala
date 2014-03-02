@@ -13,9 +13,7 @@ import ru.stachek66.okminer.Meta
 import scala.util.{Success, Failure, Try}
 
 object IndexProperties {
-
   type RuEn = (String, String)
-
   val (ru, en) = ("ru", "en")
 }
 
@@ -87,6 +85,6 @@ object Tool extends App {
 
   val index = new Index(new File("parsed/ru-en-sorted.tsv"), new File("indices/lang_index"))
   val s = new Searcher(index)
-  s.search("красота по-американски").foreach(println(_))
+  s.search("интернет вещей").foreach(println(_))
 
 }

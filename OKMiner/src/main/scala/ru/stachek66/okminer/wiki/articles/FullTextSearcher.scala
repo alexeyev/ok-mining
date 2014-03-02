@@ -14,18 +14,17 @@ import scala.util.Try
  * @author alexeyev
  */
 class FullTextSearcher {
+  //todo: remove crap
 
   private val log = LoggerFactory.getLogger("wiki-text-searcher")
 
-  private lazy val reader = Try {
-    IndexReader.open(IndexProperties.index)
+  private val reader = Try {
+    IndexReader.open(IndexProperties.index.index)
   } match {
     case Failure(f) =>
       log.error("No index found", f)
-      IndexProperties.index.getDirectory.mkdirs()
-      log.info("Deleting old index: " + IndexProperties.index.getDirectory.listFiles().foreach(_.delete()))
-      new Indexer().doIndex()
-      IndexReader.open(IndexProperties.index)
+      log.error("Exiting.")
+      throw new Error()
     case Success(r) =>
       log.info("Index found. v: " + r.getVersion)
       r
