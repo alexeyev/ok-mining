@@ -1,11 +1,11 @@
-package ru.stachek66.okminer.wiki.translation
+package ru.stachek66.okminer.wiki.translation.tools
 
 import java.io._
-import org.slf4j.LoggerFactory
-import scala.util.{Success, Failure, Try}
-import scala.util.Success
-import scala.util.Failure
 import java.util.zip.GZIPInputStream
+import org.slf4j.LoggerFactory
+import scala.util.Failure
+import scala.util.Success
+import scala.util.{Success, Failure, Try}
 
 /**
  * Parses id-to-title mapping for Russian wiki-articles
@@ -17,7 +17,6 @@ object PageSQLParser {
 
   private[translation] val rudump = new File("../ruwiki-latest-page.sql.gz")
   private[translation] val endump = new File("../enwiki-latest-page.sql.gz")
-
 
   private val ruPrepared = new File("parsed/ru-id-title.tsv")
   private val enPrepared = new File("parsed/en-id-title.tsv")

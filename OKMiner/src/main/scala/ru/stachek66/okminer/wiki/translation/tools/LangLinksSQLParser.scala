@@ -1,12 +1,12 @@
-package ru.stachek66.okminer.wiki.translation
+package ru.stachek66.okminer.wiki.translation.tools
 
 import java.io._
-import org.slf4j.LoggerFactory
-import scala.util.{Success, Failure, Try}
-import scala.util.matching.Regex
 import java.util.zip.GZIPInputStream
-import scala.util.Success
+import org.slf4j.LoggerFactory
 import scala.util.Failure
+import scala.util.Success
+import scala.util.matching.Regex
+import scala.util.{Success, Failure, Try}
 
 /**
  * PArses langlinks dump.

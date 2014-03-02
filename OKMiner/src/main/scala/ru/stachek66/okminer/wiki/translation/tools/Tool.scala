@@ -1,4 +1,4 @@
-package ru.stachek66.okminer.wiki.translation
+package ru.stachek66.okminer.wiki.translation.tools
 
 import java.io.FileWriter
 
