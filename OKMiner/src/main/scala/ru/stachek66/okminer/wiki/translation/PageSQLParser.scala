@@ -22,13 +22,9 @@ object PageSQLParser {
   private val ruPrepared = new File("parsed/ru-id-title.tsv")
   private val enPrepared = new File("parsed/en-id-title.tsv")
 
-  //todo: strange stuff, make simple
-  private val ruPreparedStream = new FileInputStream(ruPrepared)
-  private val enPreparedStream = new FileInputStream(enPrepared)
-
   private val pattern = "\\((\\d+),\\d+,'([^']+)'".r
 
-  private[translation] def parseDump(dump: File, enc: String)(handler: (Long, String) => Unit = ()) {
+  private[translation] def parseDump(dump: File, enc: String)(handler: (Long, String) => Unit) {
 
     // due to malformed input, we have to use buffered reader  :(
     val br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dump))))
@@ -52,12 +48,12 @@ object PageSQLParser {
     }
   }
 
-  private def getMapsFromTsv(stream: InputStream): (Map[Long, String], Map[String, Long]) = {
+  private def getMapsFromTsv(file: File): (Map[Long, String], Map[String, Long]) = {
 
     val itt = collection.mutable.Map[Long, String]()
     val tti = collection.mutable.Map[String, Long]()
 
-    io.Source.fromInputStream(stream).getLines().foreach {
+    io.Source.fromFile(file).getLines().foreach {
       line => {
         val splitted = line.trim.split("\t")
         val number = splitted(0).toLong
@@ -70,17 +66,17 @@ object PageSQLParser {
   }
 
   lazy val (ruIdToTitle, ruTitleToId): (Map[Long, String], Map[String, Long]) = {
-    if (ruPreparedStream.available() != 1) {
+    if (!ruPrepared.exists()) {
       flushRu()
     }
-    getMapsFromTsv(ruPreparedStream)
+    getMapsFromTsv(ruPrepared)
   }
 
   lazy val (enIdToTitle, enTitleToId): (Map[Long, String], Map[String, Long]) = {
-    if (enPreparedStream.available() != 1) {
+    if (!enPrepared.exists()) {
       flushEn()
     }
-    getMapsFromTsv(enPreparedStream)
+    getMapsFromTsv(enPrepared)
   }
 
   private def flushRu() {
@@ -88,6 +84,7 @@ object PageSQLParser {
     parseDump(rudump, "utf8") {
       (id, title) => fw.write("%s\t%s\n".format(id, title))
     }
+    log.info("Flushing done.")
     fw.close()
   }
 
@@ -96,6 +93,7 @@ object PageSQLParser {
     parseDump(endump, "utf8") {
       (id, title) => fw.write("%s\t%s\n".format(id, title))
     }
+    log.info("Flushing done.")
     fw.close()
   }
 }
