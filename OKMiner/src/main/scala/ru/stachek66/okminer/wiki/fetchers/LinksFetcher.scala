@@ -5,6 +5,7 @@ import ru.stachek66.okminer.wiki.WikiVisitor
 import ru.stachek66.okminer.wiki.utils.Helper
 
 /**
+ * Fetching all textual links
  * @author alexeyev
  */
 class LinksFetcher extends Fetcher[Iterable[String]] {

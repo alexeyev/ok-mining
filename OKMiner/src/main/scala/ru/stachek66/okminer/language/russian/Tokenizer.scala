@@ -12,16 +12,16 @@ import org.apache.lucene.util._
 import scala.collection.mutable.ArrayBuffer
 
 /**
+ * Tokenization + stemming provided by Lucene RussianAnalyzer
  * @author alexeyev
  */
-object Tokenizer {//extends App {
+object Tokenizer {
 
   //todo: version to properties
   private lazy val russian = new RussianAnalyzer(Meta.luceneVersion)
 
   /**
    * Lucene tokenizer applied to text.
-   * @param string
    */
   def tokenize(string: String): Iterable[String] = {
     val stream = russian.tokenStream("", new StringReader(string))

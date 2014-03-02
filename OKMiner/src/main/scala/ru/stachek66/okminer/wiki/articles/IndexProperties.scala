@@ -18,6 +18,6 @@ object IndexProperties {
   val idField = "id"
 
   val analyzer: Analyzer = new RussianAnalyzer(Meta.luceneVersion)
-  val index = new NIOFSDirectory(new File("wiki_index"))
+  val index = new NIOFSDirectory(new File("indices/wiki_index"))
   val config = new IndexWriterConfig(Meta.luceneVersion, analyzer)
 }

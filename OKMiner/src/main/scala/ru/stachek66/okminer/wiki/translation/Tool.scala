@@ -9,12 +9,16 @@ object Tool extends App {
 
   val fw = new FileWriter("../ru-en-titles.tsv")
   //oom danger
-  val idToTitle = PageSQLParser.idToTitle
-  for {
-    (id, entitle) <- LangLinksSQLParser.idToEnTitle
-  } {
-    fw.write("%s\t%s\t%s\n".format(id, idToTitle(id), entitle))
-  }
+//  val idToTitle: Map[Long, String] = PageSQLParser.idToTitle
+//
+//  for {
+//    (id: Long, enTitle) <- LangLinksSQLParser.idToEnTitle
+//  } {
+//    println("%s\t%s\t%s\n".format(id, idToTitle.get(id).get, enTitle))
+//    fw.write("%s\t%s\t%s\n".format(id, idToTitle.get(id).get, enTitle))
+//  }
+  println(PageSQLParser.enIdToTitle.size)
+//  println(LangLinksSQLParser.idToRuTitle.size)
+//  println(LangLinksSQLParser.idToEnTitle.size)
   fw.close()
-
 }

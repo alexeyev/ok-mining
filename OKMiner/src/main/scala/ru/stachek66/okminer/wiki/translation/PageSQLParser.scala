@@ -5,20 +5,20 @@ import org.slf4j.LoggerFactory
 import scala.util.{Success, Failure, Try}
 
 /**
+ * Parses id-to-title mapping for Russian wiki-articles
  * @author alexeyev
  */
 object PageSQLParser {
-  //todo: maybe it is better to use xmldump, because it allows to filter crap!
 
   private val log = LoggerFactory.getLogger("")
 
   private val rudump = new File("../ruwiki-latest-page.sql")
+  private val endump = new File("../enwiki-latest-page.sql")
   private val pattern = "\\((\\d+),\\d+,'([^']+)'".r
 
+  def parseFile(dump: File, enc: String): Map[Long, String] = {
 
-  private val map = collection.mutable.Map[Long, String]()
-
-  def parseFile(dump: File, enc: String) {
+    val idToTitleMap = collection.mutable.Map[Long, String]()
 
     // due to malformed input, we have to use buffered reader  :(
     val br = new BufferedReader(new FileReader(dump))
@@ -33,27 +33,33 @@ object PageSQLParser {
             val spl = m.group(1).split(",")
             val id = spl(0).toLong
             val tal = m.group(2).replace("_", " ")
-            map.put(id, tal)
+            idToTitleMap.put(id, tal)
           })
       }
     } match {
       case Failure(e) =>
-        println(e.getStackTraceString)
         log.error("", e)
-      case Success(s) => log.info("wow such line " + c)
+      case Success(s) => log.info("Line " + c)
     }
+    idToTitleMap.toMap
   }
 
   //OOM danger (~5GiB)
-  lazy val idToTitle = {
-    println(rudump)
-    println(rudump.exists())
-    parseFile(rudump, "utf8")
-    map
+  lazy val ruIdToTitle: Map[Long, String] = {
+    log.info("Does ru-dump exist? " + rudump.exists())
+    if (rudump.exists()) parseFile(rudump, "utf8")
+    else Map()
+  }
+
+  //OOM danger (~5GiB)
+  lazy val enIdToTitle: Map[Long, String] = {
+    log.info("Does ru-dump exist? " + endump.exists())
+    if (endump.exists()) parseFile(endump, "utf8")
+    else Map()
   }
 
   def flush() {
-    val fw = new FileWriter("ru-id-title.tsv")
+    val fw = new FileWriter("parsed/ru-id-title.tsv")
     for {
       (id, title) <- idToTitle
     } {

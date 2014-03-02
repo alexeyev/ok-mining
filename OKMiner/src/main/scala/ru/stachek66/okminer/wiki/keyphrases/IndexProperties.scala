@@ -15,6 +15,6 @@ object IndexProperties {
    val textField = "text"
 
    val analyzer: Analyzer = new RussianAnalyzer(Meta.luceneVersion)
-   val index = new NIOFSDirectory(new File("wiki_keyphrases_index_short"))
+   val index = new NIOFSDirectory(new File("indices/wiki_keyphrases_index_short"))
    val config = new IndexWriterConfig(Meta.luceneVersion, analyzer)
  }
