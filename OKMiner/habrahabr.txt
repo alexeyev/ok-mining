@@ -1,5 +1,6 @@
 Яндекс
 Mail.Ru Group
+Mail.Ru
 Intel
 Мосигра
 Zfort Group
@@ -11,6 +12,7 @@ Digital Security
 Сибирикс
 Microsoft
 ВымпелКом (Билайн)
+билайн
 Virt2real
 ESET NOD32
 Box Overview

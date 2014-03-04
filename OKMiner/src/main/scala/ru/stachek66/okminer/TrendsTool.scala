@@ -12,7 +12,7 @@ import scala.util.{Success, Failure, Try}
 /**
  * @author alexeyev
  */
-object FullPipeLineTool extends App {
+object TrendsTool extends App {
 
   //todo: try article as a request
   private val log = LoggerFactory.getLogger("test-tool")

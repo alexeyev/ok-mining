@@ -12,10 +12,10 @@ object NaiveNER extends App {
   private val log = LoggerFactory.getLogger("testing-ner")
 
   val tokens =
-//    StopWordsFilter.filter(
+    StopWordsFilter.filter(
       Lexer.split(
         FileUtils.asStringWithoutNewLines(
-          new java.io.File("test.txt")))//)
+          new java.io.File("test.txt"))))
 
   val duples =
     tokens.zip(tokens.tail).
