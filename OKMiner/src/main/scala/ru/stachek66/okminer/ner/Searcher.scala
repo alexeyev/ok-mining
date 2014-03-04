@@ -46,7 +46,7 @@ object Searcher {
   fillIndex(new File("habrahabr.txt"))
 
 
-  def fuzzyFind(freeTextQuery: String, maxEditDistance: Int): Iterable[Document] = {
+  def fuzzyFind(freeTextQuery: String, maxEditDistance: Int): Iterable[(Float, Document)] = {
 
     /*
      * Sadly, one can't use FuzzyQuery: max edit distance = 2
@@ -79,7 +79,7 @@ object Searcher {
         scoreDocs.toIterable.
         map(
         document =>
-          searcher.doc(document.doc)
+          (document.score, searcher.doc(document.doc))
       )
     hits.toIterable
   }

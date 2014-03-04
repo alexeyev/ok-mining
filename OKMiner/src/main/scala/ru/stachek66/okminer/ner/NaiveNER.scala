@@ -1,6 +1,6 @@
 package ru.stachek66.okminer.ner
 
-import ru.stachek66.okminer.language.russian.{Lexer, Tokenizer}
+import ru.stachek66.okminer.language.russian.{StopWordsFilter, Lexer, Tokenizer}
 import ru.stachek66.okminer.utils.FileUtils
 import org.slf4j.LoggerFactory
 
@@ -12,9 +12,10 @@ object NaiveNER extends App {
   private val log = LoggerFactory.getLogger("testing-ner")
 
   val tokens =
-    Lexer.split(
-      FileUtils.asStringWithoutNewLines(
-        new java.io.File("test.txt")))
+//    StopWordsFilter.filter(
+      Lexer.split(
+        FileUtils.asStringWithoutNewLines(
+          new java.io.File("test.txt")))//)
 
   val duples =
     tokens.zip(tokens.tail).
@@ -27,11 +28,11 @@ object NaiveNER extends App {
   val companiesFromDuples = {
     for {
       d <- duples
-      res = Searcher.fuzzyFind("%s %s".format(d._1, d._2), 1)
+      res = Searcher.magicFind("%s %s".format(d._1, d._2), 2)
       if res.nonEmpty
     } yield {
-      log.info(d + " " + res.head)
-      res.head.getField(Searcher.companyField).stringValue()
+      log.info(d + " ~> " + res.head)
+      res.head._2.getField(Searcher.companyField).stringValue()
     }
   } toSet
 
