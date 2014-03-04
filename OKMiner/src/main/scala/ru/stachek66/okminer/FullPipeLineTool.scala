@@ -2,7 +2,7 @@ package ru.stachek66.okminer
 
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.language.russian.{StopWordsFilter, Lexer, Tokenizer}
-import ru.stachek66.okminer.wiki.KeyphrasenessCalculator
+import ru.stachek66.okminer.wiki._
 import ru.stachek66.okminer.wiki.translation.Tool
 import ru.stachek66.okminer.wiki.vocabulary.Vocabulary
 import scala.concurrent.duration._
@@ -18,6 +18,10 @@ object FullPipeLineTool extends App {
   private val log = LoggerFactory.getLogger("test-tool")
 
   import ExecutionContext.Implicits.global
+
+  log.info("Opening index.")
+  articles.IndexProperties.index
+  keyphrases.IndexProperties.index
 
   val dummy = "dummyword"
 
@@ -38,11 +42,14 @@ object FullPipeLineTool extends App {
       else dummy
     }
 
-  val duples = tokens.zip(tokens.tail).filter {
+  val allDuples = tokens.zip(tokens.tail)
+
+  val duples = allDuples.filter {
     case (x, y) => !x.equals(dummy) && !y.equals(dummy)
   }
-    val triples = duples.zip(tokens.tail.tail)
-  //  val tetrics = triples.zip(tokens.tail.tail.tail)
+  val triples = allDuples.zip(tokens.tail.tail).filter {
+    case ((x, y), z) => !x.equals(dummy) && !y.equals(dummy) && !z.equals(dummy)
+  }
 
   def buildResults(phrases: Iterable[String]): Iterable[(String, Double)] = {
     phrases.map {
@@ -58,26 +65,14 @@ object FullPipeLineTool extends App {
             }
             case Success(kps) => {
               if (kps > 0) {
-//                log.info(kps + "\t" + phrase)
                 Some((phrase, kps))
-              }
-              else None
+              } else None
             }
           }
         res
       }
     }
   }.flatten.toSet
-
-  //  tokens.foreach(
-  //    token => PhraseSearcher.tryPhrase(token)
-  //  )
-
-  ////  System.exit(-1)
-  //  val ress = buildResults(tokens)
-  //
-  //  log.info(ress.toSeq.sortBy(-_._2).take(50).mkString("\n"))
-  //  Thread.sleep(3000)
 
   val dResults: Iterable[(String, Double)] = {
     buildResults(
@@ -86,32 +81,21 @@ object FullPipeLineTool extends App {
       })
   }
 
-  val ranked = dResults.toSeq.sortBy(-_._2).take(50)
-
-  //  log.info(ranked.mkString("\n"))
+  val ranked = dResults.toSeq.sortBy(-_._2).take(5)
 
   val translation = ranked.map {
     case (s, d) => (d, s, Tool.translate(s))
   }
 
-  log.info(translation.mkString("\n"))
+  log.info("Duples:\n" + translation.mkString("\n"))
 
-  //  val tResults: Iterable[(String, Double)] = {
-  //    buildResults(
-  //      triples.map {
-  //        case ((first, second), third) => "%s %s %s".format(first, second, third)
-  //      })
-  //  }
+  val tResults: Iterable[(String, Double)] = {
+    buildResults(
+      triples.map {
+        case ((first, second), third) => "%s %s %s".format(first, second, third)
+      })
+  }
 
-  //  log.info(tResults.toSeq.sortBy(-_._2).take(50).mkString("\n"))
+  log.info("Triples:\n" + tResults.toSeq.sortBy(-_._2).take(5).mkString("\n"))
 
-  //  val ttResults: Iterable[(String, Double)] = {
-  //    buildResults(
-  //      tetrics.map {
-  //        case (((first, second), third), fourth) =>
-  //          "%s %s %s %s".format(first, second, third, fourth)
-  //      })
-  //  }
-
-  //  log.info(ttResults.toSeq.sortBy(-_._2).take(50).mkString("\n"))
 }
