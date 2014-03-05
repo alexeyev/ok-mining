@@ -18,6 +18,15 @@ object LentaGetterTool extends App {
     cal.getTime()
   }
 
+  def setDay(year: Int, month: Int, day: Int): Date = {
+    val cal = Calendar.getInstance()
+    cal.setTime(new Date())
+    cal.set(Calendar.YEAR, year)
+    cal.set(Calendar.MONTH, month - 1)
+    cal.set(Calendar.DAY_OF_MONTH, day)
+    cal.getTime()
+  }
+
   def ymd(day: Date) = {
     val cal = Calendar.getInstance()
     cal.setTime(day)
@@ -31,14 +40,13 @@ object LentaGetterTool extends App {
       number.toString
   }
 
-  var date = new Date()
+  var date = setDay(2009, 5, 18)
   val category = "science"
   val urlPattern = "http://lenta.ru/rubrics/%s/%d/%s/%s"
 
   val fw = new FileWriter("../lenta-links-%s.txt".format(category))
 
   while (true) {
-    date = previousDay(date)
     val (year, month, day) = ymd(date)
     println(year, month, day)
     val url = urlPattern.format(category, year, to2digits(month), to2digits(day))
@@ -60,6 +68,7 @@ object LentaGetterTool extends App {
       fw.write("http://lenta.ru%s\n".format(slug))
     }
     Thread.sleep(math.round(math.random * 1000 + 100))
+    date = previousDay(date)
   }
   fw.close()
 }
