@@ -31,19 +31,22 @@ object Searcher {
   private val config = new IndexWriterConfig(Meta.luceneVersion, analyzer)
   private val log = LoggerFactory.getLogger("company-searcher-experimental")
 
-  def fillIndex(file: File) {
+  def fillIndex(sources: Iterable[File]) {
     log.info("Filling companies' index...")
     val iw = new IndexWriter(index, config)
-    io.Source.fromFile(file).getLines().
-      foreach {
-      line =>
-        addToIndex(iw, line.trim)
+    for (file <- sources) {
+      io.Source.fromFile(file).getLines().
+        foreach {
+        file
+        line =>
+          addToIndex(iw, line.trim)
+      }
     }
     iw.close()
     log.info("Done.")
   }
 
-  fillIndex(new File("habrahabr.txt"))
+  fillIndex(Iterable(new File("habrahabr-companies.tsv"), new File("crunchbase-companies.tsv")))
 
 
   def fuzzyFind(freeTextQuery: String, maxEditDistance: Int): Iterable[(Float, Document)] = {
@@ -93,7 +96,7 @@ object Searcher {
     val searcher = new IndexSearcher(reader)
     val qp = new QueryParser(Meta.luceneVersion, companyField, analyzer)
 
-    val collector = TopScoreDocCollector.create(10, true)
+    val collector = TopScoreDocCollector.create(1000, true)
     searcher.search(qp.parse(freeTextQuery), collector)
     val hits =
       collector.topDocs().
@@ -104,6 +107,8 @@ object Searcher {
       ).filter(
         _._1 > relevanceThreshold
       )
+    if (!hits.isEmpty)
+      log.info(hits.toIterable.toString())
     hits.toIterable
   }
 }

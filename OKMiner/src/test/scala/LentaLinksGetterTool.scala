@@ -5,11 +5,11 @@ import org.jsoup.nodes.Element
 import scala.util._
 
 /**
- * A tool for getting all articles from Lenta.RU
+ * A tool for getting all links from Lenta.RU
  * for the specified category.
  * @author alexeyev
  */
-object LentaGetterTool extends App {
+object LentaLinksGetterTool extends App {
 
   def previousDay(day: Date): Date = {
     val cal = Calendar.getInstance()
@@ -40,13 +40,13 @@ object LentaGetterTool extends App {
       number.toString
   }
 
-  var date = setDay(2009, 5, 18)
+  var date = setDay(2002, 1, 28)
   val category = "science"
   val urlPattern = "http://lenta.ru/rubrics/%s/%d/%s/%s"
 
-  val fw = new FileWriter("../lenta-links-%s.txt".format(category))
+  val fw = new FileWriter("../lenta-links-%s-%s.txt".format(category, new Date().getTime))
 
-  while (true) {
+  while (ymd(date)._1 >= 2000) {
     val (year, month, day) = ymd(date)
     println(year, month, day)
     val url = urlPattern.format(category, year, to2digits(month), to2digits(day))
