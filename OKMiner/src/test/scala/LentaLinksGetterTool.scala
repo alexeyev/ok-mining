@@ -40,22 +40,22 @@ object LentaLinksGetterTool extends App {
       number.toString
   }
 
-  var date = setDay(2002, 1, 28)
+  var date = setDay(2012, 9, 29)
   val category = "science"
   val urlPattern = "http://lenta.ru/rubrics/%s/%d/%s/%s"
 
   val fw = new FileWriter("../lenta-links-%s-%s.txt".format(category, new Date().getTime))
 
-  while (ymd(date)._1 >= 2000) {
+  while (ymd(date)._1 >= 1997) {
     val (year, month, day) = ymd(date)
     println(year, month, day)
     val url = urlPattern.format(category, year, to2digits(month), to2digits(day))
     val doc = Try {
-      Jsoup.connect(url).userAgent("Mozilla").get
+      Jsoup.connect(url).userAgent(math.random.toString).get
     } match {
       case Success(d) => d
       case Failure(e) => {
-        println(e.getStackTrace)
+        println(e.getStackTrace.toString)
         println(date, ymd(date))
         println(url)
         fw.close()
@@ -65,7 +65,7 @@ object LentaLinksGetterTool extends App {
 
     for (it <- doc.select("section.b-layout_archive").select("div.titles").toArray) {
       val slug = it.asInstanceOf[Element].select("a").attr("href")
-      fw.write("http://lenta.ru%s\n".format(slug))
+      fw.write("http://lenta.ru%s\t%s/%s-%s\n".format(slug, year, month, day))
     }
     Thread.sleep(math.round(math.random * 1000 + 100))
     date = previousDay(date)
