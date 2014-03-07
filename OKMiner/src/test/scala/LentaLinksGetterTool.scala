@@ -1,7 +1,9 @@
 import java.io.FileWriter
 import java.util.{Calendar, Date}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
+import org.jsoup.nodes.{Document, Element}
+import org.slf4j.LoggerFactory
+import scala.annotation.tailrec
 import scala.util._
 
 /**
@@ -10,6 +12,8 @@ import scala.util._
  * @author alexeyev
  */
 object LentaLinksGetterTool extends App {
+
+  private val log = LoggerFactory.getLogger(getClass)
 
   def previousDay(day: Date): Date = {
     val cal = Calendar.getInstance()
@@ -40,7 +44,24 @@ object LentaLinksGetterTool extends App {
       number.toString
   }
 
-  var date = setDay(2012, 9, 29)
+  @tailrec
+  def getDocument(url: String): Document = {
+    Try {
+      Jsoup.connect(url).userAgent(math.random.toString).get
+    } match {
+      case Success(d) => d
+      case Failure(e) => {
+        log.error("Oops, problems while trying to connect", e)
+        log.error(date + " " + ymd(date))
+        log.error(url)
+        Thread.sleep(1500)
+        log.error("Retrying...")
+        getDocument(url)
+      }
+    }
+  }
+
+  var date = setDay(2014, 3, 8)
   val category = "science"
   val urlPattern = "http://lenta.ru/rubrics/%s/%d/%s/%s"
 
@@ -50,18 +71,8 @@ object LentaLinksGetterTool extends App {
     val (year, month, day) = ymd(date)
     println(year, month, day)
     val url = urlPattern.format(category, year, to2digits(month), to2digits(day))
-    val doc = Try {
-      Jsoup.connect(url).userAgent(math.random.toString).get
-    } match {
-      case Success(d) => d
-      case Failure(e) => {
-        println(e.getStackTrace.toString)
-        println(date, ymd(date))
-        println(url)
-        fw.close()
-        throw e
-      }
-    }
+
+    val doc = getDocument(url)
 
     for (it <- doc.select("section.b-layout_archive").select("div.titles").toArray) {
       val slug = it.asInstanceOf[Element].select("a").attr("href")

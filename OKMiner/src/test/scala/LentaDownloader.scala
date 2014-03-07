@@ -1,25 +1,40 @@
 import java.io.FileWriter
 import java.net.URL
+import java.nio.file.{Paths, Files}
+import java.util.Date
 import org.apache.commons.io.IOUtils
+import org.slf4j.LoggerFactory
+import ru.stachek66.okminer.utils.CounterLogger
+import scala.annotation.tailrec
+import scala.util._
 
 /**
  * @author alexeyev
  */
 object LentaDownloader extends App {
 
-//  val pattern = ".*/([^/]+)/?$".r
-  var counter = 0
+  private val log = LoggerFactory.getLogger(getClass)
+  private val clog = new CounterLogger(log, 10, "%s files downloaded")
+
+  @tailrec
+  def getPage(url: URL, rawDate: String) {
+    Try {
+      Files.copy(url.openStream(), Paths.get(s"corpus-media/raw/$rawDate--" + clog.getCounter))
+    } match {
+      case Success(_) => clog.tick()
+      case Failure(e) => {
+        log.error(url.toString, e)
+        Thread.sleep(10000)
+        getPage(url, rawDate)
+      }
+    }
+  }
+
   for {
-    line <- io.Source.fromFile("../lenta-links-science-all").getLines()
+    line <- io.Source.fromFile("/home/alexeyev/thesis/lenta-links-media-all.txt").getLines()
     splitted = line.split("\t")
     rawUrl = splitted(0)
     rawDate = splitted(1).replace("/", ".")
     url = new URL(rawUrl)
-  } {
-    counter += 1
-    val html = IOUtils.toString(url.openStream(), "UTF-8")
-    val fw = new FileWriter(s"corpus/raw/$rawDate--" + counter)
-    fw.write(html)
-    fw.close()
-  }
+  } getPage(url, rawDate)
 }

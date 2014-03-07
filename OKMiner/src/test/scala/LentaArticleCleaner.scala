@@ -13,7 +13,7 @@ object LentaArticleCleaner extends App {
 
   private val log = LoggerFactory.getLogger(getClass)
   private val clog = new CounterLogger(log, 100, "%s files cleaned")
-  private val errlog = new CounterLogger(log, 2, "%s fuckups")
+  private val errlog = new CounterLogger(log, 2, "%s fups")
 
   def parseText(html: String): String = {
     val doc = Jsoup.parse(html)
@@ -42,7 +42,7 @@ object LentaArticleCleaner extends App {
     Try {
       val path = new File("corpus/clean/" + folderName(file))
       path.mkdirs()
-      val fw = new FileWriter(path.getAbsolutePath + fileName(file))
+      val fw = new FileWriter(path.getAbsolutePath + "/" + fileName(file))
       fw.write(parseText(html))
       fw.close()
     } match {
