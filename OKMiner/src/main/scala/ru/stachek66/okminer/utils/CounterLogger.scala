@@ -3,6 +3,11 @@ package ru.stachek66.okminer.utils
 import org.slf4j.Logger
 
 /**
+ * Logging repeated action to show progress.
+ * @param log user's logger
+ * @param step number of ticks to skip before logging
+ * @param pattern text for flushing to log with a given step
+ * Please use %s or %d interpolation of pattern!
  * @author alexeyev
  */
 class CounterLogger(log: Logger, step: Int, pattern: String) {

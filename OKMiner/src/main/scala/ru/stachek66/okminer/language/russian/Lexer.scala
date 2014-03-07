@@ -21,12 +21,9 @@ import scala.collection.mutable.ArrayBuffer
  */
 object Lexer extends App {
 
-  //todo: version to properties
-  private lazy val russian = new RussianAnalyzer(Meta.luceneVersion)
-
   /**
    * Lucene tokenizer applied to text.
-   * @param string
+   * @param string the text in concern
    */
   def split(string: String): Iterable[String] = {
     val lexer =

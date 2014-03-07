@@ -14,9 +14,11 @@ object KeyphrasenessCalculator {
    * Relative TF with Laplacian smoothing.
    */
   def getKeyPhraseness(phrase: String): Double =
-    (keyphrases.Searcher.getHitsCount(phrase) + 1) / (0.0 + phraseSearcher.getHitsCount(phrase) + phraseSearcher.totalDocs)
-//
-//  def main(args: Array[String]) {
-//    println(getKeyPhraseness("космическая пыль"))
-//  }
+    (keyphrases.Searcher.getHitsCount(phrase) /*/ (keyphrases.Searcher.totalDocs.toDouble)*/ + 1) /
+      (phraseSearcher.getHitsCount(phrase).toDouble /*/ phraseSearcher.totalDocs.toDouble */+ phraseSearcher.totalDocs)
+
+  //
+//    def main(args: Array[String]) {
+//      println(getKeyPhraseness("космическая пыль"))
+//    }
 }

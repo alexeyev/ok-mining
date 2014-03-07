@@ -7,10 +7,10 @@ import com.sun.syndication.io.XmlReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Date
-import org.slf4j.LoggerFactory
-import scala.collection.JavaConversions._
-import ru.stachek66.okminer.ner.NaiveNER
 import org.apache.commons.collections.bag.HashBag
+import org.slf4j.LoggerFactory
+import ru.stachek66.okminer.ner.NaiveNER
+import scala.collection.JavaConversions._
 
 case class Entity(uri: String, description: String, date: Date)
 

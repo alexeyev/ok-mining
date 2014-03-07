@@ -37,6 +37,6 @@ object GraphsExperiments extends App {
     )
   )
 
-  val (trend,chart) = ChartGenerator.buildChart(m)
-  ChartPrinter.print(chart, new File("../../Desktop/" + trend + new util.Date().getTime + ".png"))
+  val (chart) = ChartGenerator.buildChart(m)
+  ChartPrinter.print(chart, new File("../../Desktop/" + m.trend + new util.Date().getTime + ".png"))
 }

@@ -13,7 +13,8 @@ import org.apache.lucene.queryparser.classic.QueryParser
 import org.slf4j.LoggerFactory
 
 /**
- * Experiment with companies' names.
+ * Searching companies' names.
+ * Is a singleton due to holding the index.
  * @author alexeyev
  */
 object Searcher {
@@ -31,7 +32,7 @@ object Searcher {
   private val config = new IndexWriterConfig(Meta.luceneVersion, analyzer)
   private val log = LoggerFactory.getLogger("company-searcher-experimental")
 
-  def fillIndex(sources: Iterable[File]) {
+  private def fillIndex(sources: Iterable[File]) {
     log.info("Filling companies' index...")
     val iw = new IndexWriter(index, config)
     for (file <- sources) {
@@ -108,7 +109,7 @@ object Searcher {
         _._1 > relevanceThreshold
       )
     if (!hits.isEmpty)
-      log.info(hits.toIterable.toString())
+      log.debug(hits.toIterable.toString())
     hits.toIterable
   }
 }

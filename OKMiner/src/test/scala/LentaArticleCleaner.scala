@@ -36,11 +36,11 @@ object LentaArticleCleaner extends App {
   }
 
 
-  for (file <- new File("corpus/raw/").listFiles()) {
+  for (file <- new File("corpus-media/raw/").listFiles()) {
     clog.tick()
     val html = FileUtils.asStringWithoutNewLines(file)
     Try {
-      val path = new File("corpus/clean/" + folderName(file))
+      val path = new File("corpus-media/clean/" + folderName(file))
       path.mkdirs()
       val fw = new FileWriter(path.getAbsolutePath + "/" + fileName(file))
       fw.write(parseText(html))

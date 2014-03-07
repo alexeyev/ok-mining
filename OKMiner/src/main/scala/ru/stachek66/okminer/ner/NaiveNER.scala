@@ -5,10 +5,12 @@ import ru.stachek66.okminer.language.russian.{StopWordsFilter, Lexer}
 import ru.stachek66.okminer.utils.FileUtils
 
 /**
+ * NER tool. To extract all known companies from a text,
+ * call "extractAllCompanies".
  * @author alexeyev
  */
 object NaiveNER {
-  //todo: rewrite so as mail.ru could be found
+
   private val log = LoggerFactory.getLogger("testing-ner")
 
   def extractAllCompanies(sourceText: String) = {
@@ -20,11 +22,12 @@ object NaiveNER {
 
     val duples =
       tokens.zip(if (tokens.isEmpty) Seq() else tokens.tail).
-        filterNot(
-        t =>
-          HeuristicsHelper.isDigits(t._1) && HeuristicsHelper.isDigits(t._2))
+        filterNot {
+        case (token1, token2) =>
+          HeuristicsHelper.isDigits(token1) && HeuristicsHelper.isDigits(token2)
+      }
 
-    log.info("2-token search")
+    log.debug("2-token search")
 
     val companiesFromDuples = {
       for {
@@ -37,7 +40,7 @@ object NaiveNER {
       }
     } toSet
 
-    log.info("1-token search")
+    log.debug("1-token search")
 
     val companiesFromTokens = {
       for {
@@ -50,6 +53,6 @@ object NaiveNER {
       }
     } toSet
 
-    (companiesFromDuples ++ companiesFromTokens)
+    companiesFromDuples ++ companiesFromTokens
   }
 }

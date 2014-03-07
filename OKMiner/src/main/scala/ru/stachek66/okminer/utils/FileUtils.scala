@@ -3,6 +3,7 @@ package ru.stachek66.okminer.utils
 import java.io.File
 
 /**
+ * Tools for common tasks for working with text files
  * @author alexeyev
  */
 object FileUtils {

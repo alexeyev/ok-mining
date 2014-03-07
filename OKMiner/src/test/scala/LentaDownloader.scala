@@ -19,7 +19,7 @@ object LentaDownloader extends App {
   @tailrec
   def getPage(url: URL, rawDate: String) {
     Try {
-      Files.copy(url.openStream(), Paths.get(s"corpus-media/raw/$rawDate--" + clog.getCounter))
+      Files.copy(url.openStream(), Paths.get(s"corpus/raw/$rawDate--" + clog.getCounter))
     } match {
       case Success(_) => clog.tick()
       case Failure(e) => {
@@ -31,7 +31,7 @@ object LentaDownloader extends App {
   }
 
   for {
-    line <- io.Source.fromFile("/home/alexeyev/thesis/lenta-links-media-all.txt").getLines()
+    line <- io.Source.fromFile("/home/alexeyev/thesis/lenta-links-science-all3.txt").getLines()
     splitted = line.split("\t")
     rawUrl = splitted(0)
     rawDate = splitted(1).replace("/", ".")

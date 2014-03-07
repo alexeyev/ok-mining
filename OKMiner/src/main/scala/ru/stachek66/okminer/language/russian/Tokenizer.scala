@@ -17,7 +17,6 @@ import scala.collection.mutable.ArrayBuffer
  */
 object Tokenizer {
 
-  //todo: version to properties
   private lazy val russian = new RussianAnalyzer(Meta.luceneVersion)
 
   /**

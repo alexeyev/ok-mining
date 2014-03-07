@@ -6,7 +6,7 @@ import ru.stachek66.okminer.utils.FileUtils
 /**
  * @author alexeyev
  */
-object CheckTool extends App {
+private object CheckTool extends App {
 
   val description = FileUtils.asString(new File("test.txt"))
     val companies = NaiveNER.extractAllCompanies(description)

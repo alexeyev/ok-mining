@@ -13,7 +13,7 @@ object ChartGenerator {
     private[visualization] def getChart = jFreeChart
   }
 
-  def buildChart(data: Model): (String, Chart) = {
+  def buildChart(data: Model): Chart = {
 
     val dataset: XYSeriesCollection = new XYSeriesCollection
 
@@ -25,14 +25,13 @@ object ChartGenerator {
       dataset.addSeries(series)
     }
 
-    (data.trend,
-      new Chart(ChartFactory.createXYLineChart(
-        data.trend, // title
-        "years", // x
-        "mentions", // y
-        dataset,
-        PlotOrientation.VERTICAL,
-        true, true, false)))
+    new Chart(ChartFactory.createXYLineChart(
+      data.trend, // title
+      "years", // x
+      "mentions", // y
+      dataset,
+      PlotOrientation.VERTICAL,
+      true, true, false))
   }
 
 }
