@@ -11,12 +11,13 @@ import scala.collection.mutable.{Map => mMap}
  */
 object GraphsTool {
 
-  private val dest = new File("graphs")
-  dest.mkdirs()
+  def drawFromDirectory(directory: File, dest: File) {
 
-  def drawFromDirectory(directory: File) {
+    directory.mkdirs
+    dest.mkdirs
 
-    require(directory.isDirectory)
+    //    require(directory.isDirectory)
+    //    require(dest.isDirectory)
 
     val megamap = mMap[String, mMap[String, mMap[Int, Float]]]()
 
@@ -53,6 +54,8 @@ object GraphsTool {
 
 object GraphsRunner extends App {
 
-  GraphsTool.drawFromDirectory(new File("results"))
+//  GraphsTool.drawFromDirectory(new File("test-corpus/results"), new File("test-corpus/graphs"))
+
+    GraphsTool.drawFromDirectory(new File("corpus-media/results"), new File("corpus-media/graphs"))
 
 }

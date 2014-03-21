@@ -81,6 +81,7 @@ object TrendsTool {
     }
 
     val ranked = dResults.toSeq.sortBy(-_._2).take(5)
+//    log.info(ranked.mkString("\n"))
 
     val translation = ranked.map {
       case (terms, score) => (score, terms, Tool.translate(terms))
@@ -90,7 +91,9 @@ object TrendsTool {
 
     //todo: rewrite
     (translation.map {
-      case (score, terms, Some((ruArticle, enArticle))) => Some(ruArticle)
+      case (score, terms, Some((ruArticle, enArticle))) =>
+        log.info(List(score, terms, Some((ruArticle, enArticle))).mkString(","))
+        Some(ruArticle)
       case _ => None
     }).toIterable.filter(_.isDefined).map(_.get)
   }

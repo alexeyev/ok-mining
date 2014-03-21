@@ -38,6 +38,7 @@ object Searcher {
 
   def buildQuery(keyphrase: String) = {
     val pq = new PhraseQuery()
+    //bug: tokenizer must not do stemming
     val splitted = Tokenizer.tokenize(keyphrase)
     log.debug("Query: [%s]".format(splitted.mkString(" ")))
     for (t <- splitted) {

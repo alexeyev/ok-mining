@@ -60,9 +60,13 @@ object CompaniesTrendsExtractor {
 }
 
 object DefaultRunner extends App {
+
+  private val category = "media"
+
   for {
-    year <- 1995 to 2014
+    year <- 1999 to 2014
   } Try {
-    CompaniesTrendsExtractor.main(Array("./corpus-media/clean/%s/".format(year), "results/%s.tsv".format(year)))
+//    CompaniesTrendsExtractor.main(Array(s"./corpus-$category/clean/$year/", s"results/$year.tsv"))
+    CompaniesTrendsExtractor.main(Array(s"./test-corpus/clean/$year/", s"./test-corpus/results/$year.tsv"))
   }
 }

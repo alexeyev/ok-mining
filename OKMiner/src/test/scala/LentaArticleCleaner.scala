@@ -15,11 +15,13 @@ object LentaArticleCleaner extends App {
   private val clog = new CounterLogger(log, 100, "%s files cleaned")
   private val errlog = new CounterLogger(log, 2, "%s fups")
 
+  private val category = "science"
+
   def parseText(html: String): String = {
     val doc = Jsoup.parse(html)
     val title = doc.select(".b-topic__title").text().trim
     val mainBody =
-      doc.select("div.b-topic__content").
+      doc.select("div.b-topic__body").
         select("p").
         toArray().
         map(_.asInstanceOf[Element].text()).
@@ -35,12 +37,11 @@ object LentaArticleCleaner extends App {
     file.getName.split("\\.")(1) + new Date().getTime
   }
 
-
-  for (file <- new File("corpus-media/raw/").listFiles()) {
+  for (file <- new File(s"corpus-$category/raw/").listFiles()) {
     clog.tick()
     val html = FileUtils.asStringWithoutNewLines(file)
     Try {
-      val path = new File("corpus-media/clean/" + folderName(file))
+      val path = new File(s"corpus-$category/clean/" + folderName(file))
       path.mkdirs()
       val fw = new FileWriter(path.getAbsolutePath + "/" + fileName(file))
       fw.write(parseText(html))
@@ -53,4 +54,3 @@ object LentaArticleCleaner extends App {
     }
   }
 }
-
