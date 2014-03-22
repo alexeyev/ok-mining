@@ -66,18 +66,20 @@ object Runner extends SimpleSwingApplication {
         DataProcessingTasks.buildReports(corpusDirectory.getFile, destDirectory.getFile)
       } match {
         case Success(_) =>
-          Dialog.showMessage(this.bounds, "Reports building done!", "Message", Dialog.Message.Info)
+          Dialog.showMessage(
+            button, "Reports building done!", "Message", Dialog.Message.Info)
         case Failure(e) =>
-          Dialog.showMessage(this.bounds, "Something went wrong while building reports: " + e.getMessage, "Error", Dialog.Message.Error)
+          Dialog.showMessage(
+            button, "Something went wrong while building reports: " + e.getMessage, "Error", Dialog.Message.Error)
       }
       case ButtonClicked(button)
-        if button.equals(reportsButton) => Try {
-        DataProcessingTasks.drawGraphs(corpusDirectory.getFile, destDirectory.getFile)
+        if button.equals(graphsButton) => Try {
+        DataProcessingTasks.drawGraphs(destDirectory.getFile)
       } match {
         case Success(_) =>
-          Dialog.showMessage(this.bounds, "Graphs flushing done!", "Message", Dialog.Message.Info)
+          Dialog.showMessage(button, "Graphs flushing done!", "Message", Dialog.Message.Info)
         case Failure(e) =>
-          Dialog.showMessage(this.bounds, "Something went wrong while drawing graphs: " + e.getMessage, "Error", Dialog.Message.Error)
+          Dialog.showMessage(button, "Something went wrong while drawing graphs: " + e.getMessage, "Error", Dialog.Message.Error)
       }
     }
   }

@@ -42,6 +42,7 @@ private[gui] case class ImportantDirectory(button: Button,
     } else {
       Dialog.showMessage(label, "No file chosen", "Message", Dialog.Message.Info)
       label.text = initialText
+      file = null
     }
   }
 
