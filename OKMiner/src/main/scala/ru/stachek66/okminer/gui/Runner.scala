@@ -12,65 +12,66 @@ import scala.swing.event.ButtonClicked
  */
 object Runner extends SimpleSwingApplication {
 
-  private var corpusFile: File = null
-  private var destinationFile: File = null
-
   def top = new MainFrame() {
+
     title = "GUI for tech references mining"
 
-    val corpusChooser = new FileChooser {
-      this.fileSelectionMode = SelectionMode(JFileChooser.DIRECTORIES_ONLY)
-    }
-    val destinationChooser = new FileChooser {
-      this.fileSelectionMode = SelectionMode(JFileChooser.DIRECTORIES_ONLY)
-    }
+    val corpusDirectory = ImportantDirectory(
+      new Button {
+        this.text = "Set corpus"
+      }, new Label {
+        this.text = "Please choose corpus"
+      }
+    )
 
-    val corpusLabel = new Label {
-      this.text = "Please choose corpus"
-    }
-    val corpusButton = new Button {
-      this.text = "Set corpus"
-    }
-
-    val destinationLabel = new Label {
-      this.text = "Please choose destination"
-    }
-    val destinationButton = new Button {
-      this.text = "Set destination"
-    }
+    val destDirectory = ImportantDirectory(
+      new Button {
+        this.text = "Set destination"
+      }, new Label {
+        this.text = "Please choose destination"
+      }
+    )
 
     contents = new BoxPanel(Orientation.Vertical) {
-      contents += corpusLabel
-      contents += corpusButton
-      contents += destinationLabel
-      contents += destinationButton
-      border = Swing.EmptyBorder(100, 100, 100, 100)
+      contents ++= corpusDirectory.getComponents
+      contents ++= destDirectory.getComponents
+      border = Swing.EmptyBorder(10, 10, 10, 10)
     }
 
-    listenTo(corpusButton)
-    listenTo(destinationButton)
+    listenTo(corpusDirectory.button)
+    listenTo(destDirectory.button)
 
     reactions += {
-      case ButtonClicked(button) if button.equals(corpusButton) => {
-        corpusLabel.text = "Opening corpus..."
-        val result: FileChooser.Result.Value = corpusChooser.showOpenDialog(corpusLabel)
-        if (result.equals(FileChooser.Result.Approve)) {
-          corpusFile = corpusChooser.selectedFile
-          corpusLabel.text = "Corpus directory chosen: " + corpusFile.getAbsolutePath
-        } else {
-          corpusLabel.text = "Please choose the corpus"
-        }
-      }
-      case ButtonClicked(button) if button.equals(destinationButton) => {
-        corpusLabel.text = "Opening destination..."
-        val result: FileChooser.Result.Value = corpusChooser.showOpenDialog(destinationLabel)
-        if (result.equals(FileChooser.Result.Approve)) {
-          destinationFile = destinationChooser.selectedFile
-          corpusLabel.text = "Destination directory chosen: " + destinationFile.getAbsolutePath
-        } else {
-          corpusLabel.text = "Please choose destination"
-        }
-      }
+      case ButtonClicked(button)
+        if button.equals(corpusDirectory.button) => corpusDirectory.actOnClick()
+      case ButtonClicked(button)
+        if button.equals(destDirectory) => destDirectory.actOnClick()
     }
   }
+}
+
+case class ImportantDirectory(button: Button,
+                              label: Label,
+                              chooser: FileChooser = new FileChooser {
+                                this.fileSelectionMode = SelectionMode(JFileChooser.DIRECTORIES_ONLY)
+                              }) {
+  private var file = null
+
+  private val initialText = label.text
+
+  def getFile: Option[File] = Option(file)
+
+  def actOnClick() {
+    label.text = "Opening..."
+    val result: FileChooser.Result.Value = chooser.showOpenDialog(label)
+    if (result.equals(FileChooser.Result.Approve)) {
+      file = chooser.selectedFile
+      label.text = "Destination directory chosen: " + file.getAbsolutePath
+    } else {
+      label.text = initialText
+    }
+  }
+
+  def getComponents = List(label, button)
+
 }
