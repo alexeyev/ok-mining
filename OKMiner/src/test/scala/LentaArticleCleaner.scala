@@ -15,7 +15,7 @@ object LentaArticleCleaner extends App {
   private val clog = new CounterLogger(log, 100, "%s files cleaned")
   private val errlog = new CounterLogger(log, 2, "%s fups")
 
-  private val category = "science"
+  private val category = "media"
 
   def parseText(html: String): String = {
     val doc = Jsoup.parse(html)

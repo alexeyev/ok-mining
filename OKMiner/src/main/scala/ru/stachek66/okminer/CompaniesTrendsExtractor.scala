@@ -5,6 +5,10 @@ import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.ner.NaiveNER
 import ru.stachek66.okminer.utils.{StatsFileIO, CounterLogger, FileUtils}
 import scala.util.Try
+import java.util.Date
+import javax.print.attribute.standard.DateTimeAtCompleted
+import java.util.Formatter.DateTime
+import java.util.concurrent.TimeUnit
 
 /**
  * @author alexeyev
@@ -61,12 +65,16 @@ object CompaniesTrendsExtractor {
 
 object DefaultRunner extends App {
 
-  private val category = "media"
+  private val categories = List("media", "science")
 
   for {
+    category <- categories
     year <- 1999 to 2014
   } Try {
-//    CompaniesTrendsExtractor.main(Array(s"./corpus-$category/clean/$year/", s"results/$year.tsv"))
-    CompaniesTrendsExtractor.main(Array(s"./test-corpus/clean/$year/", s"./test-corpus/results/$year.tsv"))
+    val start = new Date()
+    CompaniesTrendsExtractor.main(Array(s"./corpus-$category/clean/$year/", s"./corpus-$category/results/$year.tsv"))
+    val end = new Date()
+    val elapsed = TimeUnit.SECONDS.convert(end.getTime - start.getTime, TimeUnit.MILLISECONDS)
+    println(s"Done in $elapsed seconds.")
   }
 }
