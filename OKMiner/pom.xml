@@ -19,6 +19,8 @@
         <mallet.v>2.0.7</mallet.v>
         <ant.v>1.9.2</ant.v>
         <jfree.v>1.0.13</jfree.v>
+        <onejar.v>1.4.4</onejar.v>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -118,6 +120,31 @@
 
     <build>
         <plugins>
+            <!--<plugin>-->
+                <!--<artifactId>maven-compiler-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<source>${java.s}</source>-->
+                    <!--<target>${java.t}</target>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+            <plugin>
+                <groupId>org.dstovall</groupId>
+                <artifactId>onejar-maven-plugin</artifactId>
+                <version>${onejar.v}</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <mainClass>ru.stachek66.okminer.gui.Runner</mainClass>
+                            <onejarVersion>0.97</onejarVersion>
+                            <attachToBuild>true</attachToBuild>
+                            <classifier>onejar</classifier>
+                        </configuration>
+                        <goals>
+                            <goal>one-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.scala-tools</groupId>
                 <artifactId>maven-scala-plugin</artifactId>
@@ -157,5 +184,13 @@
         </repository>
 
     </repositories>
+
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>onejar-maven-plugin.googlecode.com</id>
+            <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

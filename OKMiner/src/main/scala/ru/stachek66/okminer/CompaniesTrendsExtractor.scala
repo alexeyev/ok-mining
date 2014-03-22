@@ -72,7 +72,7 @@ object DefaultRunner extends App {
     year <- 1999 to 2014
   } Try {
     val start = new Date()
-    CompaniesTrendsExtractor.main(Array(s"./corpus-$category/clean/$year/", s"./corpus-$category/results/$year.tsv"))
+    CompaniesTrendsExtractor.main(Array(s"../corpus-$category/clean/$year/", s"../corpus-$category/results/$year.tsv"))
     val end = new Date()
     val elapsed = TimeUnit.SECONDS.convert(end.getTime - start.getTime, TimeUnit.MILLISECONDS)
     println(s"Done in $elapsed seconds.")
