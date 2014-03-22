@@ -38,7 +38,7 @@ private[gui] case class ImportantDirectory(button: Button,
     val result: FileChooser.Result.Value = chooser.showOpenDialog(label)
     if (result.equals(FileChooser.Result.Approve)) {
       file = chooser.selectedFile
-      label.text = "Destination directory chosen: " + file.getAbsolutePath
+      label.text = "Directory chosen: " + file.getAbsolutePath
     } else {
       Dialog.showMessage(label, "No file chosen", "Message", Dialog.Message.Info)
       label.text = initialText

@@ -1,14 +1,12 @@
 package ru.stachek66.okminer
 
 import java.io.File
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.ner.NaiveNER
 import ru.stachek66.okminer.utils.{StatsFileIO, CounterLogger, FileUtils}
 import scala.util.Try
-import java.util.Date
-import javax.print.attribute.standard.DateTimeAtCompleted
-import java.util.Formatter.DateTime
-import java.util.concurrent.TimeUnit
 
 /**
  * @author alexeyev
@@ -35,6 +33,20 @@ object CompaniesTrendsExtractor {
     }
   }
 
+  private def extractFromYearDirectory(source: File): Iterable[(Trend, Company, Int)] = {
+    (
+      if (source.isDirectory) source.listFiles().toIterable
+      else Iterable(source)
+      ) flatMap {
+      clog.execute {
+        extractFromFile(_)
+      }
+    } groupBy {
+      case (trend, company, count) => (trend, company)
+    } map {
+      case ((trend, company), triples) => (trend, company, triples.map(_._3).sum)
+    }
+  }
 
   def main(args: Array[String]) {
     if (args.size < 2) {
@@ -45,17 +57,7 @@ object CompaniesTrendsExtractor {
       if (!source.exists()) {
         log.error("Please provide existing source file/directory.")
       } else {
-        val extracted = (
-          if (source.isDirectory) source.listFiles().toIterable
-          else Iterable(source)
-          ) flatMap {
-          clog.tick()
-          extractFromFile(_)
-        } groupBy {
-          case (trend, company, count) => (trend, company)
-        } map {
-          case ((trend, company), triples) => (trend, company, triples.map(_._3).sum)
-        }
+        val extracted = extractFromYearDirectory(source)
         destination.getParentFile.mkdirs()
         StatsFileIO.writeToFile(extracted, destination)
       }

@@ -7,14 +7,18 @@ import org.slf4j.Logger
  * @param log user's logger
  * @param step number of ticks to skip before logging
  * @param pattern text for flushing to log with a given step
- * Please use %s or %d interpolation of pattern!
+ *                Please use %s or %d interpolation of pattern!
  * @author alexeyev
  */
 class CounterLogger(log: Logger, step: Int, pattern: String) {
-  //todo: write in scala-style, without ticks
   if (step < 1) throw new IllegalArgumentException("Step must be a positive integer.")
 
-  def tick() {
+  def execute[T](action: => T): T = {
+    tick()
+    action
+  }
+
+  private def tick() {
     counter += 1
     if (counter % step == 0) {
       log.info(pattern.format(counter))
@@ -22,7 +26,7 @@ class CounterLogger(log: Logger, step: Int, pattern: String) {
     }
   }
 
-  def tick(up: Int) {
+  private def tick(up: Int) {
     counter += up
     if (counter - prevCounter >= step) {
       log.info(pattern.format(counter))
@@ -30,7 +34,7 @@ class CounterLogger(log: Logger, step: Int, pattern: String) {
     }
   }
 
-  def getCounter = counter
+  def getCurrentCount = counter
 
   @volatile
   private var counter: Long = 0

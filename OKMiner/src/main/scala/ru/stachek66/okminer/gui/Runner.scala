@@ -13,7 +13,7 @@ object Runner extends SimpleSwingApplication {
   def top = new MainFrame() {
 
     title = "GUI for tech references mining"
-    preferredSize = new Dimension(900, 500)
+    preferredSize = new Dimension(450, 500)
 
     // choosing data for reading
     val corpusDirectory = ImportantDirectory(
@@ -34,18 +34,39 @@ object Runner extends SimpleSwingApplication {
     )
 
     val reportsButton = new Button {
-      this.text = "Build reports"
+      this.text = "Build!"
     }
 
     val graphsButton = new Button {
-      this.text = "Draw graphs"
+      this.text = "Draw!"
     }
 
+    val defaultPosition = BorderPanel.Position.Center
+
     contents = new BoxPanel(Orientation.Vertical) {
-      contents ++= corpusDirectory.getComponents
-      contents ++= destDirectory.getComponents
-      contents += reportsButton
-      contents += graphsButton
+      contents ++=
+        (corpusDirectory.getComponents ++ destDirectory.getComponents).map {
+          case component =>
+            new BorderPanel {
+              add(component, defaultPosition)
+            }
+        }
+      contents += new BorderPanel {
+        add(new Label {
+          this.text = "Reports:"
+        }, defaultPosition)
+      }
+      contents += new BorderPanel {
+        add(reportsButton, defaultPosition)
+      }
+      contents += new BorderPanel {
+        add(new Label {
+          this.text = "Graphs:"
+        }, defaultPosition)
+      }
+      contents += new BorderPanel {
+        add(graphsButton, defaultPosition)
+      }
       border = Swing.EmptyBorder(20, 20, 20, 20)
     }
 
@@ -59,28 +80,30 @@ object Runner extends SimpleSwingApplication {
     reactions += {
       case ButtonClicked(button)
         if button.equals(corpusDirectory.button) => corpusDirectory.actOnClick()
+
       case ButtonClicked(button)
         if button.equals(destDirectory.button) => destDirectory.actOnClick()
-      case ButtonClicked(button)
-        if button.equals(reportsButton) => Try {
-        DataProcessingTasks.buildReports(corpusDirectory.getFile, destDirectory.getFile)
-      } match {
-        case Success(_) =>
-          Dialog.showMessage(
-            button, "Reports building done!", "Message", Dialog.Message.Info)
-        case Failure(e) =>
-          Dialog.showMessage(
-            button, "Something went wrong while building reports: " + e.getMessage, "Error", Dialog.Message.Error)
-      }
-      case ButtonClicked(button)
-        if button.equals(graphsButton) => Try {
-        DataProcessingTasks.drawGraphs(destDirectory.getFile)
-      } match {
-        case Success(_) =>
-          Dialog.showMessage(button, "Graphs flushing done!", "Message", Dialog.Message.Info)
-        case Failure(e) =>
-          Dialog.showMessage(button, "Something went wrong while drawing graphs: " + e.getMessage, "Error", Dialog.Message.Error)
-      }
+
+      case ButtonClicked(button) if button.equals(reportsButton) =>
+        Try {
+          DataProcessingTasks.buildReports(corpusDirectory.getFile, destDirectory.getFile)
+        } match {
+          case Success(_) =>
+            Dialog.showMessage(
+              button, "Reports building done!", "Message", Dialog.Message.Info)
+          case Failure(e) =>
+            Dialog.showMessage(
+              button, "Something went wrong while building reports: " + e.getMessage, "Error", Dialog.Message.Error)
+        }
+      case ButtonClicked(button) if button.equals(graphsButton) =>
+        Try {
+          DataProcessingTasks.drawGraphs(destDirectory.getFile)
+        } match {
+          case Success(_) =>
+            Dialog.showMessage(button, "Graphs flushing done!", "Message", Dialog.Message.Info)
+          case Failure(e) =>
+            Dialog.showMessage(button, "Something went wrong while drawing graphs: " + e.getMessage, "Error", Dialog.Message.Error)
+        }
     }
   }
 }

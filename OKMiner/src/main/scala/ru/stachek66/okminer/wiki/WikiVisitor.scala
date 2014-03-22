@@ -1,13 +1,12 @@
 package ru.stachek66.okminer.wiki
 
 import edu.jhu.nlp.wikipedia.{WikiPage, PageCallbackHandler, WikiXMLParserFactory}
+import java.io.File
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.utils.CounterLogger
-import java.io.File
 
 /**
- * A wrapper over a lightweight wiki-parser
- * for doing stuff with WikiPages.
+ * A wrapper over a lightweight wiki-parser for managing WikiPages.
  * @author alexeyev
  */
 class WikiVisitor(file: File, clog: CounterLogger) {
@@ -16,7 +15,7 @@ class WikiVisitor(file: File, clog: CounterLogger) {
     dumps("ru"),
     new CounterLogger(LoggerFactory.getLogger("wiki-visitor"), 1000, "%s articles processed"))
 
-  def this(file:File) = this()
+  def this(file: File) = this()
 
   private val wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath)
 
@@ -25,8 +24,9 @@ class WikiVisitor(file: File, clog: CounterLogger) {
       wxsp.setPageCallback(
         new PageCallbackHandler {
           def process(page: WikiPage) {
-            clog.tick()
-            handler(page)
+            clog.execute {
+              handler(page)
+            }
           }
         }
       )

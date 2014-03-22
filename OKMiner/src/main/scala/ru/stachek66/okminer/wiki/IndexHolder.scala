@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import scala.util.{Success, Failure, Try}
 
 /**
+ * Abstraction of an object providing access to index.
  * @author alexeyev
  */
 trait IndexHolder {

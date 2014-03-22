@@ -1,16 +1,17 @@
 package ru.stachek66.okminer.ner
 
+import java.io.InputStream
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.document.{Field, TextField, Document}
 import org.apache.lucene.index._
+import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.sandbox.queries.SlowFuzzyQuery
 import org.apache.lucene.search.{TopScoreDocCollector, IndexSearcher}
 import org.apache.lucene.store.RAMDirectory
-import ru.stachek66.okminer.Meta
-import java.io.File
-import org.apache.lucene.queryparser.classic.QueryParser
 import org.slf4j.LoggerFactory
+import ru.stachek66.okminer.Meta
+import org.apache.commons.io.IOUtils
 
 /**
  * Searching companies' names.
@@ -32,11 +33,13 @@ object Searcher {
   private val config = new IndexWriterConfig(Meta.luceneVersion, analyzer)
   private val log = LoggerFactory.getLogger("company-searcher-experimental")
 
-  private def fillIndex(sources: Iterable[File]) {
+  private def fillIndex(sources: Iterable[InputStream]) {
     log.info("Filling companies' index...")
     val iw = new IndexWriter(index, config)
-    for (file <- sources) {
-      io.Source.fromFile(file).getLines().
+    for (stream <- sources) {
+      println(stream.toString)
+      println(IOUtils.toString(stream))
+      io.Source.fromInputStream(stream).getLines().
         foreach {
         line =>
           addToIndex(iw, line.trim)
@@ -46,8 +49,9 @@ object Searcher {
     log.info("Done.")
   }
 
-  fillIndex(Iterable(new File("habrahabr-companies.tsv"), new File("crunchbase-companies.tsv")))
-
+  fillIndex(Iterable(
+    classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv"),
+    classOf[ClassLoader].getResourceAsStream("/crunchbase-companies.tsv")))
 
   def fuzzyFind(freeTextQuery: String, maxEditDistance: Int): Iterable[(Float, Document)] = {
 

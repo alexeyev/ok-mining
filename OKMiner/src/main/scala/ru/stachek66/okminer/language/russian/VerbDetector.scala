@@ -2,7 +2,7 @@ package ru.stachek66.okminer.language.russian
 
 /**
  * A simple regex tool checking if a given word is a verb.
- * Please mind the danger of probable false negatives.
+ * Please mind the danger of probable false negatives!
  * @author alexeyev
  */
 object VerbDetector {

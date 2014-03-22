@@ -5,7 +5,7 @@ import scala.collection.mutable.ArrayBuffer
 import edu.jhu.nlp.wikipedia.WikiPage
 
 /**
- * Stuff for wiki markup processing.
+ * Tools for wiki markup processing.
  * @author alexeyev
  */
 object Helper {

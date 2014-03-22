@@ -19,9 +19,9 @@ object LentaDownloader extends App {
   @tailrec
   def getPage(url: URL, rawDate: String) {
     Try {
-      Files.copy(url.openStream(), Paths.get(s"corpus/raw/$rawDate--" + clog.getCounter))
+      Files.copy(url.openStream(), Paths.get(s"corpus/raw/$rawDate--" + clog.getCurrentCount))
     } match {
-      case Success(_) => clog.tick()
+      case Success(_) => clog.execute(())
       case Failure(e) => {
         log.error(url.toString, e)
         Thread.sleep(10000)

@@ -9,6 +9,7 @@ import scala.collection.JavaConversions._
 
 /**
  * All normalized words that are allowed to be analyzed.
+ * Originally got from Wikipedia.
  * @author alexeyev
  */
 object Vocabulary {

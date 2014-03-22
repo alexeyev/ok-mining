@@ -37,8 +37,7 @@ object LentaArticleCleaner extends App {
     file.getName.split("\\.")(1) + new Date().getTime
   }
 
-  for (file <- new File(s"corpus-$category/raw/").listFiles()) {
-    clog.tick()
+  for (file <- new File(s"corpus-$category/raw/").listFiles()) clog.execute {
     val html = FileUtils.asStringWithoutNewLines(file)
     Try {
       val path = new File(s"corpus-$category/clean/" + folderName(file))
@@ -49,8 +48,9 @@ object LentaArticleCleaner extends App {
     } match {
       case Success(_) => log.debug("cool")
       case Failure(e) =>
-        log.error(file.getName)
-        errlog.tick()
+        errlog.execute {
+          log.error(file.getName)
+        }
     }
   }
 }

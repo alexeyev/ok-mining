@@ -10,12 +10,11 @@ import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.util.{Success, Failure, Try}
 
 /**
+ * Trends extraction.
  * @author alexeyev
  */
 object TrendsTool {
-  //extends App {
 
-  //todo: try article as a request
   private val log = LoggerFactory.getLogger("test-tool")
 
   import ExecutionContext.Implicits.global
@@ -25,8 +24,12 @@ object TrendsTool {
   keyphrases.IndexProperties.index
 
   val dummy = "dummyword"
-  val testText = "Приложение от компании FacialNetwork.com вызвало возмущение у представителей правозащитных организаций. Они логично предположили, что подобные программы могут распознавать лица прохожих без их разрешения, что станет настоящим кошмаром с точки конфиденциальности. Можно будет автоматически распознавать на улице людей с криминальной историей, бывших преступников, замужних/незамужних/разведенных женщин, людей нетрадиционной сексуальной ориентации и т.д. (фильтрация по профилям Facebook).\n\nРазработчики NameTag категорически отвергают опасения правозащитников. Наоборот, они считают, что распознавание лиц прохожих сделает нашу жизнь интереснее: «Я верю, что это сделает онлайновые свидания и офлайновые отношения гораздо безопаснее и позволит нам лучше понять окружающих людей, — говорит автор программы Кевин Алан Тасси (Kevin Alan Tussy). — Гораздо проще встретить интересных людей, просто оглядываясь вокруг, посмотреть профиль Facebook, изучить страницу LinkedIn и, может быть, профиль на сайте знакомств. Раньше нам приходилось знакомиться с людьми вслепую или не знакомиться вовсе. NameTag для Google Glass изменит это».\n\nТехнология явно имеет большие перспективы. И как бы не возмущались правозащитники, и даже если Google пока запрещает подобные приложения для Google Glass, но технический прогресс остановить невозможно. И если быстрое сканирование миллионов фотографий станет технически возможным, то можно не сомневаться, что подобные приложения станут популярными. Тем более, что программы распознавания лиц уже вовсю работают в казино и многих магазинах для автоматического распознавания известных мошенников и воришек на входе в заведение.\n\nВ данный момент вышла закрытая бета-версия NameTag для Google Glass. До конца I кв. 2014 года разработчики обещают выпустить версии для Android и iOS. "
 
+  /**
+   * Provided with some text, returns most valuable wiki-trends.
+   * @param text  source text
+   * @return  resulting Wikipedia titles
+   */
   def extractTrends(text: String): Iterable[String] = {
 
     val splitted = Lexer.split(text)
@@ -81,7 +84,6 @@ object TrendsTool {
     }
 
     val ranked = dResults.toSeq.sortBy(-_._2).take(5)
-//    log.info(ranked.mkString("\n"))
 
     val translation = ranked.map {
       case (terms, score) => (score, terms, Tool.translate(terms))

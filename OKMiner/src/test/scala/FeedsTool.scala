@@ -70,7 +70,7 @@ object FeedsTool extends App {
   val counts =
     for ((company, pairColl) <- pairs.groupBy(_._2))
     yield {
-      // никогда, никогда не делайте так
+      //todo: rewrite
       val trends = pairColl.
         map(_._1).
         groupBy(t => t).

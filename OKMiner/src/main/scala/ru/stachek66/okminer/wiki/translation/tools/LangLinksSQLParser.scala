@@ -9,7 +9,7 @@ import scala.util.matching.Regex
 import scala.util.{Success, Failure, Try}
 
 /**
- * PArses langlinks dump.
+ * Parsing langlinks dump.
  * @author alexeyev
  */
 object LangLinksSQLParser {
@@ -18,7 +18,7 @@ object LangLinksSQLParser {
 
   private val rudump = new File("../ruwiki-latest-langlinks.sql.gz")
   private val endump = new File("../enwiki-latest-langlinks.sql.gz")
-  //  private val extdump = new File("../extwiki-20131231-langlinks.sql")
+
   private val pattern = "\\((\\d+,'%s','([^']+)')\\)"
 
   private val rup = pattern.format("ru").r

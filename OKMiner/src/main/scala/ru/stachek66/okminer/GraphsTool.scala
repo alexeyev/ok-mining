@@ -6,18 +6,20 @@ import ru.stachek66.okminer.visualization.{ChartPrinter, ChartGenerator, Model}
 import scala.collection.mutable.{Map => mMap}
 
 /**
- * An inst
+ * Drawing graphs by reports.
  * @author alexeyev
  */
 object GraphsTool {
 
-  def drawFromDirectory(directory: File, dest: File) {
+  /**
+   * Drawing graphs by *.tsv reports from one directory and storing them at another one
+   * @param src source directory
+   * @param dest destination directory
+   */
+  def drawFromDirectory(src: File, dest: File) {
 
-    directory.mkdirs
+    src.mkdirs
     dest.mkdirs
-
-    //    require(directory.isDirectory)
-    //    require(dest.isDirectory)
 
     val megamap = mMap[String, mMap[String, mMap[Int, Float]]]()
 
@@ -31,7 +33,7 @@ object GraphsTool {
     }
 
     for {
-      file <- directory.listFiles()
+      file <- src.listFiles()
       (triples, year) = StatsFileIO.readFromFile(file)
       (trend, company, count) <- triples
     } {
@@ -50,12 +52,4 @@ object GraphsTool {
       }
     }
   }
-}
-
-object GraphsRunner extends App {
-
-//  GraphsTool.drawFromDirectory(new File("test-corpus/results"), new File("test-corpus/graphs"))
-
-    GraphsTool.drawFromDirectory(new File("corpus-media/results"), new File("corpus-media/graphs"))
-
 }
