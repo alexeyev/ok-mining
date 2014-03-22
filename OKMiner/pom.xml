@@ -137,13 +137,6 @@
 
     <build>
         <plugins>
-            <!--<plugin>-->
-                <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<source>${java.s}</source>-->
-                    <!--<target>${java.t}</target>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
             <plugin>
                 <groupId>org.dstovall</groupId>
                 <artifactId>onejar-maven-plugin</artifactId>
@@ -151,7 +144,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <mainClass>ru.stachek66.okminer.gui.Runner$</mainClass>
+                            <mainClass>ru.stachek66.okminer.gui.Runner</mainClass>
                             <onejarVersion>0.97</onejarVersion>
                             <attachToBuild>true</attachToBuild>
                             <classifier>onejar</classifier>
@@ -187,21 +180,12 @@
     </build>
 
     <repositories>
-
-        <!--<repository>-->
-        <!--<id>russian-morphology.lucene.apache.org</id>-->
-        <!--<name>Lucene Russian Morphology Repository for Maven</name>-->
-        <!--<url>http://russianmorphology.googlecode.com/svn/repo/releases/</url>-->
-        <!--</repository>-->
-
         <repository>
             <id>local</id>
             <name>OKMinerRepo</name>
             <url>file://${project.basedir}/lib</url>
         </repository>
-
     </repositories>
-
 
     <pluginRepositories>
         <pluginRepository>
