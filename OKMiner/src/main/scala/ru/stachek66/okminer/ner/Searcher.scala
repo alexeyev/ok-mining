@@ -38,7 +38,6 @@ object Searcher {
     for (file <- sources) {
       io.Source.fromFile(file).getLines().
         foreach {
-        file
         line =>
           addToIndex(iw, line.trim)
       }
