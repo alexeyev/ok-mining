@@ -9,7 +9,7 @@ import ru.stachek66.okminer.utils.FileUtils
 private object CheckTool extends App {
 
   val description = FileUtils.asString(new File("test.txt"))
-  val companies = NaiveNER.extractAllCompanies(description)
+  val companies = new NaiveNER(new Searcher).extractAllCompanies(description)
   companies.foreach(println)
 
 }

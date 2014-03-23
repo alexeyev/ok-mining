@@ -18,7 +18,7 @@ import org.apache.commons.io.IOUtils
  * Is a singleton due to holding the index.
  * @author alexeyev
  */
-object Searcher {
+class Searcher {
 
   val companyField = "name"
 
@@ -37,8 +37,6 @@ object Searcher {
     log.info("Filling companies' index...")
     val iw = new IndexWriter(index, config)
     for (stream <- sources) {
-      println(stream.toString)
-      println(IOUtils.toString(stream))
       io.Source.fromInputStream(stream).getLines().
         foreach {
         line =>

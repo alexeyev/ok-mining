@@ -7,7 +7,7 @@ import ru.stachek66.okminer.language.russian.Tokenizer
 import scala.util.{Success, Try, Failure}
 
 /**
- * Script searching for keyphrases in the whole text collection.
+ * Searching for keyphrases in the whole text collection.
  * @author alexeyev
  */
 class PhraseSearcher(index: Index) {
@@ -18,7 +18,7 @@ class PhraseSearcher(index: Index) {
     IndexReader.open(index.index)
   } match {
     case Failure(f) =>
-      log.error("No index found, bye", f)
+      log.error("No index found", f)
       throw new Error("Problem officer")
     case Success(r) =>
       log.info("Index found. v: " + r.getVersion)
@@ -31,7 +31,7 @@ class PhraseSearcher(index: Index) {
 
   private def buildQuery(keyphrase: String): Query = {
     val pq = new PhraseQuery()
-    //bug: tokenizer must not do stemming
+    //todo: bug: tokenizer must not do stemming
     val splitted = Tokenizer.tokenize(keyphrase)
     log.debug("Query: [%s]".format(splitted.mkString(" ")))
     for (t <- splitted) {

@@ -7,9 +7,8 @@ import com.sun.syndication.io.XmlReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Date
-import org.apache.commons.collections.bag.HashBag
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.ner.NaiveNER
+import ru.stachek66.okminer.ner.{Searcher, NaiveNER}
 import scala.collection.JavaConversions._
 
 case class Entity(uri: String, description: String, date: Date)
@@ -56,10 +55,12 @@ object FeedsTool extends App {
 
   //-------------------------------------------------------
 
+  val ner = new NaiveNER(new Searcher)
+
   val pairs: Iterable[(String, String)] = corpus.flatMap {
     case Entity(uri, description, date) => {
       val trends = TrendsTool.extractTrends(description)
-      val companies = NaiveNER.extractAllCompanies(description)
+      val companies = ner.extractAllCompanies(description)
       for {
         trend <- trends
         company <- companies

@@ -16,8 +16,8 @@ object LangLinksSQLParser {
 
   private val log = LoggerFactory.getLogger("")
 
-  private val rudump = new File("../ruwiki-latest-langlinks.sql.gz")
-  private val endump = new File("../enwiki-latest-langlinks.sql.gz")
+  private val rudump = ru.stachek66.okminer.wiki.dumps("ru_langlinks")
+  private val endump = ru.stachek66.okminer.wiki.dumps("en_langlinks")
 
   private val pattern = "\\((\\d+,'%s','([^']+)')\\)"
 

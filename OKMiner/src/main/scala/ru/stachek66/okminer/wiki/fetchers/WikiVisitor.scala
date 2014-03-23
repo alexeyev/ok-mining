@@ -1,9 +1,10 @@
-package ru.stachek66.okminer.wiki
+package ru.stachek66.okminer.wiki.fetchers
 
 import edu.jhu.nlp.wikipedia.{WikiPage, PageCallbackHandler, WikiXMLParserFactory}
 import java.io.File
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.utils.CounterLogger
+import ru.stachek66.okminer.wiki._
 
 /**
  * A wrapper over a lightweight wiki-parser for managing WikiPages.

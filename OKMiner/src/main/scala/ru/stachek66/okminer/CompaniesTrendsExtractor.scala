@@ -4,7 +4,7 @@ import java.io.File
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.ner.NaiveNER
+import ru.stachek66.okminer.ner.{Searcher, NaiveNER}
 import ru.stachek66.okminer.utils.{StatsFileIO, CounterLogger, FileUtils}
 import scala.util.Try
 
@@ -18,12 +18,14 @@ object CompaniesTrendsExtractor {
 
   private val log = LoggerFactory.getLogger("companies-trends-extractor")
   private val clog = new CounterLogger(log, 5, "%s files processed")
+  private val ner = new NaiveNER(new Searcher)
+  private val trendsTool = new TrendsTool()
 
   private def extractFromFile(file: File): Iterable[(Trend, Company, Int)] = {
     log.debug(file.getName)
     val description = FileUtils.asStringWithoutNewLines(file)
-    val trends = TrendsTool.extractTrends(description)
-    val companies = NaiveNER.extractAllCompanies(description)
+    val trends = trendsTool.extractTrends(description)
+    val companies = ner.extractAllCompanies(description)
     val allPairs = for {
       trend <- trends
       company <- companies

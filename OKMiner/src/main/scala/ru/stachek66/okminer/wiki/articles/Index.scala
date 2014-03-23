@@ -1,23 +1,24 @@
 package ru.stachek66.okminer.wiki.articles
 
+import java.io.File
 import org.apache.lucene.document.{Field, TextField, Document}
 import org.apache.lucene.index.{IndexReader, IndexWriter}
+import org.apache.lucene.store.NIOFSDirectory
 import org.slf4j.LoggerFactory
+import ru.stachek66.okminer.wiki.IndexHolder
 import ru.stachek66.okminer.wiki.fetchers.TextFetcher
 import scala.util.{Success, Failure, Try}
-import org.apache.lucene.store.NIOFSDirectory
-import java.io.File
 
 /**
  * @author alexeyev
  */
-class Index {
+class Index extends IndexHolder {
   //todo: make safe
 
   private val log = LoggerFactory.getLogger(this.getClass)
 
   private val indexDir = {
-    val path = new File("indices/wiki_index")
+    val path = ru.stachek66.okminer.wiki.indices("ru_wiki_titles_and_texts")
     path.mkdirs()
     new NIOFSDirectory(path)
   }
@@ -39,7 +40,7 @@ class Index {
     val doc = new Document()
     doc.add(new TextField(IndexProperties.titleField, title, Field.Store.YES))
     doc.add(new TextField(IndexProperties.textField, text, Field.Store.YES))
-//    doc.add(new TextField(IndexProperties.idField, text, Field.Store.YES))
+    //    doc.add(new TextField(IndexProperties.idField, text, Field.Store.YES))
     iw.addDocument(doc)
   }
 
@@ -54,7 +55,7 @@ class Index {
     iw.close()
   }
 
-  private def doIndex() {
+  protected override def doIndex() {
     log.info("Starting indexing.")
     indexDir.getDirectory.listFiles().foreach(_.delete())
     fillIndex()
@@ -62,6 +63,6 @@ class Index {
   }
 }
 
-object Index extends App {
-  new Index()
-}
+//object Index extends App {
+//  new Index()
+//}

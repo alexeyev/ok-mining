@@ -1,9 +1,12 @@
 package ru.stachek66.okminer
 
 import java.io.File
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import ru.stachek66.okminer.utils.{Conversions, StatsFileIO}
 import ru.stachek66.okminer.visualization.{ChartPrinter, ChartGenerator, Model}
 import scala.collection.mutable.{Map => mMap}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Drawing graphs by reports.
@@ -52,4 +55,20 @@ object GraphsTool {
       }
     }
   }
+}
+
+object GraphDrawingTool extends App {
+
+  private val categories = List("media", "science")
+
+  {
+    for (category <- categories) {
+      val start = new Date()
+      GraphsTool.drawFromDirectory(new File(s"../corpus-$category/results"), new File(s"../corpus-$category/graphs"))
+      val end = new Date()
+      val elapsed = TimeUnit.MINUTES.convert(end.getTime - start.getTime, TimeUnit.MILLISECONDS)
+      println(s"Done in $elapsed seconds.")
+    }
+  }
+
 }

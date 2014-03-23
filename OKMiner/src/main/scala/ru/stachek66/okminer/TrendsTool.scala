@@ -1,9 +1,9 @@
 package ru.stachek66.okminer
 
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.language.russian.{VerbDetector, StopWordsFilter, Lexer, Tokenizer}
+import ru.stachek66.okminer.language.russian.{StopWordsFilter, Lexer, Tokenizer}
 import ru.stachek66.okminer.wiki._
-import ru.stachek66.okminer.wiki.translation.Tool
+import ru.stachek66.okminer.wiki.translation.Translator
 import ru.stachek66.okminer.wiki.vocabulary.Vocabulary
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future, Await}
@@ -13,7 +13,8 @@ import scala.util.{Success, Failure, Try}
  * Trends extraction.
  * @author alexeyev
  */
-object TrendsTool {
+class TrendsTool(kpCalculator: KeyphrasenessCalculator = LaplacianKeyphrasenessCalculator,
+                 translator: Translator = new Translator()) {
 
   private val log = LoggerFactory.getLogger("test-tool")
 
@@ -39,7 +40,7 @@ object TrendsTool {
       for {
         word <- filtered
         if !StopWordsFilter.getList.contains(word)
-        if !VerbDetector.isVerb(word)
+        //if !VerbDetector.isVerb(word)
         tokenized <- Tokenizer.tokenize(word).headOption
         if !StopWordsFilter.getList.contains(tokenized)
       } yield {
@@ -56,7 +57,7 @@ object TrendsTool {
     def buildResults(phrases: Iterable[String]): Iterable[(String, Double)] = {
       phrases.map {
         phrase => {
-          val kp = Future(KeyphrasenessCalculator.getKeyPhraseness(phrase))
+          val kp = Future(kpCalculator.getKeyPhraseness(phrase))
           val res =
             Try {
               Await.result(kp, 1 seconds)
@@ -86,7 +87,7 @@ object TrendsTool {
     val ranked = dResults.toSeq.sortBy(-_._2).take(5)
 
     val translation = ranked.map {
-      case (terms, score) => (score, terms, Tool.translate(terms))
+      case (terms, score) => (score, terms, translator.translate(terms))
     }
 
     log.debug("Duples:\n" + translation.mkString("\n"))

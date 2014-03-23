@@ -3,9 +3,9 @@ package ru.stachek66.okminer.wiki.vocabulary
 import java.io.{File, FileWriter}
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.language.russian.Tokenizer
-import ru.stachek66.okminer.wiki.WikiVisitor
 import ru.stachek66.okminer.wiki.utils._
 import scala.collection.JavaConversions._
+import ru.stachek66.okminer.wiki.fetchers.WikiVisitor
 
 /**
  * All normalized words that are allowed to be analyzed.

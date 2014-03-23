@@ -9,11 +9,11 @@ import ru.stachek66.okminer.utils.FileUtils
  * call "extractAllCompanies".
  * @author alexeyev
  */
-object NaiveNER {
+class NaiveNER(searcher: Searcher) extends NER {
 
   private val log = LoggerFactory.getLogger("testing-ner")
 
-  def extractAllCompanies(sourceText: String) = {
+  def extractAllCompanies(sourceText: String): Set[String] = {
 
     val tokens =
       StopWordsFilter.filter(
@@ -32,11 +32,11 @@ object NaiveNER {
     val companiesFromDuples = {
       for {
         d <- duples
-        res = Searcher.magicFind("%s %s".format(d._1, d._2), 5f)
+        res = searcher.magicFind("%s %s".format(d._1, d._2), 5f)
         if res.nonEmpty
       } yield {
         log.debug(d + " ~> " + res.head)
-        res.head._2.getField(Searcher.companyField).stringValue()
+        res.head._2.getField(searcher.companyField).stringValue()
       }
     } toSet
 
@@ -45,11 +45,11 @@ object NaiveNER {
     val companiesFromTokens = {
       for {
         t <- tokens
-        res = Searcher.magicFind("%s".format(t), 8f)
+        res = searcher.magicFind("%s".format(t), 8f)
         if res.nonEmpty
       } yield {
         log.debug(t + " -> " + res.toString())
-        res.head._2.getField(Searcher.companyField).stringValue()
+        res.head._2.getField(searcher.companyField).stringValue()
       }
     } toSet
 

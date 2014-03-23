@@ -2,12 +2,16 @@ package ru.stachek66.okminer.gui
 
 import java.io.File
 import java.security.InvalidParameterException
+import ru.stachek66.okminer.GraphsTool
 
 /**
  * All important calls for computing are provided by this class.
  * @author alexeyev
  */
 private[gui] object DataProcessingTasks {
+
+  private val resultsFolderName = "results"
+  private val graphsFolderName = "results"
 
   /**
    * Building *.tsv-reports by corpus
@@ -26,8 +30,20 @@ private[gui] object DataProcessingTasks {
    * @param reports reports directory
    */
   def drawGraphs(reports: Option[File]) {
-    if (reports.isEmpty) throw new InvalidParameterException("Destination directory unset")
-    //todo:
+    val hasResultsFolder =
+      reports.filter {
+        case dir =>
+          dir.listFiles().toIterable.filter {
+            case subDir =>
+              println(subDir, subDir.getName, subDir.getName.equals(resultsFolderName))
+              subDir.isDirectory && subDir.getName.equals(resultsFolderName)
+          }.nonEmpty
+      }.nonEmpty
+    if (!hasResultsFolder) throw new InvalidParameterException("Destination directory invalid")
+
+    val src = new File(reports.get.getAbsolutePath + "/" + resultsFolderName)
+    val dest = new File(reports.get.getAbsolutePath + "/" + graphsFolderName)
+    GraphsTool.drawFromDirectory(src, dest)
   }
 
 }

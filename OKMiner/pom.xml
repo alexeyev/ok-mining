@@ -47,9 +47,9 @@
             <version>${jfree.v}</version>
         </dependency>
         <dependency>
-            <groupId>edu.jhu.nlp.wikipedia</groupId>
+            <groupId>edu-jhu-nlp-wikipedia</groupId>
             <artifactId>wikixmlj</artifactId>
-            <version>{version}</version>
+            <version>r43</version>
             <exclusions>
                 <exclusion>
                     <groupId>jdom</groupId>
@@ -97,11 +97,6 @@
             <artifactId>jsoup</artifactId>
             <version>${jsoup.v}</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.apache.lucene.morphology</groupId>-->
-        <!--<artifactId>russian</artifactId>-->
-        <!--<version>${russian.morphology.v}</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
@@ -181,7 +176,7 @@
 
     <repositories>
         <repository>
-            <id>local</id>
+            <id>my-local-repo</id>
             <name>OKMinerRepo</name>
             <url>file://${project.basedir}/lib</url>
         </repository>

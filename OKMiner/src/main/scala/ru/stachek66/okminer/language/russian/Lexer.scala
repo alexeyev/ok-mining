@@ -19,7 +19,7 @@ import scala.collection.mutable.ArrayBuffer
  * Plain regex-based lexer.
  * @author alexeyev
  */
-object Lexer extends App {
+object Lexer {
 
   /**
    * Lucene tokenizer applied to text.

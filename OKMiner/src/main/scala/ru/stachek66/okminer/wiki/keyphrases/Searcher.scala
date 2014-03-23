@@ -17,12 +17,12 @@ import scala.util.Failure
  * Поиск по вики-ссылкам
  * @author alexeyev
  */
-object Searcher {
+class Searcher(index: Index) {
 
   private val log = LoggerFactory.getLogger("wiki-links-searcher")
 
   private val reader = Try {
-    IndexReader.open(IndexProperties.index.accessIndex)
+    IndexReader.open(index.accessIndex)
   } match {
     case Failure(f) =>
       log.error("No index found, bye", f)
