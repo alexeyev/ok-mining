@@ -13,6 +13,8 @@ import org.slf4j.Logger
 class CounterLogger(log: Logger, step: Int, pattern: String) {
   if (step < 1) throw new IllegalArgumentException("Step must be a positive integer.")
 
+  def getLogger = log
+
   def execute[T](action: => T): T = {
     tick()
     action

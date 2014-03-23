@@ -56,10 +56,11 @@ object FeedsTool extends App {
   //-------------------------------------------------------
 
   val ner = new NaiveNER(new Searcher)
+  val trendsTool = new TrendsTool()
 
   val pairs: Iterable[(String, String)] = corpus.flatMap {
     case Entity(uri, description, date) => {
-      val trends = TrendsTool.extractTrends(description)
+      val trends = trendsTool.extractTrends(description)
       val companies = ner.extractAllCompanies(description)
       for {
         trend <- trends
@@ -73,11 +74,14 @@ object FeedsTool extends App {
     yield {
       //todo: rewrite
       val trends = pairColl.
-        map(_._1).
-        groupBy(t => t).
-        map(t => (t._1, t._2.size)).
-        toSeq.
-        sortBy(-_._2)
+        map {
+        case (ru, en) => ru
+      }.groupBy(t => t).
+        map {
+        case (key, values) =>
+          (key, values.size)
+      }.toSeq.sortBy(-_._2)
+
       (company, trends)
     }
 

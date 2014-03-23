@@ -57,7 +57,7 @@ object GraphsTool {
   }
 }
 
-object GraphDrawingTool extends App {
+private object GraphDrawingTool extends App {
 
   private val categories = List("media", "science")
 

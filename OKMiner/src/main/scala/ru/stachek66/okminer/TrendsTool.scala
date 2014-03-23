@@ -13,7 +13,7 @@ import scala.util.{Success, Failure, Try}
  * Trends extraction.
  * @author alexeyev
  */
-class TrendsTool(kpCalculator: KeyphrasenessCalculator = LaplacianKeyphrasenessCalculator,
+private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = LaplacianKeyphrasenessCalculator,
                  translator: Translator = new Translator()) {
 
   private val log = LoggerFactory.getLogger("test-tool")

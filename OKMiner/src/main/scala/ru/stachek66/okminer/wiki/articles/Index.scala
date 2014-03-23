@@ -17,7 +17,7 @@ class Index extends IndexHolder {
 
   private val log = LoggerFactory.getLogger(this.getClass)
 
-  private val indexDir = {
+  protected val indexDir = {
     val path = ru.stachek66.okminer.wiki.indices("ru_wiki_titles_and_texts")
     path.mkdirs()
     new NIOFSDirectory(path)

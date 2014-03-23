@@ -2,7 +2,6 @@ package ru.stachek66.okminer.wiki.fetchers
 
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.wiki.utils.Helper
-import ru.stachek66.okminer.wiki.fetchers.WikiVisitor
 
 /**
  * Fetching all textual links

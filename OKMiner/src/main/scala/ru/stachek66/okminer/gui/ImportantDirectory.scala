@@ -12,7 +12,7 @@ import scala.swing.{Dialog, FileChooser, Label, Button}
  */
 private[gui] case class ImportantDirectory(button: Button,
                                            label: Label,
-                                           chooser: FileChooser = new FileChooser {
+                                           chooser: FileChooser = new FileChooser(new File("../")) {
                                              this.fileSelectionMode = SelectionMode(JFileChooser.DIRECTORIES_ONLY)
                                            }) {
   /**
