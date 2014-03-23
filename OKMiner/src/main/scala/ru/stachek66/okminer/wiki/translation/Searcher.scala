@@ -10,10 +10,12 @@ import ru.stachek66.okminer.Meta
  * Wikipedia-based translation.
  * @author alexeyev
  */
-class Searcher(index: Index) {
+object Searcher {
+  //(index: Index) {
 
   import IndexProperties._
 
+  private val index = new Index()
   private val reader = IndexReader.open(index.index)
   private val searcher = new IndexSearcher(reader)
   private val qp = new QueryParser(Meta.luceneVersion, ru, index.analyzer)

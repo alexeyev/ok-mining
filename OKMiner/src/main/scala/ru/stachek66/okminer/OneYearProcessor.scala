@@ -1,12 +1,15 @@
 package ru.stachek66.okminer
 
 import java.io.File
-import java.util.Date
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.ner.{NER, Searcher, NaiveNER}
 import ru.stachek66.okminer.utils.{CounterLogger, FileUtils}
-import scala.util.Try
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
+import scala.concurrent.duration.Duration
+import scala.util.{Failure, Try, Success}
+import java.util.Date
 
 /**
  * @author alexeyev
@@ -35,18 +38,32 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
   }
 
   def extractFromYearDirectory(source: File, externalCounter: Option[CounterLogger] = None): Iterable[(Trend, Company, Int)] = {
-    println(source.listFiles().size)
 
-    {
-      if (source.isDirectory) source.listFiles().toIterable
-      else Iterable()
-    } flatMap {
-      file =>
+    def safeExtract(file: File): scala.concurrent.Future[Iterable[(Trend, Company, Int)]] =
+      scala.concurrent.future {
         clog.execute {
-          externalCounter.foreach(_.execute(()))
-          extractFromFile(file)
+          Try {
+            val extracted = extractFromFile(file)
+            externalCounter.foreach(_.execute(()))
+            extracted
+          } match {
+            case Failure(e) =>
+              log.error("Problems extracting from file " + file.getAbsolutePath, e)
+              Iterable.empty[(Trend, Company, Int)]
+            case Success(triple) => triple
+          }
         }
-    } groupBy {
+      }
+
+    val files =
+      if (source.isDirectory) source.listFiles().toIterable
+      else Iterable[File]()
+
+    Await.result(
+      Future.sequence(files.map(safeExtract(_))),
+      Duration(2, TimeUnit.DAYS)
+    ).flatten.
+      groupBy {
       case (trend, company, count) => (trend, company)
     } map {
       case ((trend, company), triples) => (trend, company, triples.map(_._3).sum)
@@ -54,21 +71,21 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
   }
 
 
-//    def main(args: Array[String]) {
-//      if (args.size < 2) {
-//        log.error("Please provide 2 arguments: source and destination; %d args provided".format(args.size))
-//      } else {
-//        val source = new File(args(0))
-//        val destination = new File(args(1))
-//        if (!source.exists()) {
-//          log.error("Please provide existing source file/directory.")
-//        } else {
-//          val extracted = extractFromYearDirectory(source)
-//          destination.getParentFile.mkdirs()
-//          StatsFileIO.writeToFile(extracted, destination)
-//        }
-//      }
-//    }
+  //    def main(args: Array[String]) {
+  //      if (args.size < 2) {
+  //        log.error("Please provide 2 arguments: source and destination; %d args provided".format(args.size))
+  //      } else {
+  //        val source = new File(args(0))
+  //        val destination = new File(args(1))
+  //        if (!source.exists()) {
+  //          log.error("Please provide existing source file/directory.")
+  //        } else {
+  //          val extracted = extractFromYearDirectory(source)
+  //          destination.getParentFile.mkdirs()
+  //          StatsFileIO.writeToFile(extracted, destination)
+  //        }
+  //      }
+  //    }
 }
 
 private object DefaultRunner extends App {

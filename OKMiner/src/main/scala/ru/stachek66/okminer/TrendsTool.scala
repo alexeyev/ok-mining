@@ -1,22 +1,24 @@
 package ru.stachek66.okminer
 
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.language.russian.{StopWordsFilter, Lexer, Tokenizer}
+import ru.stachek66.okminer.language.russian.{VerbDetector, StopWordsFilter, Lexer, Tokenizer}
 import ru.stachek66.okminer.wiki._
 import ru.stachek66.okminer.wiki.translation.Translator
 import ru.stachek66.okminer.wiki.vocabulary.Vocabulary
 import scala.concurrent.duration._
+import scala.concurrent._
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.util.{Success, Failure, Try}
+import java.util.concurrent.TimeUnit
 
 /**
  * Trends extraction.
  * @author alexeyev
  */
 private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = LaplacianKeyphrasenessCalculator,
-                 translator: Translator = new Translator()) {
+                                  translator: Translator = new Translator()) {
 
-  private val log = LoggerFactory.getLogger("test-tool")
+  private val log = LoggerFactory.getLogger("trends-tool")
 
   import ExecutionContext.Implicits.global
 
@@ -40,7 +42,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Laplac
       for {
         word <- filtered
         if !StopWordsFilter.getList.contains(word)
-        //if !VerbDetector.isVerb(word)
+        if !VerbDetector.isVerb(word)
         tokenized <- Tokenizer.tokenize(word).headOption
         if !StopWordsFilter.getList.contains(tokenized)
       } yield {
@@ -55,9 +57,10 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Laplac
     }
 
     def buildResults(phrases: Iterable[String]): Iterable[(String, Double)] = {
+
       phrases.map {
         phrase => {
-          val kp = Future(kpCalculator.getKeyPhraseness(phrase))
+          val kp = future[Double](kpCalculator.getKeyPhraseness(phrase))
           val res =
             Try {
               Await.result(kp, 1 seconds)
@@ -95,7 +98,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Laplac
     //todo: rewrite
     (translation.map {
       case (score, terms, Some((ruArticle, enArticle))) =>
-        log.info(List(score, terms, Some((ruArticle, enArticle))).mkString(","))
+        log.debug(List(score, terms, Some((ruArticle, enArticle))).mkString(","))
         Some(ruArticle)
       case _ => None
     }).toIterable.filter(_.isDefined).map(_.get)

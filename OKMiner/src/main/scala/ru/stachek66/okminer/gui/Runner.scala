@@ -1,5 +1,6 @@
 package ru.stachek66.okminer.gui
 
+import org.slf4j.LoggerFactory
 import scala.swing._
 import scala.swing.event.ButtonClicked
 import scala.util._
@@ -9,6 +10,8 @@ import scala.util._
  * @author alexeyev
  */
 object Runner extends SimpleSwingApplication {
+
+  private val log = LoggerFactory.getLogger("logger-factory")
 
   def top = new MainFrame() {
 
@@ -94,6 +97,7 @@ object Runner extends SimpleSwingApplication {
           case Failure(e) =>
             Dialog.showMessage(
               button, "Something went wrong while building reports: " + e.getMessage, "Error", Dialog.Message.Error)
+            log.error("Please fix me", e)
         }
       case ButtonClicked(button) if button.equals(graphsButton) =>
         Try {
@@ -103,6 +107,7 @@ object Runner extends SimpleSwingApplication {
             Dialog.showMessage(button, "Graphs flushing done!", "Message", Dialog.Message.Info)
           case Failure(e) =>
             Dialog.showMessage(button, "Something went wrong while drawing graphs: " + e.getMessage, "Error", Dialog.Message.Error)
+            log.error("Please fix me",e)
         }
     }
   }

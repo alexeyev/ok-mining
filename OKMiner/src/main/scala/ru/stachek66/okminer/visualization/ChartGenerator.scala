@@ -20,7 +20,8 @@ object ChartGenerator {
     for ((company: String, yearToScore) <- data.companyToYearToScore) {
       val series = new XYSeries(company)
       for ((year: Int, score: Float) <- yearToScore) {
-        series.add(year, score)
+        // scattering hack
+        series.add(year + math.random / 5, score + math.random / 5)
       }
       dataset.addSeries(series)
     }

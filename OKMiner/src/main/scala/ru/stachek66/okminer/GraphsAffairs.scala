@@ -4,15 +4,14 @@ import java.io.File
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import ru.stachek66.okminer.utils.{Conversions, StatsFileIO}
-import ru.stachek66.okminer.visualization.{ChartPrinter, ChartGenerator, Model}
+import ru.stachek66.okminer.visualization.{Config, ChartPrinter, ChartGenerator, Model}
 import scala.collection.mutable.{Map => mMap}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Drawing graphs by reports.
  * @author alexeyev
  */
-object GraphsTool {
+class GraphsTool(drawConfig: Config = Config()) {
 
   /**
    * Drawing graphs by *.tsv reports from one directory and storing them at another one
@@ -46,7 +45,16 @@ object GraphsTool {
       megamap(trend).put(company, map)
     }
 
-    megamap.map {
+    //filter
+    val filteredMegaMap = for {
+      (trend, companiesMap) <- megamap
+      if companiesMap.exists {
+        case (company, yearMap) =>
+          drawConfig.yearsAppropriate(yearMap.toMap.keySet)
+      }
+    } yield trend -> companiesMap
+
+    filteredMegaMap.map {
       case (trend, map) => Model(trend, Conversions.toImmutable(map))
     } foreach {
       model => {
@@ -64,7 +72,7 @@ private object GraphDrawingTool extends App {
   {
     for (category <- categories) {
       val start = new Date()
-      GraphsTool.drawFromDirectory(new File(s"../corpus-$category/results"), new File(s"../corpus-$category/graphs"))
+//      GraphsTool.drawFromDirectory(new File(s"../corpus-$category/results"), new File(s"../corpus-$category/graphs"))
       val end = new Date()
       val elapsed = TimeUnit.MINUTES.convert(end.getTime - start.getTime, TimeUnit.MILLISECONDS)
       println(s"Done in $elapsed seconds.")

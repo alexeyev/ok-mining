@@ -1,8 +1,12 @@
 package ru.stachek66.okminer
 
 import java.io.File
+import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.utils.{StatsFileIO, CounterLogger}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 /**
  * A tool for processing the whole corpus:
@@ -22,20 +26,27 @@ object CorpusProcessorWriter {
    */
   def processCorpus(corpus: File, reportsDirectory: File) {
 
-    for {
+    reportsDirectory.mkdirs()
+
+    val tasks = for {
     // choosing appropriate directories
       directory <- corpus.listFiles().toIterable
       if directory.isDirectory &&
         yearPattern.matcher(directory.getName).matches() &&
         directory.listFiles().nonEmpty
-    } {
-      val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 1, "%s files processed")
-      // carrying out the core task
-      val data = processor.extractFromYearDirectory(directory, Some(log))
-      reportsDirectory.mkdirs()
-      // writing everything down
-      StatsFileIO.writeToFile(data, reportsDirectory)
+    } yield {
+      // running in parallel
+      scala.concurrent.future[Unit] {
+        val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 100, "%s files processed")
+        log.getLogger.info("Hello, world! I'm parsing " + directory.getName)
+        // carrying out the core task
+        val data = processor.extractFromYearDirectory(directory, Some(log))
+        // writing everything down
+        StatsFileIO.writeToFile(data, new File(s"${reportsDirectory.getAbsolutePath}/${directory.getName}.tsv"))
+        log.getLogger.info("Done with it!")
+      }
     }
-
+    // waiting for 48 hours max
+    Await.ready(Future.sequence(tasks), Duration.create(2, TimeUnit.DAYS))
   }
 }

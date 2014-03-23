@@ -5,15 +5,14 @@ import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.ru.RussianAnalyzer
 import org.apache.lucene.document.{Field, TextField, Document}
 import org.apache.lucene.index.{IndexReader, IndexWriterConfig, IndexWriter}
-import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.search.{TopScoreDocCollector, IndexSearcher}
 import org.apache.lucene.store.NIOFSDirectory
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
+import ru.stachek66.okminer.wiki._
 import scala.util.{Success, Failure, Try}
 
 
-private[translation] class Index(mapFile: File, destDirectory: File) {
+private[translation] class Index(mapFile: File = parsed("ru_en"), destDirectory: File = indices("ru_en")) {
 
   import IndexProperties._
 

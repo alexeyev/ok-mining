@@ -16,8 +16,9 @@ class CounterLogger(log: Logger, step: Int, pattern: String) {
   def getLogger = log
 
   def execute[T](action: => T): T = {
+    val result = action
     tick()
-    action
+    result
   }
 
   private def tick() {

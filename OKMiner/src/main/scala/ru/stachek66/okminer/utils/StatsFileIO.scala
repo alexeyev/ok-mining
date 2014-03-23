@@ -38,8 +38,3 @@ object StatsFileIO {
     (triples,year)
   }
 }
-
-object tool extends App {
-
-  println(StatsFileIO.readFromFile(new File("results/2002.tsv")))
-}

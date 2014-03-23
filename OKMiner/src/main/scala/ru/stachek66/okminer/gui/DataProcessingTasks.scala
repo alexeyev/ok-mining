@@ -11,7 +11,7 @@ import ru.stachek66.okminer.{CorpusProcessorWriter, GraphsTool}
 private[gui] object DataProcessingTasks {
 
   private val resultsFolderName = "results"
-  private val graphsFolderName = "results"
+  private val graphsFolderName = "graphs"
 
   /**
    * Building *.tsv-reports by corpus
@@ -21,9 +21,9 @@ private[gui] object DataProcessingTasks {
   def buildReports(src: Option[File], dest: Option[File]) {
     if (src.filter(_.isDirectory).isEmpty) throw new InvalidParameterException("Corpus directory unset")
     if (dest.filter(_.isDirectory).isEmpty) throw new InvalidParameterException("Destination directory unset")
-
-    CorpusProcessorWriter.processCorpus(src.get, dest.get)
-
+    val tsvDest = new File(dest.get.getAbsolutePath + "/" + resultsFolderName)
+    tsvDest.mkdirs()
+    CorpusProcessorWriter.processCorpus(src.get, tsvDest)
   }
 
   /**
@@ -37,7 +37,6 @@ private[gui] object DataProcessingTasks {
         case dir =>
           dir.listFiles().toIterable.filter {
             case subDir =>
-              println(subDir, subDir.getName, subDir.getName.equals(resultsFolderName))
               subDir.isDirectory && subDir.getName.equals(resultsFolderName)
           }.nonEmpty
       }.nonEmpty
@@ -45,7 +44,7 @@ private[gui] object DataProcessingTasks {
 
     val src = new File(reports.get.getAbsolutePath + "/" + resultsFolderName)
     val dest = new File(reports.get.getAbsolutePath + "/" + graphsFolderName)
-    GraphsTool.drawFromDirectory(src, dest)
+    new GraphsTool().drawFromDirectory(src, dest)
   }
 
 }
