@@ -20,8 +20,6 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Laplac
 
   private val log = LoggerFactory.getLogger("trends-tool")
 
-  import ExecutionContext.Implicits.global
-
   log.info("Opening index.")
   articles.IndexProperties.index
   keyphrases.IndexProperties.index
@@ -60,7 +58,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Laplac
 
       phrases.map {
         phrase => {
-          val kp = future[Double](kpCalculator.getKeyPhraseness(phrase))
+          val kp = future[Double](kpCalculator.getKeyPhraseness(phrase))(ru.stachek66.okminer.Meta.singleContext)
           val res =
             Try {
               Await.result(kp, 1 seconds)

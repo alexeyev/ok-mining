@@ -3,8 +3,8 @@ package ru.stachek66.okminer
 import java.io.File
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
+import ru.stachek66.okminer.Meta.singleContext
 import ru.stachek66.okminer.utils.{StatsFileIO, CounterLogger}
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
@@ -37,7 +37,7 @@ object CorpusProcessorWriter {
     } yield {
       // running in parallel
       scala.concurrent.future[Unit] {
-        val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 100, "%s files processed")
+        val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 10, "%s files processed")
         log.getLogger.info("Hello, world! I'm parsing " + directory.getName)
         // carrying out the core task
         val data = processor.extractFromYearDirectory(directory, Some(log))
