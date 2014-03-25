@@ -6,17 +6,21 @@ import org.slf4j.LoggerFactory
 import scala.util.Failure
 import scala.util.Success
 import scala.util.{Success, Failure, Try}
+import ru.stachek66.okminer.utils.CounterLogger
 
 /**
  * Parses id-to-title mapping for Russian wiki-articles
  * @author alexeyev
  */
-object PageSQLParser {
+private[tools] object PageSQLParser {
 
   private val log = LoggerFactory.getLogger("")
+  private val clog = new CounterLogger(log, 50, "%s wiki lines processed")
 
-  private[translation] val rudump = new File("../ruwiki-latest-page.sql.gz")
-  private[translation] val endump = new File("../enwiki-latest-page.sql.gz")
+  private[translation] val rudump = new File("../meta_data/ruwiki-latest-page.sql.gz")
+  private[translation] val endump = new File("../meta_data/enwiki-latest-page.sql.gz")
+
+  new File("parsed").mkdirs()
 
   private val ruPrepared = new File("parsed/ru-id-title.tsv")
   private val enPrepared = new File("parsed/en-id-title.tsv")
@@ -42,45 +46,12 @@ object PageSQLParser {
           })
       }
     } match {
-      case Failure(e) => log.error("", e)
-      case Success(s) => log.info("Line " + c)
+      case Failure(e) => log.error("Problem", e)
+      case Success(s) => clog.execute(())
     }
   }
 
-  private def getMapsFromTsv(file: File): (Map[Long, String], Map[String, Long]) = {
-
-    val itt = collection.mutable.Map[Long, String]()
-    val tti = collection.mutable.Map[String, Long]()
-
-    io.Source.fromFile(file).getLines().foreach {
-      line => {
-        val splitted = line.trim.split("\t")
-        val number = splitted(0).toLong
-        itt.put(number, splitted(1))
-        tti.put(splitted(1), number)
-      }
-    }
-
-    (itt.toMap, tti.toMap)
-  }
-
-  lazy val (ruIdToTitle, ruTitleToId): (Map[Long, String], Map[String, Long]) = {
-    log.info("Accessing ru map")
-    if (!ruPrepared.exists()) {
-      flushRu()
-    }
-    getMapsFromTsv(ruPrepared)
-  }
-
-  lazy val (enIdToTitle, enTitleToId): (Map[Long, String], Map[String, Long]) = {
-    log.info("Accessing en map")
-    if (!enPrepared.exists()) {
-      flushEn()
-    }
-    getMapsFromTsv(enPrepared)
-  }
-
-  private def flushRu() {
+  def flushRu() {
     val fw = new FileWriter(ruPrepared)
     parseDump(rudump, "utf8") {
       (id, title) => fw.write("%s\t%s\n".format(id, title))
@@ -89,7 +60,7 @@ object PageSQLParser {
     fw.close()
   }
 
-  private def flushEn() {
+  def flushEn() {
     val fw = new FileWriter(enPrepared)
     parseDump(endump, "utf8") {
       (id, title) => fw.write("%s\t%s\n".format(id, title))

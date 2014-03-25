@@ -7,14 +7,16 @@ import scala.util.Failure
 import scala.util.Success
 import scala.util.matching.Regex
 import scala.util.{Success, Failure, Try}
+import ru.stachek66.okminer.utils.CounterLogger
 
 /**
  * Parsing langlinks dump.
  * @author alexeyev
  */
-object LangLinksSQLParser {
+private[tools] object LangLinksSQLParser {
 
-  private val log = LoggerFactory.getLogger("")
+  private val log = LoggerFactory.getLogger("langlinks-parser")
+  private val clog = new CounterLogger(log, 50, "%s lines processed")
 
   private val rudump = ru.stachek66.okminer.wiki.dumps("ru_langlinks")
   private val endump = ru.stachek66.okminer.wiki.dumps("en_langlinks")
@@ -45,8 +47,8 @@ object LangLinksSQLParser {
           })
       }
     } match {
-      case Failure(e) => println(e.getStackTraceString)
-      case Success(s) => log.info("Wow such line " + counter)
+      case Failure(e) => log.error("Problem", e)
+      case Success(s) => clog.execute(())
     }
     map.toMap
   }
