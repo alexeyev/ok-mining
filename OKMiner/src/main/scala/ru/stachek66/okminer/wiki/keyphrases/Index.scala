@@ -1,6 +1,5 @@
 package ru.stachek66.okminer.wiki.keyphrases
 
-import java.io.File
 import org.apache.lucene.document.{Field, TextField, Document}
 import org.apache.lucene.index.IndexWriter
 import org.apache.lucene.store.NIOFSDirectory
@@ -20,20 +19,6 @@ class Index extends IndexHolder {
     path.mkdirs()
     new NIOFSDirectory(path)
   }
-
-  //  def safeAccessIndex: org.apache.lucene.store.Directory = Try {
-  //    IndexReader.open(innerIndexDir)
-  //  } match {
-  //    case Failure(_) => {
-  //      log.error("Index not found.")
-  //      doIndex()
-  //      innerIndexDir
-  //    }
-  //    case Success(_) => {
-  //      log.info("Index found.")
-  //      innerIndexDir
-  //    }
-  //  }
 
   private def addToIndex(iw: IndexWriter, words: String) {
     val doc = new Document()
@@ -61,5 +46,10 @@ class Index extends IndexHolder {
     fillIndex()
     log.info("Indexing links done.")
   }
+}
 
+object Index {
+  def main(args: Array[String]) {
+    new Index()
+  }
 }

@@ -1,15 +1,15 @@
 package ru.stachek66.okminer.wiki.translation.tools
 
 import java.io.{File, FileWriter}
+import java.util.Date
+import java.util.concurrent.TimeUnit
+import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
 import ru.stachek66.okminer.Meta.singleContext
 import scala.concurrent._
-import org.slf4j.LoggerFactory
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 /**
- *
+ * Ru-En links acquisition tool.
  * @author alexeyev
  */
 object Tool extends App {
@@ -59,6 +59,8 @@ object Tool extends App {
     case line => sortedFW.write(line.trim + "\n")
   }
   sortedFW.close()
+
+  new File("parsed/ru-en-titles.tsv").delete()
 
   val stop = new Date()
 

@@ -15,7 +15,7 @@ import ru.stachek66.okminer.wiki.fetchers.WikiVisitor
 object Vocabulary {
 
   private val log = LoggerFactory.getLogger("voc")
-  private lazy val vocAsTxtFile = new File("tools/vocabulary.txt")
+  private lazy val vocAsTxtFile = new File("parsed/vocabulary.txt")
 
   lazy val normalizedWords: Set[String] = {
     if (vocAsTxtFile.exists() && io.Source.fromFile(vocAsTxtFile).getLines().nonEmpty) getFromTxt

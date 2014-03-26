@@ -3,12 +3,13 @@ package ru.stachek66.okminer.wiki
 import org.apache.lucene.index.IndexReader
 import org.slf4j.LoggerFactory
 import scala.util.{Success, Failure, Try}
+import java.io.Closeable
 
 /**
  * Abstraction of an object providing access to index.
  * @author alexeyev
  */
-trait IndexHolder {
+trait IndexHolder extends Closeable {
 
   private val log = LoggerFactory.getLogger(this.getClass)
 
@@ -28,6 +29,10 @@ trait IndexHolder {
       log.info("Index found.")
       indexDir
     }
+  }
+
+  override def close() {
+    indexDir.close()
   }
 
 }

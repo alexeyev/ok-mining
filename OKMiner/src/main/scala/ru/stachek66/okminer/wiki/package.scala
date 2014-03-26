@@ -9,7 +9,7 @@ import java.io.File
 package object wiki {
 
   val dumps = Map(
-    "ru" -> new File("../meta_data/ruwiki-latest-pages-meta-current.xml.gz"),
+    "ru" -> new File("../meta_data/ruwiki-latest-pages-meta-current.xml"),
     //    "en" -> new File("../meta_data/enwiki-latest-pages-meta-current.xml"),
     "en" -> new File("../meta_data/enwiki-all.xml.gz"),
     "ru_langlinks" -> new File("../meta_data/ruwiki-latest-langlinks.sql.gz"),

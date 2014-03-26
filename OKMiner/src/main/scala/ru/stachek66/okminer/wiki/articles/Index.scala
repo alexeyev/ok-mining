@@ -23,18 +23,18 @@ class Index extends IndexHolder {
     new NIOFSDirectory(path)
   }
 
-  val index = Try {
-    IndexReader.open(indexDir)
-  } match {
-    case Failure(_) => {
-      doIndex()
-      indexDir
-    }
-    case Success(_) => {
-      log.info("Index found")
-      indexDir
-    }
-  }
+//  val index = Try {
+//    IndexReader.open(indexDir)
+//  } match {
+//    case Failure(_) => {
+//      doIndex()
+//      indexDir
+//    }
+//    case Success(_) => {
+//      log.info("Index found")
+//      indexDir
+//    }
+//  }
 
   private def addToIndex(iw: IndexWriter, title: String, text: String) {
     val doc = new Document()
@@ -63,6 +63,8 @@ class Index extends IndexHolder {
   }
 }
 
-//object Index extends App {
-//  new Index()
-//}
+object Index {
+  def main(args: Array[String]) {
+    new Index()
+  }
+}

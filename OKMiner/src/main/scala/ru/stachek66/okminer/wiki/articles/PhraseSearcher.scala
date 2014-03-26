@@ -15,7 +15,7 @@ class PhraseSearcher(index: Index) {
   private val log = LoggerFactory.getLogger("wiki-text-searcher")
 
   private val reader = Try {
-    IndexReader.open(index.index)
+    IndexReader.open(index.accessIndex)
   } match {
     case Failure(f) =>
       log.error("No index found", f)
