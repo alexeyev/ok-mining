@@ -1,12 +1,12 @@
 package ru.stachek66.okminer.wiki.vocabulary
 
-import java.io.{File, FileWriter}
+import java.io.FileWriter
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.language.russian.Tokenizer
+import ru.stachek66.okminer.utils.CounterLogger
+import ru.stachek66.okminer.wiki.fetchers.WikiVisitor
 import ru.stachek66.okminer.wiki.utils._
 import scala.collection.JavaConversions._
-import ru.stachek66.okminer.wiki.fetchers.WikiVisitor
-import ru.stachek66.okminer.utils.CounterLogger
 
 /**
  * All normalized words that are allowed to be analyzed.
@@ -21,7 +21,11 @@ object Vocabulary {
 
   lazy val normalizedWords: Set[String] = {
     if (vocAsTxtFile.exists() && io.Source.fromFile(vocAsTxtFile).getLines().nonEmpty) getFromTxt
-    else getFromDump
+    else {
+      val vocabulary = getFromDump
+      flush(vocabulary)
+      vocabulary
+    }
   }
 
   private def getFromTxt = io.Source.fromFile(vocAsTxtFile).getLines().map(_.trim).toSet
@@ -46,13 +50,12 @@ object Vocabulary {
           }
         }
     )
-    flush()
     voc.toSet
   }
 
-  private def flush() {
+  private def flush(data: Set[String]) {
     val fw = new FileWriter(vocAsTxtFile)
-    normalizedWords.foreach {
+    data.foreach {
       token =>
         fw.write("%s\n".format(token))
     }
@@ -61,6 +64,6 @@ object Vocabulary {
   }
 
   def main(args: Array[String]) {
-    flush()
+    log.info("Checking if vocabulary is present")
   }
 }

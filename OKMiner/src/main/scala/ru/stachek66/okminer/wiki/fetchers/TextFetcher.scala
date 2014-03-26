@@ -2,6 +2,7 @@ package ru.stachek66.okminer.wiki.fetchers
 
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.wiki.utils.Helper
+import ru.stachek66.okminer.utils.CounterLogger
 
 
 /**
@@ -11,7 +12,7 @@ class TextFetcher extends Fetcher[(String, String)] {
   private val log = LoggerFactory.getLogger("wiki-text-fetcher")
 
   override def fetch(handler: ((String, String)) => Unit) {
-    new WikiVisitor().visit {
+    new WikiVisitor(new CounterLogger(log, 1000, "%s texts got")).visit {
       page => {
         if (Helper.isCoolPage(page)) {
           val text =
