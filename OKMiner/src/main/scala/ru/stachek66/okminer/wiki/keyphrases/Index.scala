@@ -50,6 +50,6 @@ class Index extends IndexHolder {
 
 object Index {
   def main(args: Array[String]) {
-    new Index()
+    new Index().doIndex()
   }
 }
