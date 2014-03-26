@@ -65,5 +65,6 @@ object Vocabulary {
 
   def main(args: Array[String]) {
     log.info("Checking if vocabulary is present")
+    println(normalizedWords)
   }
 }
