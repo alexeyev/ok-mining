@@ -23,7 +23,7 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
   private val clog = new CounterLogger(log, 5, "%s files processed")
 
   private def extractFromFile(file: File): Iterable[(Trend, Company, Int)] = {
-    log.debug(file.getName)
+    log.info(file.getName)
     val description = FileUtils.asStringWithoutNewLines(file)
     //    val fTrends = future(trendsMiner.extractTrends(description)) //(ru.stachek66.okminer.Meta.singleContext)
     //    val fCompanies = future(ner.extractAllCompanies(description)) //(ru.stachek66.okminer.Meta.singleContext)
@@ -42,7 +42,11 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
     }
   }
 
-  def extractFromYearDirectory(source: File, externalCounter: Option[CounterLogger] = None): Iterable[(Trend, Company, Int)] = {
+  def extractFromYearDirectory
+  (source: File,
+   externalCounter: Iterable[CounterLogger] = List.empty[CounterLogger]): Iterable[(Trend, Company, Int)] = {
+
+    log.info("Extracting from dir " + source.getAbsolutePath)
 
     def safeExtract(file: File): scala.concurrent.Future[Iterable[(Trend, Company, Int)]] =
       scala.concurrent.future {

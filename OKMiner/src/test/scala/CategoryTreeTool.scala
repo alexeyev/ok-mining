@@ -37,7 +37,7 @@ object CategoryTreeTool extends App {
 
       if (unknown == 1) {
         val (parents, restt) = getByHead(rest)
-        //                  val (children, _) = getByHead(restt)
+//        val (children, _) = getByHead(restt)
         map.put(-id, (text, parents.map(-_).toArray))
       } else if (unknown == 0) {
         val (parents, restt) = getByHead(rest)
@@ -49,10 +49,10 @@ object CategoryTreeTool extends App {
 
   def pr(id: Int, sp: Int, maxDepth: Int): Unit = if (maxDepth >= sp) {
     for ((t, ch) <- map.get(id)) {
-      println("|>" + (0 to sp).map(v => "-").mkString + t)
+      println("|>" + (0 to sp).map(v => "*").mkString + t)
       for (c <- ch) pr(c, sp + 1, maxDepth)
     }
   }
 
-  pr(3, 0, 2)
+  pr(-3, 0, 2)
 }

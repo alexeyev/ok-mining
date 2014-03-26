@@ -1,8 +1,8 @@
 package ru.stachek66.okminer.ner
 
-import java.io.InputStream
+import java.io.{Closeable, InputStream}
 import org.apache.lucene.analysis.Analyzer
-import org.apache.lucene.analysis.standard.StandardAnalyzer
+import org.apache.lucene.analysis.ru.RussianAnalyzer
 import org.apache.lucene.document.{Field, TextField, Document}
 import org.apache.lucene.index._
 import org.apache.lucene.queryparser.classic.QueryParser
@@ -11,7 +11,6 @@ import org.apache.lucene.search.{TopScoreDocCollector, IndexSearcher}
 import org.apache.lucene.store.RAMDirectory
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
-import org.apache.commons.io.IOUtils
 
 /**
  * Searching companies' names.
@@ -28,28 +27,28 @@ class Searcher {
     iw.addDocument(doc)
   }
 
-  private val analyzer: Analyzer = new StandardAnalyzer(Meta.luceneVersion)
-  private val index = new RAMDirectory()
-  private val config = new IndexWriterConfig(Meta.luceneVersion, analyzer)
+  private val index = new RAMIndex
   private val log = LoggerFactory.getLogger("company-searcher-experimental")
 
   private def fillIndex(sources: Iterable[InputStream]) {
     log.info("Filling companies' index...")
-    val iw = new IndexWriter(index, config)
-    for (stream <- sources) {
-      io.Source.fromInputStream(stream).getLines().
-        foreach {
-        line =>
-          addToIndex(iw, line.trim)
-      }
+    val iw = index.withWriter {
+      iw =>
+        for (stream <- sources) {
+          io.Source.fromInputStream(stream).getLines().
+            foreach {
+            line =>
+              addToIndex(iw, line.trim)
+          }
+        }
     }
-    iw.close()
     log.info("Done.")
   }
 
   fillIndex(Iterable(
-    classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv"),
-    classOf[ClassLoader].getResourceAsStream("/crunchbase-companies.tsv")))
+    //    classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv")//,
+    classOf[ClassLoader].getResourceAsStream("/crunchbase-companies.tsv")
+  ))
 
   def fuzzyFind(freeTextQuery: String, maxEditDistance: Int): Iterable[(Float, Document)] = {
 
@@ -70,23 +69,22 @@ class Searcher {
      *  query term. Edit distances specified in this way may not be fractional.
      */
     val fq =
-      new SlowFuzzyQuery(
-        new Term(companyField, freeTextQuery),
-        maxEditDistance)
+      new SlowFuzzyQuery(new Term(companyField, freeTextQuery), maxEditDistance)
 
-    val reader = IndexReader.open(index)
-    val searcher = new IndexSearcher(reader)
-
-    val collector = TopScoreDocCollector.create(10, true)
-    searcher.search(fq, collector)
-    val hits =
-      collector.topDocs().
-        scoreDocs.toIterable.
-        map(
-        document =>
-          (document.score, searcher.doc(document.doc))
-      )
-    hits.toIterable
+    index.withSearcher {
+      searcher => {
+        val collector = TopScoreDocCollector.create(10, true)
+        searcher.search(fq, collector)
+        val hits =
+          collector.topDocs().
+            scoreDocs.toIterable.
+            map(
+            document =>
+              (document.score, searcher.doc(document.doc))
+          )
+        hits.toIterable
+      }
+    }
   }
 
   /**
@@ -94,23 +92,26 @@ class Searcher {
    */
   def magicFind(freeTextQuery: String, relevanceThreshold: Float): Iterable[(Float, Document)] = {
 
-    val reader = IndexReader.open(index)
-    val searcher = new IndexSearcher(reader)
-    val qp = new QueryParser(Meta.luceneVersion, companyField, analyzer)
+    index.withSearcher {
+      searcher => {
 
-    val collector = TopScoreDocCollector.create(1000, true)
-    searcher.search(qp.parse(freeTextQuery), collector)
-    val hits =
-      collector.topDocs().
-        scoreDocs.toIterable.
-        map(
-        document =>
-          (document.score, searcher.doc(document.doc))
-      ).filter(
-        _._1 > relevanceThreshold
-      )
-    if (!hits.isEmpty)
-      log.debug(hits.toIterable.toString())
-    hits.toIterable
+        val qp = new QueryParser(Meta.luceneVersion, companyField, index.analyzer)
+
+        val collector = TopScoreDocCollector.create(1000, true)
+        searcher.search(qp.parse(freeTextQuery), collector)
+        val hits =
+          collector.topDocs().
+            scoreDocs.toIterable.
+            map(
+            document =>
+              (document.score, searcher.doc(document.doc))
+          ).filter(
+            _._1 > relevanceThreshold
+          )
+        if (!hits.isEmpty)
+          log.debug(hits.toIterable.toString())
+        hits.toIterable
+      }
+    }
   }
 }

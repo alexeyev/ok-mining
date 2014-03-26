@@ -18,6 +18,7 @@ object CorpusProcessorWriter {
 
   private val processor = new OneYearProcessor()
   private val yearPattern = "\\d{1,4}".r.pattern
+  private val clog = new CounterLogger(LoggerFactory.getLogger("corpus-global-processed"), 100, "%s files processed")
 
   /**
    * Writing the results of the whole corpus processing to the specified folder.
@@ -37,10 +38,10 @@ object CorpusProcessorWriter {
     } yield {
       // running in parallel
       scala.concurrent.future[Unit] {
-        val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 10, "%s files processed")
-        log.getLogger.info("Hello, world! I'm parsing " + directory.getName)
+        val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 1, "%s files processed")
+        log.getLogger.info("I'm parsing " + directory.getName)
         // carrying out the core task
-        val data = processor.extractFromYearDirectory(directory, Some(log))
+        val data = processor.extractFromYearDirectory(directory, List(log, clog))
         // writing everything down
         StatsFileIO.writeToFile(data, new File(s"${reportsDirectory.getAbsolutePath}/${directory.getName}.tsv"))
         log.getLogger.info("Done with it!")

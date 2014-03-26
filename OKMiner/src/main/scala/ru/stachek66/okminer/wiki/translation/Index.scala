@@ -5,12 +5,12 @@ import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.ru.RussianAnalyzer
 import org.apache.lucene.document.{Field, TextField, Document}
 import org.apache.lucene.index.{IndexReader, IndexWriterConfig, IndexWriter}
+import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.store.NIOFSDirectory
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
 import ru.stachek66.okminer.utils.CounterLogger
 import ru.stachek66.okminer.wiki._
-import scala.util.{Success, Failure, Try}
 
 
 class Index(mapFile: File = parsed("ru_en"), destDirectory: File = indices("ru_en")) {
@@ -33,44 +33,60 @@ class Index(mapFile: File = parsed("ru_en"), destDirectory: File = indices("ru_e
 
   private val indexDir = new NIOFSDirectory(destDirectory)
 
-  val index = Try {
-    IndexReader.open(indexDir)
-  } match {
-    case Failure(_) => {
-      log.info("Index not found.")
-      fillIndex(mapFile)
-      indexDir
+  private def openReader(attempts: Int = 3): IndexReader =
+    try {
+      IndexReader.open(indexDir)
+    } catch {
+      case e: Exception => {
+        log.info("Index not found.")
+        if (attempts <= 1) {
+          log.error("Can't refill or open index")
+          throw new Exception("Index corrupted")
+        }
+        log.info("Reattempting...")
+        fillIndex(mapFile)
+        openReader(attempts - 1)
+      }
+      case ir: IndexReader => {
+        log.info("Index found.")
+        ir
+      }
     }
-    case Success(_) => {
-      log.info("Index found.")
-      indexDir
-    }
+
+  private val (reader, writer, searcher) = {
+    val r = openReader()
+    (r,
+      new IndexWriter(indexDir, new IndexWriterConfig(Meta.luceneVersion, analyzer)),
+      new IndexSearcher(r))
+  }
+
+  def withSearcher[T](action: IndexSearcher => T): T = action(searcher)
+
+  def withWriter(action: IndexWriter => Unit) {
+    action(writer)
   }
 
   private def fillIndex(file: File) {
     log.info("Filling lang index...")
     log.info("Destination: " + indexDir.getDirectory)
 
-    val iw = new IndexWriter(indexDir, new IndexWriterConfig(Meta.luceneVersion, analyzer))
-    io.Source.fromFile(file).getLines().
-      foreach {
-      line => clog.execute {
-        val splitted = line.trim.split("\t")
-        addToIndex(iw, (splitted(0), splitted(1)))
+    withWriter {
+      iw => {
+        io.Source.fromFile(file).getLines().
+          foreach {
+          line => clog.execute {
+            val splitted = line.trim.split("\t")
+            addToIndex(iw, (splitted(0), splitted(1)))
+          }
+        }
+        iw.commit()
       }
     }
-    iw.commit()
-    iw.close()
     log.info("Done.")
   }
 }
 
 object Index {
-
-  //  val analyzer: Analyzer = new RussianAnalyzer(Meta.luceneVersion)
-  //  val config = new IndexWriterConfig(Meta.luceneVersion, analyzer)
-  //
-  //  println(config)
   def main(args: Array[String]) {
     new Index()
   }

@@ -1,12 +1,10 @@
 package ru.stachek66.okminer
 
 import java.io.File
-import java.util.Date
-import java.util.concurrent.TimeUnit
+import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.utils.{Conversions, StatsFileIO}
 import ru.stachek66.okminer.visualization.{Config, ChartPrinter, ChartGenerator, Model}
 import scala.collection.mutable.{Map => mMap}
-import org.slf4j.LoggerFactory
 
 /**
  * Drawing graphs by reports.
@@ -23,7 +21,9 @@ class GraphsTool(drawConfig: Config = Config()) {
    */
   def drawFromDirectory(src: File, dest: File) {
 
+    println("qu")
     log.info(s"From $src to $dest")
+    println("qu")
 
     src.mkdirs
     dest.mkdirs
@@ -40,7 +40,11 @@ class GraphsTool(drawConfig: Config = Config()) {
     }
 
     for {
-      file <- src.listFiles()
+      file <- {
+        val files = src.listFiles()
+        log.info(s"Dir $src contains ${files.size} files.")
+        files
+      }
       (triples, year) = StatsFileIO.readFromFile(file)
       (trend, company, count) <- triples
     } {
@@ -59,29 +63,16 @@ class GraphsTool(drawConfig: Config = Config()) {
       }
     } yield trend -> companiesMap
 
+    println("wow")
+
     filteredMegaMap.map {
       case (trend, map) => Model(trend, Conversions.toImmutable(map))
     } foreach {
       model => {
+        println("woww")
         val chart = ChartGenerator.buildChart(model)
         ChartPrinter.print(chart, new File(dest.getAbsolutePath + "/" + model.trend.replaceAll("\\s", "_") + ".png"))
       }
     }
   }
-}
-
-private object GraphDrawingTool extends App {
-
-  private val categories = List("media", "science")
-//
-//  {
-//    for (category <- categories) {
-//      val start = new Date()
-////      GraphsTool.drawFromDirectory(new File(s"../corpus-$category/results"), new File(s"../corpus-$category/graphs"))
-//      val end = new Date()
-//      val elapsed = TimeUnit.MINUTES.convert(end.getTime - start.getTime, TimeUnit.MILLISECONDS)
-//      println(s"Done in $elapsed seconds.")
-//    }
-//  }
-
 }
