@@ -47,6 +47,6 @@ object CorpusProcessorWriter {
       }
     }
     // waiting for 48 hours max
-    Await.ready(Future.sequence(tasks), Duration.create(2, TimeUnit.DAYS))
+    Await.ready(Future.sequence(tasks), Duration(2, TimeUnit.DAYS))
   }
 }

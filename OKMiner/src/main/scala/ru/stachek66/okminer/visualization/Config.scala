@@ -5,5 +5,5 @@ package ru.stachek66.okminer.visualization
  */
 case class Config(
                    yearsAppropriate: Set[Int] => Boolean =
-                   years => years.size > 1
+                   years => years.size > 0
                    )

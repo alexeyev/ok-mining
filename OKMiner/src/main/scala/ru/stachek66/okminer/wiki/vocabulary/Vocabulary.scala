@@ -6,6 +6,7 @@ import ru.stachek66.okminer.language.russian.Tokenizer
 import ru.stachek66.okminer.wiki.utils._
 import scala.collection.JavaConversions._
 import ru.stachek66.okminer.wiki.fetchers.WikiVisitor
+import ru.stachek66.okminer.utils.CounterLogger
 
 /**
  * All normalized words that are allowed to be analyzed.
@@ -15,7 +16,8 @@ import ru.stachek66.okminer.wiki.fetchers.WikiVisitor
 object Vocabulary {
 
   private val log = LoggerFactory.getLogger("voc")
-  private lazy val vocAsTxtFile = new File("parsed/vocabulary.txt")
+  private val clog = new CounterLogger(log, 10000, "%s items processed")
+  private lazy val vocAsTxtFile = ru.stachek66.okminer.wiki.parsed("voc")
 
   lazy val normalizedWords: Set[String] = {
     if (vocAsTxtFile.exists() && io.Source.fromFile(vocAsTxtFile).getLines().nonEmpty) getFromTxt
@@ -33,7 +35,7 @@ object Vocabulary {
 
     val numberPattern = "\\d+".r.pattern
     val voc = collection.mutable.Set[String]()
-    new WikiVisitor().visit(
+    new WikiVisitor(clog).visit(
       page =>
         if (Helper.isCoolPage(page)) {
           for {
@@ -44,6 +46,7 @@ object Vocabulary {
           }
         }
     )
+    flush()
     voc.toSet
   }
 

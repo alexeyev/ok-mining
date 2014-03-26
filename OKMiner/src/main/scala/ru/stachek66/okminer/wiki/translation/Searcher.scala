@@ -22,6 +22,9 @@ object Searcher {
 
   def search(freeTextQuery: String, threshold: Option[Float] = None): Iterable[(Float, RuEn)] = {
     val collector = TopScoreDocCollector.create(10000, true)
+    if (freeTextQuery == null) {
+      println("HELLO I AM NULL LOL")
+    }
     searcher.search(qp.parse(freeTextQuery), collector)
     for {
       scoreDoc <- collector.topDocs().scoreDocs.toIterable

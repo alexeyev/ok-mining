@@ -93,7 +93,6 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Laplac
 
     log.debug("Duples:\n" + translation.mkString("\n"))
 
-    //todo: rewrite
     (translation.map {
       case (score, terms, Some((ruArticle, enArticle))) =>
         log.debug(List(score, terms, Some((ruArticle, enArticle))).mkString(","))

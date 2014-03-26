@@ -25,12 +25,12 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
   private def extractFromFile(file: File): Iterable[(Trend, Company, Int)] = {
     log.debug(file.getName)
     val description = FileUtils.asStringWithoutNewLines(file)
-//    val fTrends = future(trendsMiner.extractTrends(description)) //(ru.stachek66.okminer.Meta.singleContext)
-//    val fCompanies = future(ner.extractAllCompanies(description)) //(ru.stachek66.okminer.Meta.singleContext)
-//    val List(trends, companies) =
-//      Await.result(
-//        Future.sequence(List(fTrends, fCompanies)),
-//        Duration(12, TimeUnit.HOURS))
+    //    val fTrends = future(trendsMiner.extractTrends(description)) //(ru.stachek66.okminer.Meta.singleContext)
+    //    val fCompanies = future(ner.extractAllCompanies(description)) //(ru.stachek66.okminer.Meta.singleContext)
+    //    val List(trends, companies) =
+    //      Await.result(
+    //        Future.sequence(List(fTrends, fCompanies)),
+    //        Duration(12, TimeUnit.HOURS))
     val trends = trendsMiner.extractTrends(description)
     val companies = ner.extractAllCompanies(description)
     val allPairs = for {
@@ -70,65 +70,11 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
         files.map(safeExtract(_))
       ),
       Duration(2, TimeUnit.DAYS)
-    )
-      .flatten.
+    ).flatten.
       groupBy {
       case (trend, company, count) => (trend, company)
     } map {
       case ((trend, company), triples) => (trend, company, triples.map(_._3).sum)
     }
   }
-
-
-  //    def main(args: Array[String]) {
-  //      if (args.size < 2) {
-  //        log.error("Please provide 2 arguments: source and destination; %d args provided".format(args.size))
-  //      } else {
-  //        val source = new File(args(0))
-  //        val destination = new File(args(1))
-  //        if (!source.exists()) {
-  //          log.error("Please provide existing source file/directory.")
-  //        } else {
-  //          val extracted = extractFromYearDirectory(source)
-  //          destination.getParentFile.mkdirs()
-  //          StatsFileIO.writeToFile(extracted, destination)
-  //        }
-  //      }
-  //    }
-}
-
-private object DefaultRunner extends App {
-
-  private val categories = List("media", "science")
-
-    val f1 = future {
-      Thread.sleep(10000)
-      1
-    } (ru.stachek66.okminer.Meta.singleContext)
-
-  List(f1,f1,f1).foreach(f =>
-    println(Await.result(f, Duration(12, TimeUnit.SECONDS))))
-  //
-  //  val f2 = future {
-  //    Thread.sleep(20000)
-  //    2
-  //  } (ru.stachek66.okminer.Meta.singleContext)
-  //
-  //  val a = for {
-  //    f <- f1
-  //  } yield f
-  //
-  //  print(a)
-
-
-  //  for {
-  //    category <- categories
-  //    year <- 1999 to 2014
-  //  } Try {
-  //    val start = new Date()
-  //    //    CompaniesTrendsExtractor.main(Array(s"../corpus-$category/clean/$year/", s"../corpus-$category/results/$year.tsv"))
-  //    val end = new Date()
-  //    val elapsed = TimeUnit.SECONDS.convert(end.getTime - start.getTime, TimeUnit.MILLISECONDS)
-  //    println(s"Done in $elapsed seconds.")
-  //  }
 }

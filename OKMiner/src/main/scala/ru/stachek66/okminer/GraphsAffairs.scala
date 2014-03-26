@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit
 import ru.stachek66.okminer.utils.{Conversions, StatsFileIO}
 import ru.stachek66.okminer.visualization.{Config, ChartPrinter, ChartGenerator, Model}
 import scala.collection.mutable.{Map => mMap}
+import org.slf4j.LoggerFactory
 
 /**
  * Drawing graphs by reports.
@@ -13,12 +14,16 @@ import scala.collection.mutable.{Map => mMap}
  */
 class GraphsTool(drawConfig: Config = Config()) {
 
+  private val log = LoggerFactory.getLogger("graphs-drawing")
+
   /**
    * Drawing graphs by *.tsv reports from one directory and storing them at another one
    * @param src source directory
    * @param dest destination directory
    */
   def drawFromDirectory(src: File, dest: File) {
+
+    log.info(s"From $src to $dest")
 
     src.mkdirs
     dest.mkdirs
@@ -68,15 +73,15 @@ class GraphsTool(drawConfig: Config = Config()) {
 private object GraphDrawingTool extends App {
 
   private val categories = List("media", "science")
-
-  {
-    for (category <- categories) {
-      val start = new Date()
-//      GraphsTool.drawFromDirectory(new File(s"../corpus-$category/results"), new File(s"../corpus-$category/graphs"))
-      val end = new Date()
-      val elapsed = TimeUnit.MINUTES.convert(end.getTime - start.getTime, TimeUnit.MILLISECONDS)
-      println(s"Done in $elapsed seconds.")
-    }
-  }
+//
+//  {
+//    for (category <- categories) {
+//      val start = new Date()
+////      GraphsTool.drawFromDirectory(new File(s"../corpus-$category/results"), new File(s"../corpus-$category/graphs"))
+//      val end = new Date()
+//      val elapsed = TimeUnit.MINUTES.convert(end.getTime - start.getTime, TimeUnit.MILLISECONDS)
+//      println(s"Done in $elapsed seconds.")
+//    }
+//  }
 
 }

@@ -7,7 +7,7 @@ import scala.swing.{Dialog, FileChooser, Label, Button}
 
 /**
  * Class for assistance with building GUI.
- * Implements common patterns of choosing a directory.
+ * Implements common interaction patterns for choosing a directory.
  * @author alexeyev
  */
 private[gui] case class ImportantDirectory(button: Button,

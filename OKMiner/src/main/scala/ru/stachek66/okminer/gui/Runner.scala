@@ -97,7 +97,7 @@ object Runner extends SimpleSwingApplication {
           case Failure(e) =>
             Dialog.showMessage(
               button, "Something went wrong while building reports: " + e.getMessage, "Error", Dialog.Message.Error)
-            log.error("Please fix me", e)
+            log.debug("Please fix me", e)
         }
       case ButtonClicked(button) if button.equals(graphsButton) =>
         Try {
@@ -107,7 +107,7 @@ object Runner extends SimpleSwingApplication {
             Dialog.showMessage(button, "Graphs flushing done!", "Message", Dialog.Message.Info)
           case Failure(e) =>
             Dialog.showMessage(button, "Something went wrong while drawing graphs: " + e.getMessage, "Error", Dialog.Message.Error)
-            log.error("Please fix me",e)
+            log.debug("Please fix me",e)
         }
     }
   }

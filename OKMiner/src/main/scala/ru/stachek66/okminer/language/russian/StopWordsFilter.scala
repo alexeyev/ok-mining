@@ -12,7 +12,9 @@ package ru.stachek66.okminer.language.russian
 object StopWordsFilter {
 
   private lazy val stopList: Set[String] =
-    io.Source.fromFile("tools/stopwords.txt").getLines().map {
+    io.Source.fromInputStream(
+      classOf[ClassLoader].getResourceAsStream("/stopwords.txt")
+    ).getLines().map {
       line =>
         line.split("\\|")(0).trim
     }.toSet
@@ -22,6 +24,6 @@ object StopWordsFilter {
 
   def filter(words: Iterable[String]): Iterable[String] = {
     words.map(_.replace("ё", "е")).
-      filter(word => word.length > 2 &&  !word.matches("\\d+") && !stopList.contains(word))
+      filter(word => word.length > 2 && !word.matches("\\d+") && !stopList.contains(word))
   }
 }
