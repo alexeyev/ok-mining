@@ -23,19 +23,6 @@ class Index extends IndexHolder {
     new NIOFSDirectory(path)
   }
 
-//  val index = Try {
-//    IndexReader.open(indexDir)
-//  } match {
-//    case Failure(_) => {
-//      doIndex()
-//      indexDir
-//    }
-//    case Success(_) => {
-//      log.info("Index found")
-//      indexDir
-//    }
-//  }
-
   private def addToIndex(iw: IndexWriter, title: String, text: String) {
     val doc = new Document()
     doc.add(new TextField(IndexProperties.titleField, title, Field.Store.YES))
@@ -65,6 +52,6 @@ class Index extends IndexHolder {
 
 object Index {
   def main(args: Array[String]) {
-    new Index()
+    new Index().doIndex()
   }
 }

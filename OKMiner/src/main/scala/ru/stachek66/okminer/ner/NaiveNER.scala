@@ -11,7 +11,7 @@ import ru.stachek66.okminer.utils.FileUtils
  */
 class NaiveNER(searcher: Searcher) extends NER {
 
-  private val log = LoggerFactory.getLogger("testing-ner")
+  private val log = LoggerFactory.getLogger("ner")
 
   def extractAllCompanies(sourceText: String): Set[String] = {
 
@@ -36,11 +36,12 @@ class NaiveNER(searcher: Searcher) extends NER {
         if res.nonEmpty
       } yield {
         log.debug(d + " ~> " + res.head)
-        res.head._2.getField(searcher.companyField).stringValue()
+        res.head._2.getField(IndexProperties.companyField).stringValue()
       }
     } toSet
 
     log.debug("1-token search")
+    println(tokens)
 
     val companiesFromTokens = {
       for {
@@ -49,9 +50,11 @@ class NaiveNER(searcher: Searcher) extends NER {
         if res.nonEmpty
       } yield {
         log.debug(t + " -> " + res.toString())
-        res.head._2.getField(searcher.companyField).stringValue()
+        res.head._2.getField(IndexProperties.companyField).stringValue()
       }
     } toSet
+
+    log.debug("" + companiesFromDuples + " " + companiesFromTokens)
 
     companiesFromDuples ++ companiesFromTokens
   }

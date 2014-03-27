@@ -23,7 +23,6 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
   private val clog = new CounterLogger(log, 5, "%s files processed")
 
   private def extractFromFile(file: File): Iterable[(Trend, Company, Int)] = {
-    log.info(file.getName)
     val description = FileUtils.asStringWithoutNewLines(file)
     //    val fTrends = future(trendsMiner.extractTrends(description)) //(ru.stachek66.okminer.Meta.singleContext)
     //    val fCompanies = future(ner.extractAllCompanies(description)) //(ru.stachek66.okminer.Meta.singleContext)
@@ -37,6 +36,7 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
       trend <- trends
       company <- companies
     } yield (trend.trim, company.trim)
+    log.info(s"File ${file.getName} : ${trends.size} trends, ${companies.size} companies")
     allPairs.groupBy(pair => pair).map {
       case ((trend, company), group) => (trend, company, group.size)
     }

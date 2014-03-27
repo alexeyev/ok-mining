@@ -53,17 +53,17 @@ class Index(mapFile: File = parsed("ru_en"), destDirectory: File = indices("ru_e
       }
     }
 
-  private val (reader, writer, searcher) = {
+  private val searcher = {
     val r = openReader()
-    (r,
-      new IndexWriter(indexDir, new IndexWriterConfig(Meta.luceneVersion, analyzer)),
-      new IndexSearcher(r))
+    new IndexSearcher(r)
   }
 
   def withSearcher[T](action: IndexSearcher => T): T = action(searcher)
 
   def withWriter(action: IndexWriter => Unit) {
+    val writer = new IndexWriter(indexDir, new IndexWriterConfig(Meta.luceneVersion, analyzer))
     action(writer)
+    writer.close()
   }
 
   private def fillIndex(file: File) {

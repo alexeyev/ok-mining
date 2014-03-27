@@ -38,7 +38,6 @@ class Searcher(index: Index) {
 
   def buildQuery(keyphrase: String) = {
     val pq = new PhraseQuery()
-    //bug: tokenizer must not do stemming
     val splitted = Tokenizer.tokenize(keyphrase)
     log.debug("Query: [%s]".format(splitted.mkString(" ")))
     for (t <- splitted) {
@@ -73,11 +72,11 @@ class Searcher(index: Index) {
     res.map(_._2)
   }
 
-//  def main(args: Array[String]) {
-//    println(tryPhrase("облачное хранилище"))
-//    println(tryPhrase("облачное вычисления"))
-//    println(tryPhrase("интернет вещица"))
-//    println(tryPhrase("интернет вещей"))
-//    println(tryPhrase("смартфон "))
-//  }
+  def main(args: Array[String]) {
+    println(tryPhrase("облачное хранилище"))
+    println(tryPhrase("облачное вычисления"))
+    println(tryPhrase("интернет вещица"))
+    println(tryPhrase("интернет вещей"))
+    println(tryPhrase("смартфон "))
+  }
 }

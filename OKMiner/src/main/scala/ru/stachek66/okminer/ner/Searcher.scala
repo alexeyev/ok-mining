@@ -1,14 +1,10 @@
 package ru.stachek66.okminer.ner
 
-import java.io.{Closeable, InputStream}
-import org.apache.lucene.analysis.Analyzer
-import org.apache.lucene.analysis.ru.RussianAnalyzer
 import org.apache.lucene.document.{Field, TextField, Document}
 import org.apache.lucene.index._
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.sandbox.queries.SlowFuzzyQuery
-import org.apache.lucene.search.{TopScoreDocCollector, IndexSearcher}
-import org.apache.lucene.store.RAMDirectory
+import org.apache.lucene.search.TopScoreDocCollector
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
 
@@ -19,37 +15,15 @@ import ru.stachek66.okminer.Meta
  */
 class Searcher {
 
-  val companyField = "name"
-
-  private def addToIndex(iw: IndexWriter, company: String) {
-    val doc = new Document()
-    doc.add(new TextField(companyField, company, Field.Store.YES))
-    iw.addDocument(doc)
-  }
-
-  private val index = new RAMIndex
+  private val index = new RAMIndex(
+    Iterable(
+      classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv"),
+      classOf[ClassLoader].getResourceAsStream("/crunchbase-companies.tsv")
+    )
+  )
   private val log = LoggerFactory.getLogger("company-searcher-experimental")
 
-  private def fillIndex(sources: Iterable[InputStream]) {
-    log.info("Filling companies' index...")
-    val iw = index.withWriter {
-      iw =>
-        for (stream <- sources) {
-          io.Source.fromInputStream(stream).getLines().
-            foreach {
-            line =>
-              addToIndex(iw, line.trim)
-          }
-        }
-    }
-    log.info("Done.")
-  }
-
-  fillIndex(Iterable(
-    //    classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv")//,
-    classOf[ClassLoader].getResourceAsStream("/crunchbase-companies.tsv")
-  ))
-
+  @deprecated
   def fuzzyFind(freeTextQuery: String, maxEditDistance: Int): Iterable[(Float, Document)] = {
 
     /*
@@ -69,7 +43,7 @@ class Searcher {
      *  query term. Edit distances specified in this way may not be fractional.
      */
     val fq =
-      new SlowFuzzyQuery(new Term(companyField, freeTextQuery), maxEditDistance)
+      new SlowFuzzyQuery(new Term(IndexProperties.companyField, freeTextQuery), maxEditDistance)
 
     index.withSearcher {
       searcher => {
@@ -95,7 +69,7 @@ class Searcher {
     index.withSearcher {
       searcher => {
 
-        val qp = new QueryParser(Meta.luceneVersion, companyField, index.analyzer)
+        val qp = new QueryParser(Meta.luceneVersion, IndexProperties.companyField, index.analyzer)
 
         val collector = TopScoreDocCollector.create(1000, true)
         searcher.search(qp.parse(freeTextQuery), collector)
