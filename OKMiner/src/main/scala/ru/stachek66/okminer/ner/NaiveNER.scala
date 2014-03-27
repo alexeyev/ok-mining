@@ -41,7 +41,6 @@ class NaiveNER(searcher: Searcher) extends NER {
     } toSet
 
     log.debug("1-token search")
-    println(tokens)
 
     val companiesFromTokens = {
       for {

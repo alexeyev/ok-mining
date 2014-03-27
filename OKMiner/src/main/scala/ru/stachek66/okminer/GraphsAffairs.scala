@@ -21,9 +21,7 @@ class GraphsTool(drawConfig: Config = Config()) {
    */
   def drawFromDirectory(src: File, dest: File) {
 
-    println("qu")
     log.info(s"From $src to $dest")
-    println("qu")
 
     src.mkdirs
     dest.mkdirs
@@ -63,13 +61,10 @@ class GraphsTool(drawConfig: Config = Config()) {
       }
     } yield trend -> companiesMap
 
-    println("wow")
-
     filteredMegaMap.map {
       case (trend, map) => Model(trend, Conversions.toImmutable(map))
     } foreach {
       model => {
-        println("woww")
         val chart = ChartGenerator.buildChart(model)
         ChartPrinter.print(chart, new File(dest.getAbsolutePath + "/" + model.trend.replaceAll("\\s", "_") + ".png"))
       }

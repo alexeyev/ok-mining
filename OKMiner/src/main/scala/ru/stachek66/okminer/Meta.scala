@@ -12,15 +12,8 @@ import scala.concurrent.duration.Duration
  */
 object Meta {
 
-  private val log = LoggerFactory.getLogger("main")
-
   val luceneVersion = Version.LUCENE_46
 
-  //  lazy val executorService = {
-  //    val numberOfThreads = 4
-  //    log.info(s"Using ${numberOfThreads} threads")
-  //    ExecutionContext.Implicits.global
-  //  }
   implicit lazy val singleContext = ExecutionContext.Implicits.global //ExecutionContext.fromExecutorService(executorService)
 
   val maxDuration = Duration(48, TimeUnit.HOURS)

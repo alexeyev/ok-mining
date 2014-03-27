@@ -11,7 +11,7 @@ import scala.util._
  */
 object Runner extends SimpleSwingApplication {
 
-  private val log = LoggerFactory.getLogger("logger-factory")
+  private val log = LoggerFactory.getLogger("gui-logger")
 
   def top = new MainFrame() {
 
@@ -107,7 +107,7 @@ object Runner extends SimpleSwingApplication {
             Dialog.showMessage(button, "Graphs flushing done!", "Message", Dialog.Message.Info)
           case Failure(e) =>
             Dialog.showMessage(button, "Something went wrong while drawing graphs: " + e.getMessage, "Error", Dialog.Message.Error)
-            log.info("Please fix me",e)
+            log.debug("Please fix me",e)
         }
     }
   }
