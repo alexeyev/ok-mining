@@ -1,0 +1,21 @@
+<configuration>
+
+    <appender name="TFA" class="ru.stachek66.okminer.gui.utils.TextFieldAppender2">
+        <!--<file>myApp.log</file>-->
+        <encoder>
+            <pattern>%logger{5} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="TFA" />
+    </root>
+
+</configuration>

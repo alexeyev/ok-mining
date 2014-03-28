@@ -1,9 +1,12 @@
 package ru.stachek66.okminer.gui
 
 import org.slf4j.LoggerFactory
-import scala.swing._
+import swing._
 import scala.swing.event.ButtonClicked
-import scala.util._
+import util.Success
+import util.Failure
+import utils.LogTextArea
+import ru.stachek66.okminer.Meta.singleContext
 
 /**
  * The GUI entry point of the application.
@@ -44,35 +47,45 @@ object Runner extends SimpleSwingApplication {
       this.text = "Draw!"
     }
 
+    val logsArea = LogTextArea
+
     val defaultPosition = BorderPanel.Position.Center
 
-    contents = new BoxPanel(Orientation.Vertical) {
-      contents ++=
-        (corpusDirectory.getComponents ++ destDirectory.getComponents).map {
-          case component =>
-            new BorderPanel {
-              add(component, defaultPosition)
-            }
-        }
-      contents += new BorderPanel {
-        add(new Label {
-          this.text = "Reports:"
-        }, defaultPosition)
-      }
-      contents += new BorderPanel {
-        add(reportsButton, defaultPosition)
-      }
-      contents += new BorderPanel {
-        add(new Label {
-          this.text = "Graphs:"
-        }, defaultPosition)
-      }
-      contents += new BorderPanel {
-        add(graphsButton, defaultPosition)
-      }
-      border = Swing.EmptyBorder(20, 20, 20, 20)
-    }
+    contents = new GridPanel(1, 2) {
+      contents += new BoxPanel(Orientation.Vertical) {
 
+        contents ++=
+          (corpusDirectory.getComponents ++ destDirectory.getComponents).map {
+            case component =>
+              new BorderPanel {
+                add(component, defaultPosition)
+              }
+          }
+        contents += new BorderPanel {
+          add(new Label {
+            this.text = "Reports:"
+          }, defaultPosition)
+        }
+        contents += new BorderPanel {
+          add(reportsButton, defaultPosition)
+        }
+        contents += new BorderPanel {
+          add(new Label {
+            this.text = "Graphs:"
+          }, defaultPosition)
+        }
+        contents += new BorderPanel {
+          add(graphsButton, defaultPosition)
+        }
+        border = Swing.EmptyBorder(20, 20, 20, 20)
+      }
+      contents += new ScrollPane(
+        new BorderPanel {
+          add(logsArea, BorderPanel.Position.Center)
+        }) {
+        border = Swing.EmptyBorder(40, 20, 20, 20)
+      }
+    }
     // adding listeners
     listenTo(corpusDirectory.button)
     listenTo(destDirectory.button)
@@ -88,26 +101,33 @@ object Runner extends SimpleSwingApplication {
         if button.equals(destDirectory.button) => destDirectory.actOnClick()
 
       case ButtonClicked(button) if button.equals(reportsButton) =>
-        Try {
+        concurrent.future {
+          button.enabled = false
           DataProcessingTasks.buildReports(corpusDirectory.getFile, destDirectory.getFile)
-        } match {
-          case Success(_) =>
-            Dialog.showMessage(
-              button, "Reports building done!", "Message", Dialog.Message.Info)
+          button.enabled = true
+        } onComplete {
+          case Success(u) =>
+            Dialog.showMessage(button, "Reports building done!", "Message", Dialog.Message.Info)
           case Failure(e) =>
             Dialog.showMessage(
               button, "Something went wrong while building reports: " + e.getMessage, "Error", Dialog.Message.Error)
             log.debug("Please fix me", e)
+            button.enabled = true
         }
+
       case ButtonClicked(button) if button.equals(graphsButton) =>
-        Try {
+        concurrent.future {
+          button.enabled = false
           DataProcessingTasks.drawGraphs(destDirectory.getFile)
-        } match {
-          case Success(_) =>
-            Dialog.showMessage(button, "Graphs flushing done!", "Message", Dialog.Message.Info)
+          button.enabled = true
+        } onComplete {
           case Failure(e) =>
             Dialog.showMessage(button, "Something went wrong while drawing graphs: " + e.getMessage, "Error", Dialog.Message.Error)
-            log.debug("Please fix me",e)
+            log.debug("Please fix me", e)
+            button.enabled = true
+          case Success(_) =>
+            Dialog.showMessage(button, "Graphs flushing done!", "Message", Dialog.Message.Info)
+
         }
     }
   }

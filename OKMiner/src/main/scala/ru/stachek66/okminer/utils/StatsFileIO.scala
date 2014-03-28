@@ -1,6 +1,6 @@
 package ru.stachek66.okminer.utils
 
-import java.io.{FileWriter, File}
+import java.io._
 import org.slf4j.LoggerFactory
 
 /**
@@ -17,7 +17,7 @@ object StatsFileIO {
   private val log = LoggerFactory.getLogger("tsv-converter")
 
   def writeToFile(data: Iterable[(Trend, Company, Int)], file: File) {
-    val fw = new FileWriter(file)
+    val fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))
     data.toSeq.sortBy(_._2).foreach {
       case (trend, company, count) => {
         val line = "%s\t%s\t%s".format(company, trend, count)
@@ -35,6 +35,6 @@ object StatsFileIO {
       val splitted = line.trim.split("\t")
       (splitted(1), splitted(0), splitted(2).toInt)
     }
-    (triples,year)
+    (triples, year)
   }
 }
