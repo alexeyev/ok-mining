@@ -9,9 +9,9 @@ import java.io.File
 object FileUtils {
 
   def asStringWithoutNewLines(file: File) =
-    io.Source.fromFile(file).getLines().mkString(" ")
+    io.Source.fromFile(file)("UTF-8").getLines().mkString(" ")
 
   def asString(file: File) =
-    io.Source.fromFile(file).getLines().mkString("\n")
+    io.Source.fromFile(file)("UTF-8").getLines().mkString("\n")
 
 }

@@ -66,7 +66,7 @@ class GraphsTool(drawConfig: Config = Config()) {
     } foreach {
       model => {
         val chart = ChartGenerator.buildChart(model)
-        ChartPrinter.print(chart, new File(dest.getAbsolutePath + "/" + model.trend.replaceAll("\\s", "_") + ".png"))
+        ChartPrinter.print(chart, new File(dest.getAbsolutePath + "/" + model.trend.replaceAll("[\\s\\.\\(\\)]", "_") + ".png"))
       }
     }
   }

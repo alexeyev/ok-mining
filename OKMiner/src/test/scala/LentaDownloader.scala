@@ -31,7 +31,7 @@ object LentaDownloader extends App {
   }
 
   for {
-    line <- io.Source.fromFile("/home/alexeyev/thesis/lenta-links-science-all3.txt").getLines()
+    line <- io.Source.fromFile("/home/alexeyev/thesis/lenta-links-science-all3.txt")("UTF-8").getLines()
     splitted = line.split("\t")
     rawUrl = splitted(0)
     rawDate = splitted(1).replace("/", ".")

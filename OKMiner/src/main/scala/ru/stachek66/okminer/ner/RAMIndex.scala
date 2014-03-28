@@ -32,7 +32,7 @@ class RAMIndex(sources: Iterable[InputStream]) extends Closeable {
     val iw = new IndexWriter(dir, config)
     log.info("Filling companies' index...")
     for (stream <- sources) {
-      io.Source.fromInputStream(stream).getLines().
+      io.Source.fromInputStream(stream)("UTF-8").getLines().
         foreach {
         line =>
           addToIndex(iw, line.trim)

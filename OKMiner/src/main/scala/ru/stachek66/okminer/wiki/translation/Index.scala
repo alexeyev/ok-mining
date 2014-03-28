@@ -72,7 +72,7 @@ class Index(mapFile: File = parsed("ru_en"), destDirectory: File = indices("ru_e
 
     withWriter {
       iw => {
-        io.Source.fromFile(file).getLines().
+        io.Source.fromFile(file)("UTF-8").getLines().
           foreach {
           line => clog.execute {
             val splitted = line.trim.split("\t")

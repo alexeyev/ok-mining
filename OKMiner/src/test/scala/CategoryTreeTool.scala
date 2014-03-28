@@ -17,7 +17,7 @@ object CategoryTreeTool extends App {
 
   var counter = 0
   for {
-    line <- io.Source.fromFile("wikiGraph.txt").getLines()
+    line <- io.Source.fromFile("wikiGraph.txt")("UTF-8").getLines()
   //    if counter < 5000000
   } clog.execute {
     counter += 1

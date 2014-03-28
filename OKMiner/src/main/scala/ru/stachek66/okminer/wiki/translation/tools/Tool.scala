@@ -55,7 +55,7 @@ object Tool extends App {
   log.info("Sorting...")
 
   val sortedFW = new FileWriter("parsed/ru-en-sorted.tsv")
-  io.Source.fromFile(new File("parsed/ru-en-titles.tsv")).getLines().toSet[String].foreach {
+  io.Source.fromFile(new File("parsed/ru-en-titles.tsv"))("UTF-8").getLines().toSet[String].foreach {
     case line => sortedFW.write(line.trim + "\n")
   }
   sortedFW.close()

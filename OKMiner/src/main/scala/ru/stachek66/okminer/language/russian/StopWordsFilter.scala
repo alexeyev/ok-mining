@@ -14,7 +14,7 @@ object StopWordsFilter {
   private lazy val stopList: Set[String] =
     io.Source.fromInputStream(
       classOf[ClassLoader].getResourceAsStream("/stopwords.txt")
-    ).getLines().map {
+    )("UTF-8").getLines().map {
       line =>
         line.split("\\|")(0).trim
     }.toSet

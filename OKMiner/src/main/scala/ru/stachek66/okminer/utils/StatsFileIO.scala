@@ -31,7 +31,7 @@ object StatsFileIO {
   def readFromFile(file: File): (Iterable[(Trend, Company, Int)], Year) = {
     val year = file.getName.replaceAll("\\.tsv", "").toInt
 
-    val triples = for (line <- io.Source.fromFile(file).getLines().toIterable) yield {
+    val triples = for (line <- io.Source.fromFile(file)("UTF-8").getLines().toIterable) yield {
       val splitted = line.trim.split("\t")
       (splitted(1), splitted(0), splitted(2).toInt)
     }
