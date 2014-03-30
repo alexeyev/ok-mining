@@ -1,15 +1,12 @@
 package ru.stachek66.okminer.ner
 
-import org.apache.lucene.document.{Field, TextField, Document}
+import org.apache.lucene.document.Document
 import org.apache.lucene.index._
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.sandbox.queries.SlowFuzzyQuery
 import org.apache.lucene.search._
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
-import org.apache.lucene.analysis.ru.RussianLetterTokenizer
-import org.apache.lucene.analysis.standard.StandardTokenizer
-import java.io.StringReader
 
 /**
  * Searching companies' names.
@@ -20,7 +17,7 @@ class Searcher {
 
   private val index = new RAMIndex(
     Iterable(
-//      classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv"),
+      classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv"),
       classOf[ClassLoader].getResourceAsStream("/crunchbase-companies.tsv")
     )
   )
@@ -67,6 +64,7 @@ class Searcher {
   /**
    * Exact match
    */
+  @deprecated // since March; should use strict match
   def magicFind(freeTextQuery: String, relevanceThreshold: Float): Iterable[(Float, Document)] = {
 
     index.withSearcher {
@@ -102,7 +100,7 @@ class Searcher {
     index.withSearcher {
       searcher => {
         val qp = new QueryParser(Meta.luceneVersion, IndexProperties.companyField, index.analyzer)
-        val q = qp.createMinShouldMatchQuery(IndexProperties.companyField, freeTextQuery, 1)
+        val q = qp.createMinShouldMatchQuery(IndexProperties.companyField, freeTextQuery, 1.0)
         val collector = TopScoreDocCollector.create(10000, true)
         //        println("query ->" + freeTextQuery)
         if (q == null) {
@@ -119,10 +117,7 @@ class Searcher {
               }
             ).filter {
               case (score, doc) => {
-                val b = doc.getValues(IndexProperties.companyField).head.split("[\\s'-\\.,:;!\\?]").size == terms.size
-                if (b) println(freeTextQuery, terms.toList, doc.getValues("name").toList.head)
-
-                b
+                doc.getValues(IndexProperties.companyField).head.split("[\\s'-\\.,:;!\\?]").size == terms.size
               }
             }
           if (!hits.isEmpty)

@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.language.russian.{StopWordsFilter, Lexer}
 
 /**
- * NER tool. To extract all known companies from a text,
+ * NER Lucene tool. To extract all known companies from a text,
  * call "extractAllCompanies".
  * @author alexeyev
  */
