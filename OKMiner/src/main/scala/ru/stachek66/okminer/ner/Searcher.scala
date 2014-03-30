@@ -7,6 +7,9 @@ import org.apache.lucene.sandbox.queries.SlowFuzzyQuery
 import org.apache.lucene.search._
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
+import org.apache.lucene.analysis.ru.RussianLetterTokenizer
+import org.apache.lucene.analysis.standard.StandardTokenizer
+import java.io.StringReader
 
 /**
  * Searching companies' names.
@@ -17,7 +20,7 @@ class Searcher {
 
   private val index = new RAMIndex(
     Iterable(
-      classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv"),
+//      classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv"),
       classOf[ClassLoader].getResourceAsStream("/crunchbase-companies.tsv")
     )
   )
@@ -95,14 +98,13 @@ class Searcher {
   def strictFind(freeTextQuery: String): Iterable[(Float, Document)] = {
 
     val terms = freeTextQuery.split(" ")
-    def puttie(s:String) = s"lucenematch $s lucenematch"
 
     index.withSearcher {
       searcher => {
         val qp = new QueryParser(Meta.luceneVersion, IndexProperties.companyField, index.analyzer)
-        val q = qp.createMinShouldMatchQuery(IndexProperties.companyField, freeTextQuery, 0.999f)
+        val q = qp.createMinShouldMatchQuery(IndexProperties.companyField, freeTextQuery, 1)
         val collector = TopScoreDocCollector.create(10000, true)
-        println("query ->" + freeTextQuery)
+        //        println("query ->" + freeTextQuery)
         if (q == null) {
           log.error(s"query is null for freetext [$freeTextQuery]")
           Iterable.empty
@@ -116,8 +118,12 @@ class Searcher {
                 (document.score, searcher.doc(document.doc))
               }
             ).filter {
-              case (score, doc) =>
-                  doc.getValues(IndexProperties.companyField).head.split("\\s").size == terms.size
+              case (score, doc) => {
+                val b = doc.getValues(IndexProperties.companyField).head.split("[\\s'-\\.,:;!\\?]").size == terms.size
+                if (b) println(freeTextQuery, terms.toList, doc.getValues("name").toList.head)
+
+                b
+              }
             }
           if (!hits.isEmpty)
             log.debug(hits.toIterable.toString())

@@ -24,6 +24,6 @@ object StopWordsFilter {
 
   def filter(words: Iterable[String]): Iterable[String] = {
     words.map(_.replace("ё", "е")).
-      filter(word => word.length > 2 && !word.matches("\\d+") && !stopList.contains(word))
+      filter(word => word.length > 2 && !word.matches("\\d+") && !stopList.contains(word.toLowerCase))
   }
 }

@@ -2,7 +2,6 @@ package ru.stachek66.okminer.ner
 
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.language.russian.{StopWordsFilter, Lexer}
-import ru.stachek66.okminer.utils.FileUtils
 
 /**
  * NER tool. To extract all known companies from a text,
