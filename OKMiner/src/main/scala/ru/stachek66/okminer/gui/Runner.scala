@@ -7,6 +7,7 @@ import util.Success
 import util.Failure
 import utils.LogTextArea
 import ru.stachek66.okminer.Meta.singleContext
+import java.awt.GridBagConstraints
 
 /**
  * The GUI entry point of the application.
@@ -49,10 +50,20 @@ object Runner extends SimpleSwingApplication {
 
     val logsArea = LogTextArea
 
+    val scrollPane = new ScrollPane(
+      new BorderPanel {
+        add(logsArea, BorderPanel.Position.Center)
+      }) {
+      border = Swing.LineBorder(java.awt.Color.BLACK) //(40, 20, 20, 20, java.awt.Color.BLACK)
+
+
+    }
+
     val defaultPosition = BorderPanel.Position.Center
 
     contents = new GridPanel(1, 2) {
-      contents += new BoxPanel(Orientation.Vertical) {
+
+      val buttonsPanel = new BoxPanel(Orientation.Vertical) {
 
         contents ++=
           (corpusDirectory.getComponents ++ destDirectory.getComponents).map {
@@ -79,12 +90,9 @@ object Runner extends SimpleSwingApplication {
         }
         border = Swing.EmptyBorder(20, 20, 20, 20)
       }
-      contents += new ScrollPane(
-        new BorderPanel {
-          add(logsArea, BorderPanel.Position.Center)
-        }) {
-        border = Swing.EmptyBorder(40, 20, 20, 20)
-      }
+
+      contents += buttonsPanel
+      contents += scrollPane
     }
     // adding listeners
     listenTo(corpusDirectory.button)

@@ -32,7 +32,7 @@ class NaiveNER(searcher: Searcher) extends NER {
     val companiesFromDuples = {
       for {
         d <- duples
-        res = searcher.magicFind("%s %s".format(d._1, d._2), 5f)
+        res = searcher.strictFind("%s %s".format(d._1, d._2))
         if res.nonEmpty
       } yield {
         log.debug(d + " ~> " + res.head)
@@ -45,7 +45,7 @@ class NaiveNER(searcher: Searcher) extends NER {
     val companiesFromTokens = {
       for {
         t <- tokens
-        res = searcher.magicFind("%s".format(t), 8f)
+        res = searcher.strictFind("%s".format(t))
         if res.nonEmpty
       } yield {
         log.debug(t + " -> " + res.toString())

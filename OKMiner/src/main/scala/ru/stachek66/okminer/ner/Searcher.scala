@@ -4,7 +4,7 @@ import org.apache.lucene.document.{Field, TextField, Document}
 import org.apache.lucene.index._
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.sandbox.queries.SlowFuzzyQuery
-import org.apache.lucene.search.TopScoreDocCollector
+import org.apache.lucene.search._
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
 
@@ -88,4 +88,43 @@ class Searcher {
       }
     }
   }
+
+  /**
+   * Exact match
+   */
+  def strictFind(freeTextQuery: String): Iterable[(Float, Document)] = {
+
+    val terms = freeTextQuery.split(" ")
+    def puttie(s:String) = s"lucenematch $s lucenematch"
+
+    index.withSearcher {
+      searcher => {
+        val qp = new QueryParser(Meta.luceneVersion, IndexProperties.companyField, index.analyzer)
+        val q = qp.createMinShouldMatchQuery(IndexProperties.companyField, freeTextQuery, 0.999f)
+        val collector = TopScoreDocCollector.create(10000, true)
+        println("query ->" + freeTextQuery)
+        if (q == null) {
+          log.error(s"query is null for freetext [$freeTextQuery]")
+          Iterable.empty
+        } else {
+          searcher.search(q, collector)
+          val hits =
+            collector.topDocs().
+              scoreDocs.toIterable.
+              map(
+              document => {
+                (document.score, searcher.doc(document.doc))
+              }
+            ).filter {
+              case (score, doc) =>
+                  doc.getValues(IndexProperties.companyField).head.split("\\s").size == terms.size
+            }
+          if (!hits.isEmpty)
+            log.debug(hits.toIterable.toString())
+          hits.toIterable
+        }
+      }
+    }
+  }
+
 }

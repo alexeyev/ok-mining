@@ -40,6 +40,7 @@ class RAMIndex(sources: Iterable[InputStream]) extends Closeable {
     }
     iw.commit()
     iw.close()
+    log.info("Indexing done.")
   }
 
   private lazy val reader = IndexReader.open(dir)

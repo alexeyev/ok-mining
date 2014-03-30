@@ -3,6 +3,7 @@ package ru.stachek66.okminer.gui.utils
 import swing.TextArea
 import java.nio.charset.Charset
 import java.io.{PrintStream, ByteArrayOutputStream}
+import javax.swing.text.DefaultCaret
 
 /**
  * @author alexeyev
@@ -13,6 +14,13 @@ object LogTextArea extends TextArea {
 
   editable = false
 
+  {
+    //Java-style solution
+    val caret = peer.getCaret.asInstanceOf[DefaultCaret]
+    caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE)
+
+  }
+
   private[utils] val stream = new PrintStream(
     new ByteArrayOutputStream() {
       override def write(b: Array[Byte], off: Int, len: Int) {
@@ -20,9 +28,4 @@ object LogTextArea extends TextArea {
       }
     }
   )
-
-  //  System.setOut(new PrintStream(stream))
-  //  System.setErr(new PrintStream(stream))
-  //  scala.Console.setOut(new PrintStream(stream))
-  //  scala.Console.setErr(new PrintStream(stream))
 }
