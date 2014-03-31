@@ -103,6 +103,7 @@ object Runner extends SimpleSwingApplication {
       contents += scrollPane
     }
     // adding listeners
+
     listenTo(corpusDirectory.button)
     listenTo(destDirectory.button)
     listenTo(reportsButton)
@@ -110,6 +111,7 @@ object Runner extends SimpleSwingApplication {
     listenTo(openDestButton)
 
     // reactive behaviour setting
+
     reactions += {
       case ButtonClicked(button)
         if button.equals(corpusDirectory.button) => corpusDirectory.actOnClick()

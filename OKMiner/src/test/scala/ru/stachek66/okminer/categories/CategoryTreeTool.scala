@@ -37,15 +37,15 @@ object CategoryTreeTool extends App {
       }
 
       if (unknown == 1) {
-        val (parents, restt) = getByHead(rest)
-        //        val (children, _) = getByHead(restt)
-        map.put(-id, (text, parents.toArray))
+//        val (parents, restt) = getByHead(rest)
+//        val (children, _) = getByHead(restt)
+//        map.put(-id, (text, children.map(-_).toArray))
       } else
       if (unknown == 0) {
         //children and parents are extracted OK
         val (parents, restt) = getByHead(rest)
-        //        val (children, _) = getByHead(restt)
-        map.put(id, (text, parents.toArray))
+        val (children, _) = getByHead(restt)
+        map.put(id, (text, children.toArray))
       }
     }
   }
@@ -61,5 +61,7 @@ object CategoryTreeTool extends App {
     }
   }
 
-  pr(-566385, sp = 2, maxDepth = 5)
+  //tech: 384712
+
+  pr(384712, sp = 2, maxDepth = 10)
 }
