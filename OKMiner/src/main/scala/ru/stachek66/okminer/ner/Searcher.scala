@@ -100,7 +100,7 @@ class Searcher {
     index.withSearcher {
       searcher => {
         val qp = new QueryParser(Meta.luceneVersion, IndexProperties.companyField, index.analyzer)
-        val q = qp.createMinShouldMatchQuery(IndexProperties.companyField, freeTextQuery, 1.0)
+        val q = qp.createMinShouldMatchQuery(IndexProperties.companyField, freeTextQuery, 1.0f)
         val collector = TopScoreDocCollector.create(10000, true)
         //        println("query ->" + freeTextQuery)
         if (q == null) {
