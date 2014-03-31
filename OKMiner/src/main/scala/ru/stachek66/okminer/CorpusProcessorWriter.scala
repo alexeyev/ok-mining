@@ -38,7 +38,7 @@ object CorpusProcessorWriter {
     } yield {
       // running in parallel
       scala.concurrent.future[Unit] {
-        val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 1, "%s files processed")
+        val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 10, "%s files processed")
         log.getLogger.info("I'm parsing " + directory.getName)
         // carrying out the core task
         val data = processor.extractFromYearDirectory(directory, List(log, clog))

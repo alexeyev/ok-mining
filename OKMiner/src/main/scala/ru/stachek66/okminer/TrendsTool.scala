@@ -85,14 +85,15 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
         })
     }
 
-    val ranked = dResults.toSeq.sortBy(-_._2)
+    val oResults = buildResults(tokens)
+
+    val ranked = (oResults ++ dResults).toSeq.sortBy(-_._2)
 
     val translation = ranked.map {
       case (terms, score) => (score, terms, translator.translate(terms))
     }
 
     log.debug("Duples:\n" + translation.mkString("\n"))
-    log.info(translation.mkString("\n"))
 
     for {
       (score, terms, optTranslation) <- translation
