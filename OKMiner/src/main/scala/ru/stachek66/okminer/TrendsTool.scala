@@ -96,7 +96,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Laplac
     (translation.map {
       case (score, terms, Some((ruArticle, enArticle))) =>
         log.debug(List(score, terms, Some((ruArticle, enArticle))).mkString(","))
-        Some(ruArticle)
+        Some(enArticle)
       case _ => None
     }).toIterable.filter(_.isDefined).map(_.get)
   }

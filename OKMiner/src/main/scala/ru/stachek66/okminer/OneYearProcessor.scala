@@ -7,7 +7,6 @@ import ru.stachek66.okminer.ner.{NER, Searcher, NaiveNER}
 import ru.stachek66.okminer.utils.{CounterLogger, FileUtils}
 import scala.concurrent._
 import scala.concurrent.duration.Duration
-import scala.util.{Failure, Try, Success}
 import ru.stachek66.okminer.Meta.singleContext
 
 /**
@@ -50,18 +49,17 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
 
     def safeExtract(file: File): scala.concurrent.Future[Iterable[(Trend, Company, Int)]] =
       scala.concurrent.future {
-        Try {
+        try {
           val extracted = extractFromFile(file)
           externalCounter.foreach(_.execute(()))
           extracted
-        } match {
-          case Failure(e: org.apache.lucene.queryparser.classic.ParseException) =>
+        } catch {
+          case e: org.apache.lucene.queryparser.classic.ParseException =>
             log.error("This file seems to be corrupted" + file.getAbsolutePath)
             Iterable.empty[(Trend, Company, Int)]
-          case Failure(e) =>
+          case e: Exception =>
             log.error("Problems extracting from file " + file.getAbsolutePath, e)
             Iterable.empty[(Trend, Company, Int)]
-          case Success(triple) => triple
         }
       }
 
@@ -71,7 +69,11 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
 
     Await.result(
       Future.sequence(
-        files.map(safeExtract(_))
+        files.
+          filter {
+          candidate =>
+            !candidate.isDirectory && candidate.length() < 100 * 1000 * 1000
+        } map (safeExtract(_))
       ),
       Duration(2, TimeUnit.DAYS)
     ).flatten.
