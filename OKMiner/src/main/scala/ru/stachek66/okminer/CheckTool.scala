@@ -14,7 +14,11 @@ object CheckTool extends App {
 
   println(ext)
 
-  val fext = ext.filter {
+  def norm(name: String) = {
+    name.replaceAll("Category:", "").toLowerCase.trim
+  }
+
+  val fext = ext.map(norm(_)).filter {
     topic => {
       TechCategories.acceptableTopics.contains(topic)
     }

@@ -86,9 +86,4 @@ object TechCategories {
     log.info("Getting acceptable topics...")
     fromParsed
   }
-
-}
-
-object Tool extends App {
-  //  println(TechCategories.acceptableTopics)
 }

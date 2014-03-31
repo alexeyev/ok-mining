@@ -12,4 +12,6 @@ object HeuristicsHelper {
 
   def replaceUrls(s: String) = urlPattern.replaceAllIn(s, " ")
 
+  def replaceCommas(s:String) = s.replaceAll(", ", "symbolnottobesearchd0")
+
 }

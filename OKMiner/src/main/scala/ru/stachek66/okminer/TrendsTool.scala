@@ -1,5 +1,6 @@
 package ru.stachek66.okminer
 
+import categories.TechCategories
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.language.russian.{VerbDetector, StopWordsFilter, Lexer, Tokenizer}
 import ru.stachek66.okminer.wiki._
@@ -7,15 +8,14 @@ import ru.stachek66.okminer.wiki.translation.Translator
 import ru.stachek66.okminer.wiki.vocabulary.Vocabulary
 import scala.concurrent.duration._
 import scala.concurrent._
-import scala.concurrent.{ExecutionContext, Future, Await}
+import scala.concurrent.Await
 import scala.util.{Success, Failure, Try}
-import java.util.concurrent.TimeUnit
 
 /**
  * Trends extraction.
  * @author alexeyev
  */
-private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = LaplacianKeyphrasenessCalculator,
+private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = SmoothedKeyphrasenessCalculator,
                                   translator: Translator = new Translator()) {
 
   private val log = LoggerFactory.getLogger("trends-tool")
@@ -85,7 +85,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Laplac
         })
     }
 
-    val ranked = dResults.toSeq.sortBy(-_._2).take(5)
+    val ranked = dResults.toSeq.sortBy(-_._2)
 
     val translation = ranked.map {
       case (terms, score) => (score, terms, translator.translate(terms))
@@ -93,11 +93,11 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Laplac
 
     log.debug("Duples:\n" + translation.mkString("\n"))
 
-    (translation.map {
-      case (score, terms, Some((ruArticle, enArticle))) =>
-        log.debug(List(score, terms, Some((ruArticle, enArticle))).mkString(","))
-        Some(enArticle)
-      case _ => None
-    }).toIterable.filter(_.isDefined).map(_.get)
+    for {
+      (score, terms, optTranslation) <- translation
+      (ru, en) <- optTranslation
+      normalizedEnglish = categories.Utils.norm(en)
+      if TechCategories.acceptableTopics.contains(normalizedEnglish)
+    } yield normalizedEnglish
   }
 }

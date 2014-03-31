@@ -12,17 +12,16 @@ trait KeyphrasenessCalculator {
 }
 
 /**
- * Keyohraseness as tf with Laplacian smoothing.
+ * Keyohraseness as tf with smoothing (+ 1 at denominator).
  */
-object LaplacianKeyphrasenessCalculator extends KeyphrasenessCalculator {
+object SmoothedKeyphrasenessCalculator extends KeyphrasenessCalculator {
 
   private val phraseSearcher = new articles.PhraseSearcher(articles.IndexProperties.index)
   private val keywordsSearcher = new keyphrases.Searcher(keyphrases.IndexProperties.index)
 
   /**
-   * Relative TF with Laplacian smoothing.
+   * Relative TF with simple smoothing.
    */
   override def getKeyPhraseness(phrase: String): Double =
-    (keywordsSearcher.getHitsCount(phrase) /*/ (keyphrases.Searcher.totalDocs.toDouble)*/ + 1) /
-      (phraseSearcher.getHitsCount(phrase).toDouble /*/ phraseSearcher.totalDocs.toDouble */ + phraseSearcher.totalDocs)
+    keywordsSearcher.getHitsCount(phrase) / (phraseSearcher.getHitsCount(phrase) + 1.0)
 }

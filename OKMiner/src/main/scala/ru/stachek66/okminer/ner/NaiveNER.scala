@@ -17,7 +17,8 @@ class NaiveNER(searcher: Searcher) extends NER {
     val tokens =
       StopWordsFilter.filter(
         Lexer.split(
-          HeuristicsHelper.replaceUrls(sourceText)))
+          HeuristicsHelper.replaceCommas(
+            HeuristicsHelper.replaceUrls(sourceText))))
 
     val duples =
       tokens.zip(if (tokens.isEmpty) Seq() else tokens.tail).

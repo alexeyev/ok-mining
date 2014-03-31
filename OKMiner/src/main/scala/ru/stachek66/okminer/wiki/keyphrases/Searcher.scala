@@ -1,20 +1,15 @@
 package ru.stachek66.okminer.wiki.keyphrases
 
-import java.util.Date
 import org.apache.lucene.index.{Term, IndexReader}
-import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.Meta
 import ru.stachek66.okminer.language.russian.Tokenizer
-import scala.util.{Success, Failure, Try}
-import org.apache.lucene.analysis.ru.RussianAnalyzer
-import org.apache.lucene.analysis.standard.StandardAnalyzer
+import scala.util.Try
 import scala.util.Success
 import scala.util.Failure
 
 /**
- * Поиск по вики-ссылкам
+ * Wiki links and titles search provider.
  * @author alexeyev
  */
 class Searcher(index: Index) {
@@ -36,7 +31,7 @@ class Searcher(index: Index) {
 
   val totalDocs = searcher.collectionStatistics(IndexProperties.textField).docCount()
 
-  def buildQuery(keyphrase: String) = {
+  private def buildQuery(keyphrase: String) = {
     val pq = new PhraseQuery()
     val splitted = Tokenizer.tokenize(keyphrase)
     log.debug("Query: [%s]".format(splitted.mkString(" ")))
@@ -54,16 +49,16 @@ class Searcher(index: Index) {
     collector.topDocs().scoreDocs.length
   }
 
-  def tryPhrase(keyphrase: String): Iterable[String] = {
+  private def tryPhrase(keyphrase: String): Iterable[String] = {
     val pq = buildQuery(keyphrase)
     val l = keyphrase.split(" ").length
     val collector = TopScoreDocCollector.create(500000, true)
     searcher.search(pq, collector)
     val res = for {
       scoreDoc <- collector.topDocs().scoreDocs.toIterable
-      if (scoreDoc.score > 3)
       doc = searcher.doc(scoreDoc.doc)
       link = doc.getField(IndexProperties.textField).stringValue()
+      // for exact match
       if link.split(" ").length == l
     } yield {
       (scoreDoc.score, link)
@@ -71,12 +66,15 @@ class Searcher(index: Index) {
     log.info(keyphrase + " => " + res.toString())
     res.map(_._2)
   }
+}
 
+object Searcher {
   def main(args: Array[String]) {
-    println(tryPhrase("облачное хранилище"))
-    println(tryPhrase("облачное вычисления"))
-    println(tryPhrase("интернет вещица"))
-    println(tryPhrase("интернет вещей"))
-    println(tryPhrase("смартфон "))
+    val s = new Searcher(new Index())
+    println(s.tryPhrase("облачное хранилище"))
+    println(s.tryPhrase("облачное вычисления"))
+    println(s.tryPhrase("интернет вещица"))
+    println(s.tryPhrase("интернет вещей"))
+    println(s.tryPhrase("смартфон "))
   }
 }
