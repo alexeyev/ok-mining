@@ -84,6 +84,8 @@ object TechCategories {
       parseDump()
     }
     log.info("Getting acceptable topics...")
-    fromParsed
+    val set = fromParsed
+    log.info("Topics got.")
+    set
   }
 }

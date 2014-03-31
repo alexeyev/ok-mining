@@ -63,7 +63,7 @@ object FeedsTool extends App {
       val trends = trendsTool.extractTrends(description)
       val companies = ner.extractAllCompanies(description)
       for {
-        trend <- trends
+        (score, orig, ru, trend) <- trends
         company <- companies
       } yield (trend, company)
     }

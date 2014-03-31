@@ -33,7 +33,7 @@ class PhraseSearcher(index: Index) {
     val pq = new PhraseQuery()
     //todo: bug: tokenizer must not do stemming
     val splitted = Tokenizer.tokenize(keyphrase)
-    log.debug("Query: [%s]".format(splitted.mkString(" ")))
+//    log.debug("Query: [%s]".format(splitted.mkString(" ")))
     for (t <- splitted) {
       pq.add(new Term(IndexProperties.textField, t))
     }

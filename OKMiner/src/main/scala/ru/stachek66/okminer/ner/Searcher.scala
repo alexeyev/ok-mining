@@ -104,7 +104,7 @@ class Searcher {
         val collector = TopScoreDocCollector.create(10000, true)
         //        println("query ->" + freeTextQuery)
         if (q == null) {
-          log.error(s"query is null for freetext [$freeTextQuery]")
+          log.error(s"Query is null for freetext [$freeTextQuery]")
           Iterable.empty
         } else {
           searcher.search(q, collector)

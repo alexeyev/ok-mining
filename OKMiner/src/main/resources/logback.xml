@@ -1,7 +1,6 @@
 <configuration>
 
     <appender name="TFA" class="ru.stachek66.okminer.gui.utils.TextFieldAppender2">
-        <!--<file>myApp.log</file>-->
         <encoder>
             <pattern>%logger{5} %msg%n</pattern>
         </encoder>
@@ -13,7 +12,7 @@
         </encoder>
     </appender>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="TFA" />
     </root>

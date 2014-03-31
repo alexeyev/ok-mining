@@ -31,7 +31,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
    * @param text  source text
    * @return  resulting Wikipedia titles
    */
-  def extractTrends(text: String): Iterable[String] = {
+  def extractTrends(text: String): Iterable[(Double, String, String, String)] = {
 
     val splitted = Lexer.split(text)
     val filtered = splitted.map(t => if (StopWordsFilter.getList.contains(t)) dummy else t)
@@ -61,7 +61,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
           val kp = future[Double](kpCalculator.getKeyPhraseness(phrase))(ru.stachek66.okminer.Meta.singleContext)
           val res =
             Try {
-              Await.result(kp, 1 seconds)
+              Await.result(kp, 10 seconds)
             } match {
               case Failure(e) => {
                 log.debug("Takes too long: %s".format(phrase))
@@ -92,12 +92,13 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
     }
 
     log.debug("Duples:\n" + translation.mkString("\n"))
+    log.info(translation.mkString("\n"))
 
     for {
       (score, terms, optTranslation) <- translation
       (ru, en) <- optTranslation
       normalizedEnglish = categories.Utils.norm(en)
       if TechCategories.acceptableTopics.contains(normalizedEnglish)
-    } yield normalizedEnglish
+    } yield (score, terms, ru, normalizedEnglish)
   }
 }

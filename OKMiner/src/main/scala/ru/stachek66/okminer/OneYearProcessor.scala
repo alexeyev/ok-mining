@@ -32,7 +32,7 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
     val trends = trendsMiner.extractTrends(description)
     val companies = ner.extractAllCompanies(description)
     val allPairs = for {
-      trend <- trends
+      (_, _, _, trend) <- trends
       company <- companies
     } yield (trend.trim, company.trim)
     log.info(s"File ${file.getName} : ${trends.size} trends, ${companies.size} companies")
