@@ -2,7 +2,7 @@ package ru.stachek66.okminer.ner.tree
 
 import ru.stachek66.okminer.utils.CounterLogger
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.language.russian.Lexer
+import ru.stachek66.okminer.language.russian.{Lemmatizer, Lexer}
 import com.googlecode.concurrenttrees.radixinverted.ConcurrentInvertedRadixTree
 import com.googlecode.concurrenttrees.radix.node.concrete.DefaultCharArrayNodeFactory
 import ru.stachek66.okminer.ner.{HeuristicsHelper, NER}
@@ -32,7 +32,11 @@ object InvertedRadixTreeNER {
 
   private val clog = new CounterLogger(LoggerFactory.getLogger("inverted-radix-tree-ner"), 50000, "%s companies put")
 
-  private def normalize(sourceText: String) = " " + Lexer.split(sourceText.replaceAll("ё", "е")).mkString(" ") + " " // space as a special delimiter
+  private def normalize(sourceText: String) =
+    " " +
+      Lexer.split(sourceText.toLowerCase.replaceAll("ё", "е")).
+        map(Lemmatizer.lemmatize(_)).mkString(" ") +
+      " " // space as a special delimiter
 
   private val tree = {
     val tree = new ConcurrentInvertedRadixTree[Boolean](new DefaultCharArrayNodeFactory())
@@ -41,6 +45,7 @@ object InvertedRadixTreeNER {
       line =>
         clog.execute {
           tree.put(normalize(line), true)
+          println(normalize(line))
         }
     )
     tree

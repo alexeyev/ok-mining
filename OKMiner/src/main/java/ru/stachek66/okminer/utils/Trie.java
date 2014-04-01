@@ -164,26 +164,4 @@ public class Trie {
             positions.add(s.length());
         return positions;
     }
-
-    public static void main(String[] args) {
-        Trie t = new Trie();
-        t.add("APPLE");
-        t.add("APPLESAUCE");
-        t.add("APPLICATION");
-//        System.out.println(t.contains("FOO") + " " + false);
-//        System.out.println(t.contains("APPL") + " " + false);
-//        System.out.println(t.contains("APPLES") + " " + false);
-//        System.out.println(t.contains("APPLE") + " " + true);
-//
-//        System.out.println(t.containsAsPrefix("FOO") + " " + false);
-//        System.out.println(t.containsAsPrefix("APPL") + " " + true);
-//        System.out.println(t.containsAsPrefix("APPLES") + " " + true);
-//        System.out.println(t.containsAsPrefix("APPLE") + " " + true);
-
-
-        System.out.println(t.foundPrefixes("APPLEJOUICE") + " " + 5);
-        System.out.println(t.foundPrefixes("APPLEJ") + " " + 5);
-        System.out.println(t.foundPrefixes("APPLE") + " " + 5);
-        System.out.println(t.foundPrefixes("AP") + " " + -1);
-    }
 }
