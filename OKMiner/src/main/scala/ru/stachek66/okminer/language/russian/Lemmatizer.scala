@@ -8,10 +8,11 @@ import scala.collection.JavaConversions._
  * https://code.google.com/p/russianmorphology/
  *
  * Won't lemmatize a word if it contains symbols from [A-z0-9\\.]
- * Is rather slow.
+ * Is VERY slow, which is why it can't be used for our purposes.
  *
  * @author alexeyev
  */
+@deprecated // since April 1 for being too slow
 object Lemmatizer {
 
   private val latinRegex = ".*[^А-Яа-я-].*".r.pattern
