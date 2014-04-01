@@ -130,7 +130,7 @@ object Runner extends SimpleSwingApplication {
           case Failure(e) =>
             Dialog.showMessage(
               button, "Something went wrong while building reports: " + e.getMessage, "Error", Dialog.Message.Error)
-            log.debug("Please fix me", e)
+            log.info("Please fix me", e)
             button.enabled = true
         }
 

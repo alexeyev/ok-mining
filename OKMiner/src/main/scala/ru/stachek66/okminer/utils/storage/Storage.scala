@@ -62,20 +62,24 @@ object Storage {
 
       new Iterator[(String, String, Int)]() {
 
-        def next() = {
-          val company = rowSet.getString("company")
-          val trend = rowSet.getString("trend")
-          val num = rowSet.getInt("num")
-          (trend, company, num)
-        }
+        // because first row set is always 'special'
+        var hNext = rowSet.next()
 
-        def hasNext: Boolean = {
-          rowSet.next()
+        def next() = {
+          if (hNext) {
+            val company = rowSet.getString("company")
+            val trend = rowSet.getString("trend")
+            val num = rowSet.getInt("num")
+            hNext = rowSet.next()
+            (trend, company, num)
+          } else {
+            throw new Exception("No more data!")
+          }
         }
+        def hasNext: Boolean = hNext
       }
     }
   }
-
 
   def withDao(handler: Dao => Unit) {
     try {
@@ -89,10 +93,4 @@ object Storage {
     handler(H2Dao)
     dropDb()
   }
-
-
-  def main(args: Array[String]) {
-    withDao(d => println(d))
-  }
-
 }

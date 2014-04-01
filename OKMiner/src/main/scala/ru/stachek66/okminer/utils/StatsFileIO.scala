@@ -21,11 +21,12 @@ object StatsFileIO {
     data.toSeq.sortBy(_._2).foreach {
       case (trend, company, count) => {
         val line = "%s\t%s\t%s".format(company, trend, count)
-        log.info(line)
+        log.debug(line)
         fw.write(line + "\n")
       }
     }
     fw.close()
+    log.info(s"Done with records for ${file.getName}")
   }
 
   def readFromFile(file: File): (Iterable[(Trend, Company, Int)], Year) = {
