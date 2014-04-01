@@ -6,8 +6,10 @@ import java.io.File
 import java.sql.Types
 import scala.collection.JavaConversions._
 import org.slf4j.LoggerFactory
+import java.util.Date
 
 /**
+ * Provides access to H2-based Data Access Object.
  * @author alexeyev
  */
 object Storage {
@@ -16,7 +18,7 @@ object Storage {
 
   private val dataSource = {
     val ds = new BasicDataSource()
-    val storageFile = new File("parsed/statdb")
+    val storageFile = new File("parsed/statdb" + new Date().getTime)
     ds.setUrl("jdbc:h2:" + storageFile.getAbsolutePath)
     ds.setPassword("")
     ds.setUsername("")
@@ -42,7 +44,6 @@ object Storage {
     def put(data: Iterable[(Int, String, String)]) {
 
       log.debug(s"Batch size: ${data.size}")
-
       jdbc.batchUpdate(
         s"insert into $table values (?,?,?,?)",
         data.map {
@@ -62,7 +63,7 @@ object Storage {
 
       new Iterator[(String, String, Int)]() {
 
-        // because first row set is always 'special'
+        // because the first row set is always 'special'
         var hNext = rowSet.next()
 
         def next() = {

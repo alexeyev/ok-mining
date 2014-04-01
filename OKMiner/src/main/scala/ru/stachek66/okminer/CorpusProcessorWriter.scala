@@ -40,7 +40,7 @@ object CorpusProcessorWriter {
           val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 10, "%s files processed")
           log.getLogger.info("I'm parsing " + directory.getName)
           // carrying out the core task
-          //            val data = processor.extractFromYearDirectory(directory, List(log, clog))
+          //                      val data = processor.extractFromYearDirectory(directory, List(log, clog))
           processor.flushFromYearDirectory(directory, List(log, clog), dao)
           // writing everything down
           val data = dao.getStats(directory.getName.toInt)
