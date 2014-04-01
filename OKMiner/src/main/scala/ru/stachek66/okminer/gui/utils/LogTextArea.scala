@@ -21,9 +21,20 @@ object LogTextArea extends TextArea {
 
   }
 
+  @volatile
+  private var logSize = 0
+  private val maxLogSize = 400
+  private val dec = 50
+  private val pattern = ("([^\\n]+\\n){" + dec + "}")
+
   private[utils] val stream = new PrintStream(
     new ByteArrayOutputStream() {
       override def write(b: Array[Byte], off: Int, len: Int) {
+        logSize += 1
+        if (logSize >= maxLogSize) {
+          text = text.replaceFirst(pattern, "")
+          logSize -= dec
+        }
         text += new String(b.slice(off, off + len), Charset.forName("UTF-8"))
       }
     }

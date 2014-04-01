@@ -82,14 +82,14 @@ object TechCategories {
   private def fromParsed: Map[String, String] =
     io.Source.fromFile(parsed)("UTF-8").getLines().
       map(
-      line => {
+      line => clog.execute {
         val splitted = line.trim.split("\t")
         splitted(0) -> splitted(1)
       }
     ).toMap
 
 
-  lazy val acceptableTopics: Map[String, String] = {
+  val acceptableTopics: Map[String, String] = {
     if (!parsed.exists() || parsed.length() <= 0) {
       log.info("Will have to parse wiki-graph dump...")
       parseDump()

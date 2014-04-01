@@ -41,7 +41,7 @@ object Storage {
 
     def put(data: Iterable[(Int, String, String)]) {
 
-      log.info(s"Batch size: ${data.size}")
+      log.debug(s"Batch size: ${data.size}")
 
       jdbc.batchUpdate(
         s"insert into $table values (?,?,?,?)",

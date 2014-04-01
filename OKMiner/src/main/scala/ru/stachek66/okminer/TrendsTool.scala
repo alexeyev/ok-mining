@@ -21,11 +21,14 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
 
   private val log = LoggerFactory.getLogger("trends-tool")
 
-  log.info("Opening index.")
+  log.info("Getting ready...")
+
+  //making sure these guys are ready
   articles.IndexProperties.index
   keyphrases.IndexProperties.index
+  TechCategories.acceptableTopics
 
-  val dummy = "dummyword"
+  val dummy = "dummy42word"
 
   /**
    * Provided with some text, returns most valuable wiki-trends.
