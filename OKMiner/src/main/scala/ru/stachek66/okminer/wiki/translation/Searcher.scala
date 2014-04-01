@@ -21,7 +21,7 @@ object Searcher {
   def search(freeTextQuery: String, threshold: Option[Float] = None): Iterable[(Float, RuEn)] = {
     val collector = TopScoreDocCollector.create(10000, true)
 
-    def splSize(s: String) = s.split("\\s").size
+    def splSize(s: String) = s.split(" ").size
 
     val querySize = splSize(freeTextQuery)
 
@@ -29,13 +29,13 @@ object Searcher {
       searcher => {
         try {
           val q = qp.createMinShouldMatchQuery(IndexProperties.ru, freeTextQuery, 1.0f)
-          println(q, freeTextQuery, qp, searcher)
+          //println(q, freeTextQuery, qp, searcher)
           searcher.search(q, collector)
           for {
             scoreDoc <- collector.topDocs().scoreDocs.toIterable
             if threshold.filter(_ > scoreDoc.score).isEmpty
             doc = searcher.doc(scoreDoc.doc)
-            if splSize(doc.get(IndexProperties.ru)) == querySize
+            if splSize(doc.get(IndexProperties.ru)) < querySize + 1
           } yield (scoreDoc.score, (doc.getField(ru).stringValue(), doc.getField(en).stringValue()))
         } catch {
           case e: NullPointerException =>

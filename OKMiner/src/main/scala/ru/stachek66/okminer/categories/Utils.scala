@@ -6,6 +6,6 @@ package ru.stachek66.okminer.categories
 object Utils {
 
   def norm(name: String) = {
-    name.replaceAll("Category:", "").toLowerCase.trim
+    name.replaceAll("Category:", "").replaceAll("Stub:", "").toLowerCase.trim
   }
 }

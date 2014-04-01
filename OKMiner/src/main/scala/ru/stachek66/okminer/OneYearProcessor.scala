@@ -3,7 +3,7 @@ package ru.stachek66.okminer
 import java.io.File
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.ner.{NER, Searcher, NaiveNER}
+import ru.stachek66.okminer.ner.{NER, Searcher, LuceneNER}
 import ru.stachek66.okminer.utils.{CounterLogger, FileUtils}
 import scala.concurrent._
 import scala.concurrent.duration.Duration
@@ -12,7 +12,7 @@ import ru.stachek66.okminer.Meta.singleContext
 /**
  * @author alexeyev
  */
-private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
+private[okminer] class OneYearProcessor(ner: NER = new LuceneNER(new Searcher),
                                         trendsMiner: TrendsTool = new TrendsTool()) {
 
   type Company = String
@@ -23,14 +23,16 @@ private[okminer] class OneYearProcessor(ner: NER = new NaiveNER(new Searcher),
 
   private def extractFromFile(file: File): Iterable[(Trend, Company, Int)] = {
     val description = FileUtils.asStringWithoutNewLines(file)
-    //    val fTrends = future(trendsMiner.extractTrends(description)) //(ru.stachek66.okminer.Meta.singleContext)
-    //    val fCompanies = future(ner.extractAllCompanies(description)) //(ru.stachek66.okminer.Meta.singleContext)
-    //    val List(trends, companies) =
-    //      Await.result(
-    //        Future.sequence(List(fTrends, fCompanies)),
-    //        Duration(12, TimeUnit.HOURS))
-    val trends = trendsMiner.extractTrends(description)
-    val companies = ner.extractAllCompanies(description)
+//        val fTrends = future(trendsMiner.extractTrends(description)) //(ru.stachek66.okminer.Meta.singleContext)
+//        val fCompanies = future(ner.extractAllCompanies(description)) //(ru.stachek66.okminer.Meta.singleContext)
+
+    val trends: Iterable[(Double, String, String, String)] =
+//      Await.result(fTrends, Duration(12, TimeUnit.HOURS))
+          trendsMiner.extractTrends(description)
+    val companies: Set[String] =
+//      Await.result(fCompanies, Duration(12, TimeUnit.HOURS))
+          ner.extractAllCompanies(description)
+
     val allPairs = for {
       (_, _, _, trend) <- trends
       company <- companies

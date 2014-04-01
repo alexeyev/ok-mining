@@ -10,6 +10,7 @@ import scala.concurrent.duration._
 import scala.concurrent._
 import scala.concurrent.Await
 import scala.util.{Success, Failure, Try}
+import ru.stachek66.okminer.Meta.singleContext
 
 /**
  * Trends extraction.
@@ -39,10 +40,8 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
     val tokens =
       for {
         word <- filtered
-        if !StopWordsFilter.getList.contains(word)
         if !VerbDetector.isVerb(word)
         tokenized <- Tokenizer.tokenize(word).headOption
-        if !StopWordsFilter.getList.contains(tokenized)
       } yield {
         if (Vocabulary.normalizedWords.contains(tokenized)) word
         else dummy
@@ -58,7 +57,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
 
       phrases.map {
         phrase => {
-          val kp = future[Double](kpCalculator.getKeyPhraseness(phrase))(ru.stachek66.okminer.Meta.singleContext)
+          val kp = future[Double](kpCalculator.getKeyPhraseness(phrase))
           val res =
             Try {
               Await.result(kp, 10 seconds)

@@ -10,7 +10,7 @@ import javax.swing.text.DefaultCaret
  */
 object LogTextArea extends TextArea {
 
-  text = "Waiting for logs..."
+  text = "Waiting for logs...\n"
 
   editable = false
 

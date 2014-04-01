@@ -9,7 +9,7 @@ import java.util.regex.Pattern
 import cc.mallet.pipe.CharSequenceRemoveHTML
 
 //import org.apache.lucene.analysis.tokenattributes.TermAttribute
-//import org.apache.lucene.morphology.russian.RussianAnalyzer
+//import org.apache.lucene_old.russian.RussianAnalyzer
 
 import org.apache.lucene.analysis.ru.RussianAnalyzer
 import org.apache.lucene.util._

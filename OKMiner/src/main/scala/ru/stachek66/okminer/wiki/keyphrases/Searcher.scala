@@ -1,12 +1,13 @@
 package ru.stachek66.okminer.wiki.keyphrases
 
-import org.apache.lucene.index.{Term, IndexReader}
+import org.apache.lucene.index.IndexReader
 import org.apache.lucene.search._
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.language.russian.Tokenizer
 import scala.util.Try
 import scala.util.Success
 import scala.util.Failure
+import org.apache.lucene.queryparser.classic.QueryParser
+import ru.stachek66.okminer.Meta
 
 /**
  * Wiki links and titles search provider.
@@ -32,14 +33,11 @@ class Searcher(index: Index) {
   val totalDocs = searcher.collectionStatistics(IndexProperties.textField).docCount()
 
   private def buildQuery(keyphrase: String) = {
-    val pq = new PhraseQuery()
-    val splitted = Tokenizer.tokenize(keyphrase)
+    val qp = new QueryParser(Meta.luceneVersion, keyphrase, IndexProperties.analyzer)
+    qp.setPhraseSlop(0)
+    qp.createMinShouldMatchQuery(IndexProperties.textField, keyphrase, 1.0f)
     //    log.debug("Query: [%s]".format(splitted.mkString(" ")))
-    for (t <- splitted) {
-      pq.add(new Term(IndexProperties.textField, t))
-    }
-    pq.setSlop(0)
-    pq
+
   }
 
   def getHitsCount(keyphrase: String): Int = {

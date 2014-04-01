@@ -8,7 +8,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Date
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.ner.{Searcher, NaiveNER}
+import ru.stachek66.okminer.ner.{Searcher, LuceneNER}
 import scala.collection.JavaConversions._
 
 case class Entity(uri: String, description: String, date: Date)
@@ -55,7 +55,7 @@ object FeedsTool extends App {
 
   //-------------------------------------------------------
 
-  val ner = new NaiveNER(new Searcher)
+  val ner = new LuceneNER(new Searcher)
   val trendsTool = new TrendsTool()
 
   val pairs: Iterable[(String, String)] = corpus.flatMap {

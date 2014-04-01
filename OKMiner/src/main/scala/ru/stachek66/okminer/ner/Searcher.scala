@@ -15,12 +15,7 @@ import ru.stachek66.okminer.Meta
  */
 class Searcher {
 
-  private val index = new RAMIndex(
-    Iterable(
-      classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv"),
-      classOf[ClassLoader].getResourceAsStream("/crunchbase-companies.tsv")
-    )
-  )
+  private val index = new RAMIndex()
   private val log = LoggerFactory.getLogger("company-searcher-experimental")
 
   @deprecated
@@ -101,7 +96,7 @@ class Searcher {
       searcher => {
         val qp = new QueryParser(Meta.luceneVersion, IndexProperties.companyField, index.analyzer)
         val q = qp.createMinShouldMatchQuery(IndexProperties.companyField, freeTextQuery, 1.0f)
-        val collector = TopScoreDocCollector.create(10000, true)
+        val collector = TopScoreDocCollector.create(1000, true)
         //        println("query ->" + freeTextQuery)
         if (q == null) {
           log.error(s"Query is null for freetext [$freeTextQuery]")

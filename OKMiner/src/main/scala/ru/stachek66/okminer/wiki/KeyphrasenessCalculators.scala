@@ -22,6 +22,7 @@ object SmoothedKeyphrasenessCalculator extends KeyphrasenessCalculator {
   /**
    * Relative TF with simple smoothing.
    */
-  override def getKeyPhraseness(phrase: String): Double =
-    keywordsSearcher.getHitsCount(phrase) / (phraseSearcher.getHitsCount(phrase) + 1.0)
+  override def getKeyPhraseness(phrase: String): Double = 1
+
+  //    keywordsSearcher.getHitsCount(phrase) / (phraseSearcher.getHitsCount(phrase) + 1.0)
 }

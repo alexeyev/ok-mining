@@ -2,6 +2,7 @@ package ru.stachek66.okminer
 
 import java.io.File
 import java.util.concurrent.TimeUnit
+import ner.TrieNER
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta.singleContext
 import ru.stachek66.okminer.utils.{StatsFileIO, CounterLogger}
@@ -16,7 +17,7 @@ import scala.concurrent.{Await, Future}
  */
 object CorpusProcessorWriter {
 
-  private val processor = new OneYearProcessor()
+  private val processor = new OneYearProcessor(ner = new TrieNER())
   private val yearPattern = "\\d{1,4}".r.pattern
   private val clog = new CounterLogger(LoggerFactory.getLogger("corpus-global-processed"), 100, "%s files processed")
 

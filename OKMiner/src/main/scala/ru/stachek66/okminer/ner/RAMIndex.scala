@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
  * In-memory index interface for accessing companies.
  * @author alexeyev
  */
-class RAMIndex(sources: Iterable[InputStream]) extends Closeable {
+class RAMIndex extends Closeable {
 
   private val log = LoggerFactory.getLogger("ram-companies-index")
 
@@ -31,13 +31,7 @@ class RAMIndex(sources: Iterable[InputStream]) extends Closeable {
   {
     val iw = new IndexWriter(dir, config)
     log.info("Filling companies' index...")
-    for (stream <- sources) {
-      io.Source.fromInputStream(stream)("UTF-8").getLines().
-        foreach {
-        line =>
-          addToIndex(iw, line.trim)
-      }
-    }
+    accessSources(line => addToIndex(iw, line.trim))
     iw.commit()
     iw.close()
     log.info("Indexing done.")
