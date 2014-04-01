@@ -8,7 +8,6 @@ import ru.stachek66.okminer.Meta
 //import org.apache.lucene_old.russian.RussianAnalyzer
 
 import org.apache.lucene.analysis.ru.RussianAnalyzer
-import org.apache.lucene.util._
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -23,7 +22,8 @@ object Tokenizer {
    * Lucene tokenizer applied to text.
    */
   def tokenize(string: String): Iterable[String] = {
-    val stream = russian.tokenStream("", new StringReader(string))
+    val deёzated = string.toLowerCase.replace("ё", "е")
+    val stream = russian.tokenStream("", new StringReader(deёzated))
     val result = ArrayBuffer[String]()
     stream.reset()
     while (stream.incrementToken()) {
