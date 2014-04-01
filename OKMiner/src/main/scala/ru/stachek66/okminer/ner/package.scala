@@ -4,8 +4,8 @@ package object ner {
 
   val sources = Iterable(
     //    NormalizedHabrahabrAccessor.getNormalizedStream,
-    classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv")//,
-//    classOf[ClassLoader].getResourceAsStream("/crunchbase-companies.tsv")
+    classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv"),
+    classOf[ClassLoader].getResourceAsStream("/crunchbase-companies.tsv")
   )
 
   def accessSources(handler: String => Unit) {
