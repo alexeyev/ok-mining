@@ -16,7 +16,7 @@ object StatsFileIO {
 
   private val log = LoggerFactory.getLogger("tsv-converter")
 
-  def writeToFile(data: Iterable[(Trend, Company, Int)], file: File) {
+  def writeToFile(data: TraversableOnce[(Trend, Company, Int)], file: File) {
     val fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))
     data.toSeq.sortBy(_._2).foreach {
       case (trend, company, count) => {

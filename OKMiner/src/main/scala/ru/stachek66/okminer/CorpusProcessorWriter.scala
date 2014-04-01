@@ -2,12 +2,13 @@ package ru.stachek66.okminer
 
 import java.io.File
 import java.util.concurrent.TimeUnit
-import ner.tree.{InvertedRadixTreeNER, TrieNER}
+import ner.tree.InvertedRadixTreeNER
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta.singleContext
-import ru.stachek66.okminer.utils.{StatsFileIO, CounterLogger}
+import utils.{StatsFileIO, CounterLogger}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+import utils.storage.Storage
 
 /**
  * A tool for processing the whole corpus:
@@ -30,25 +31,32 @@ object CorpusProcessorWriter {
 
     reportsDirectory.mkdirs()
 
-    val tasks = for {
-    // choosing appropriate directories
-      directory <- corpus.listFiles().toIterable
-      if directory.isDirectory &&
-        yearPattern.matcher(directory.getName).matches() &&
-        directory.listFiles().nonEmpty
-    } yield {
-      // running in parallel
-      scala.concurrent.future[Unit] {
-        val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 10, "%s files processed")
-        log.getLogger.info("I'm parsing " + directory.getName)
-        // carrying out the core task
-        val data = processor.extractFromYearDirectory(directory, List(log, clog))
-        // writing everything down
-        StatsFileIO.writeToFile(data, new File(s"${reportsDirectory.getAbsolutePath}/${directory.getName}.tsv"))
-        log.getLogger.info("Done with it!")
+    Storage.withDao {
+      dao => {
+        clog.getLogger.info("Dao opened.")
+        val tasks = for {
+        // choosing appropriate directories
+          directory <- corpus.listFiles().toIterable
+          if directory.isDirectory &&
+            yearPattern.matcher(directory.getName).matches() &&
+            directory.listFiles().nonEmpty
+        } yield {
+          // running in parallel
+          scala.concurrent.future[Unit] {
+            val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 10, "%s files processed")
+            log.getLogger.info("I'm parsing " + directory.getName)
+            // carrying out the core task
+            //            val data = processor.extractFromYearDirectory(directory, List(log, clog))
+            processor.flushFromYearDirectory(directory, List(log, clog), dao)
+            // writing everything down
+            val data = dao.getStats(directory.getName.toInt)
+            StatsFileIO.writeToFile(data, new File(s"${reportsDirectory.getAbsolutePath}/${directory.getName}.tsv"))
+            log.getLogger.info("Done with it!")
+          }
+        }
+        // waiting for 48 hours max
+        Await.ready(Future.sequence(tasks), Duration(2, TimeUnit.DAYS))
       }
     }
-    // waiting for 48 hours max
-    Await.ready(Future.sequence(tasks), Duration(2, TimeUnit.DAYS))
   }
 }

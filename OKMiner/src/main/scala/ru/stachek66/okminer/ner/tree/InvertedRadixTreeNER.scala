@@ -24,7 +24,7 @@ class InvertedRadixTreeNER extends NER {
         HeuristicsHelper.replaceUrls(sourceText)))
     clog.getLogger.debug("Extracting companies from text...")
     val res = tree.getValuesForKeysContainedIn(normalizedText).map(_.toString.trim).toSet
-    clog.getLogger.info(res.toString() + normalizedText)
+    clog.getLogger.debug(res.toString())
     res
   }
 }
