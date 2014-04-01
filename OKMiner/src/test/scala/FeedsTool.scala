@@ -7,8 +7,8 @@ import com.sun.syndication.io.XmlReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Date
+import ner.indexing.{LuceneNER, Searcher}
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.ner.{Searcher, LuceneNER}
 import scala.collection.JavaConversions._
 
 case class Entity(uri: String, description: String, date: Date)

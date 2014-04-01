@@ -1,5 +1,7 @@
 package ru.stachek66.okminer.ner
 
+import tree.{InvertedRadixTreeNER, TrieNER}
+
 
 /**
  * @author alexeyev
@@ -18,7 +20,7 @@ private object CheckTool extends App {
       "Впрочем, на доле рынка поиска достижения Mail.ru заметным образом пока не отразились." +
       "  "
 
-  val companies = new TrieNER().extractAllCompanies(description)
+  val companies = new InvertedRadixTreeNER().extractAllCompanies(description)
   companies.foreach(println)
   //
   //  val n = new LuceneNER(new Searcher)//.extractAllCompanies("Apple Google Yandex")

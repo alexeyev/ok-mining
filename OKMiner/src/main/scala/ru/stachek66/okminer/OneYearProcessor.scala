@@ -2,8 +2,9 @@ package ru.stachek66.okminer
 
 import java.io.File
 import java.util.concurrent.TimeUnit
+import ner.indexing.{LuceneNER, Searcher}
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.ner.{NER, Searcher, LuceneNER}
+import ru.stachek66.okminer.ner.{NER}
 import ru.stachek66.okminer.utils.{CounterLogger, FileUtils}
 import scala.concurrent._
 import scala.concurrent.duration.Duration

@@ -2,7 +2,7 @@ package ru.stachek66.okminer
 
 import java.io.File
 import java.util.concurrent.TimeUnit
-import ner.TrieNER
+import ner.tree.TrieNER
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta.singleContext
 import ru.stachek66.okminer.utils.{StatsFileIO, CounterLogger}
