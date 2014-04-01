@@ -13,14 +13,24 @@ import scala.collection.JavaConversions._
  */
 object Lemmatizer {
 
-  private val latinRegex = ".*[A-Za-z0-9\\.;:].*".r.pattern
+  private val latinRegex = ".*[^А-Яа-я-].*".r.pattern
 
-  def lemmatize(text: String): Iterable[String] = {
+  def lemmatize(sourceText: String): Iterable[String] = {
+    val nText = sourceText.toLowerCase.replaceAll("ё", "е")
+    for {
+      token <- Lexer.split(nText)
+    } yield {
+      if (latinRegex.matcher(token).matches) token
+      else lemmatizeToken(token)
+    }
+  }
+
+  private def lemmatizeToken(text: String): String = {
     val b = new RussianMorphology()
     if (!latinRegex.matcher(text).matches()) {
-      b.getNormalForms(text)
+      b.getNormalForms(text).head
     } else {
-      List(text)
+      text
     }
   }
 }

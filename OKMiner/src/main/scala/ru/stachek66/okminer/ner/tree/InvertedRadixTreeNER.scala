@@ -2,7 +2,7 @@ package ru.stachek66.okminer.ner.tree
 
 import ru.stachek66.okminer.utils.CounterLogger
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.language.russian.{Lemmatizer, Lexer}
+import ru.stachek66.okminer.language.russian.Lemmatizer
 import com.googlecode.concurrenttrees.radixinverted.ConcurrentInvertedRadixTree
 import com.googlecode.concurrenttrees.radix.node.concrete.DefaultCharArrayNodeFactory
 import ru.stachek66.okminer.ner.{HeuristicsHelper, NER}
@@ -18,7 +18,7 @@ class InvertedRadixTreeNER extends NER {
   import InvertedRadixTreeNER._
 
   def extractAllCompanies(sourceText: String): Set[String] = {
-    val normalizedText = normalize(
+    val normalizedText = normalizeText(
       HeuristicsHelper.replaceCommas(
         HeuristicsHelper.replaceUrls(sourceText)))
 
@@ -30,13 +30,19 @@ object InvertedRadixTreeNER {
 
   import ru.stachek66.okminer.ner._
 
-  private val clog = new CounterLogger(LoggerFactory.getLogger("inverted-radix-tree-ner"), 50000, "%s companies put")
+  private val clog = new CounterLogger(LoggerFactory.getLogger("inverted-radix-tree-ner"), 50, "%s companies put")
 
-  private def normalize(sourceText: String) =
+  private def normalizeText(sourceText: String) =
     " " +
-      Lexer.split(sourceText.toLowerCase.replaceAll("ё", "е")).
-        map(Lemmatizer.lemmatize(_)).mkString(" ") +
+      Lemmatizer.lemmatize(sourceText).mkString(" ") +
       " " // space as a special delimiter
+
+
+  private def normalizeCompany(sourceText: String) =
+    " " +
+      Lemmatizer.lemmatize(sourceText).mkString(" ") +
+      " " // space as a special delimiter
+
 
   private val tree = {
     val tree = new ConcurrentInvertedRadixTree[Boolean](new DefaultCharArrayNodeFactory())
@@ -44,8 +50,7 @@ object InvertedRadixTreeNER {
     accessSources(
       line =>
         clog.execute {
-          tree.put(normalize(line), true)
-          println(normalize(line))
+          tree.put(normalizeCompany(line), true)
         }
     )
     tree

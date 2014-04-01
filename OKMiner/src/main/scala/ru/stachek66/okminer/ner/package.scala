@@ -1,12 +1,14 @@
 package ru.stachek66.okminer
 
+import utils.HabrahabrAccessor
+
 /**
  * @author alexeyev
  */
 package object ner {
 
   val sources = Iterable(
-    classOf[ClassLoader].getResourceAsStream("/habrahabr-companies.tsv"),
+    HabrahabrAccessor.getNormalizedStream,
     classOf[ClassLoader].getResourceAsStream("/crunchbase-companies.tsv")
   )
 
