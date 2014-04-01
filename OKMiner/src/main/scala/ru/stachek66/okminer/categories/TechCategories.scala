@@ -18,7 +18,9 @@ object TechCategories {
   private def parseDump() {
 
     var map = collection.mutable.Map[Int, (String, Array[Int])]()
-    val set = collection.mutable.Set[String]()
+
+    // we keep a parent for each acceptable node
+    val parentMap = collection.mutable.Map[String, Option[String]]()
 
     var counter = 0
     for {
@@ -52,33 +54,42 @@ object TechCategories {
       }
     }
 
-    def pr(id: Int, sp: Int, maxDepth: Int, onEach: String => Unit): Unit =
+    def pr(id: Int, sp: Int, maxDepth: Int, onEach: (String, Option[String]) => Unit, parent: Option[String]): Unit =
       if (maxDepth >= sp) {
         for ((t, ch) <- map.get(id)) {
-          onEach(t)
+          onEach(t, parent)
           //log.debug("|>" + (0 to sp).map(v => ". ").mkString + t)
           for {
             c <- ch
             //hack due to cycles
             if c != id
-          } pr(c, sp + 1, maxDepth, onEach)
+          } pr(c, sp + 1, maxDepth, onEach, Some(t))
         }
       }
 
-    pr(technologyId, sp = 0, maxDepth = 5, topic => set.add(topic))
-    map = null
+    pr(technologyId, sp = 0, maxDepth = 5, {
+      case (topic, parent) => parentMap.put(topic, parent)
+    }, None)
 
     val fw = new FileWriter(parsed)
-    for (element <- set) {
-      fw.write(element + "\n")
+    for {(element, parent) <- parentMap} {
+      fw.write(s"$element\t${parent.getOrElse("_")}\n")
     }
+    System.gc()
     fw.close()
   }
 
-  private def fromParsed: Set[String] =
-    io.Source.fromFile(parsed)("UTF-8").getLines().map(_.trim).toSet
+  private def fromParsed: Map[String, String] =
+    io.Source.fromFile(parsed)("UTF-8").getLines().
+      map(
+      line => {
+        val splitted = line.trim.split("\t")
+        splitted(0) -> splitted(1)
+      }
+    ).toMap
 
-  lazy val acceptableTopics: Set[String] = {
+
+  lazy val acceptableTopics: Map[String, String] = {
     if (!parsed.exists() || parsed.length() <= 0) {
       log.info("Will have to parse wiki-graph dump...")
       parseDump()

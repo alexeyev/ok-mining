@@ -59,7 +59,11 @@ class GraphsTool(drawConfig: Config = Config()) {
         case (company, yearMap) =>
           drawConfig.yearsAppropriate(yearMap.toMap.keySet)
       }
-    } yield trend -> companiesMap
+      newCompaniesMap = companiesMap.filter {
+        case (company, yearMap) =>
+          drawConfig.sufficientNumberOfYears(yearMap.toMap.keySet)
+      }
+    } yield trend -> newCompaniesMap
 
     filteredMegaMap.map {
       case (trend, map) => Model(trend, Conversions.toImmutable(map))

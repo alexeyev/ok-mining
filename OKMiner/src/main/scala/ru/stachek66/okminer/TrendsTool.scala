@@ -94,11 +94,16 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
 
     log.debug("Duples:\n" + translation.mkString("\n"))
 
-    for {
-      (score, terms, optTranslation) <- translation
-      (ru, en) <- optTranslation
-      normalizedEnglish = categories.Utils.norm(en)
-      if TechCategories.acceptableTopics.contains(normalizedEnglish)
-    } yield (score, terms, ru, normalizedEnglish)
+    (
+      for {
+        (score, terms, optTranslation) <- translation
+        (ru, en) <- optTranslation
+        normalizedEnglish = categories.Utils.norm(en)
+        if TechCategories.acceptableTopics.contains(normalizedEnglish)
+      } yield {
+        Iterable((score, terms, ru, normalizedEnglish),
+          (score, terms, ru, TechCategories.acceptableTopics(normalizedEnglish)))
+      }
+      ).flatten
   }
 }
