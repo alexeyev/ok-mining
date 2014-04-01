@@ -24,15 +24,15 @@ private[okminer] class OneYearProcessor(ner: NER = new LuceneNER(new Searcher),
 
   private def extractFromFile(file: File): Iterable[(Trend, Company, Int)] = {
     val description = FileUtils.asStringWithoutNewLines(file)
-//        val fTrends = future(trendsMiner.extractTrends(description)) //(ru.stachek66.okminer.Meta.singleContext)
-//        val fCompanies = future(ner.extractAllCompanies(description)) //(ru.stachek66.okminer.Meta.singleContext)
+    val fTrends = future(trendsMiner.extractTrends(description)) //(ru.stachek66.okminer.Meta.singleContext)
+    val fCompanies = future(ner.extractAllCompanies(description)) //(ru.stachek66.okminer.Meta.singleContext)
 
     val trends: Iterable[(Double, String, String, String)] =
-//      Await.result(fTrends, Duration(12, TimeUnit.HOURS))
-          trendsMiner.extractTrends(description)
+      Await.result(fTrends, Duration(12, TimeUnit.HOURS))
+    //          trendsMiner.extractTrends(description)
     val companies: Set[String] =
-//      Await.result(fCompanies, Duration(12, TimeUnit.HOURS))
-          ner.extractAllCompanies(description)
+      Await.result(fCompanies, Duration(12, TimeUnit.HOURS))
+    //          ner.extractAllCompanies(description)
 
     val allPairs = for {
       (_, _, _, trend) <- trends

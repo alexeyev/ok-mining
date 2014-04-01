@@ -8,6 +8,7 @@ import scala.collection.JavaConversions._
  * https://code.google.com/p/russianmorphology/
  *
  * Won't lemmatize a word if it contains symbols from [A-z0-9\\.]
+ * Is rather slow.
  *
  * @author alexeyev
  */

@@ -20,7 +20,8 @@ object Vocabulary {
   private lazy val vocAsTxtFile = ru.stachek66.okminer.wiki.parsed("voc")
 
   lazy val normalizedWords: Set[String] = {
-    if (vocAsTxtFile.exists() && io.Source.fromFile(vocAsTxtFile)("UTF-8").getLines().nonEmpty) getFromTxt
+    if (vocAsTxtFile.exists() && vocAsTxtFile.length() > 0)
+      getFromTxt
     else {
       val vocabulary = getFromDump
       flush(vocabulary)
@@ -28,7 +29,8 @@ object Vocabulary {
     }
   }
 
-  private def getFromTxt = io.Source.fromFile(vocAsTxtFile)("UTF-8").getLines().map(_.trim).toSet
+  private def getFromTxt =
+    io.Source.fromFile(vocAsTxtFile)("UTF-8").getLines().map(_.trim).toSet
 
   /**
    * Putting all titles and links fron wiki dump into the vocabulary in normalized form.
