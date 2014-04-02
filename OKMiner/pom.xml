@@ -21,6 +21,12 @@
         <jfree.v>1.0.13</jfree.v>
         <h2.version>1.3.171</h2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.v>4.0.2.RELEASE</spring.v>
+        <commons.v>1.4</commons.v>
+        <trees.v>2.4.0</trees.v>
+        <logback.v>1.1.1</logback.v>
+        <commons.io.v>1.3.2</commons.io.v>
+        <rome.v>1.0</rome.v>
     </properties>
 
     <dependencies>
@@ -30,41 +36,41 @@
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>4.0.2.RELEASE</version>
+            <version>${spring.v}</version>
         </dependency>
+
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
-            <version>1.4</version>
+            <version>${commons.v}</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.googlecode.concurrent-trees</groupId>
             <artifactId>concurrent-trees</artifactId>
-            <version>2.4.0</version>
+            <version>${trees.v}</version>
         </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.1</version>
+            <version>${logback.v}</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
-            <version>1.3.2</version>
+            <version>${commons.io.v}</version>
         </dependency>
 
         <dependency>
             <groupId>rome</groupId>
             <artifactId>rome</artifactId>
-            <version>1.0</version>
+            <version>${rome.v}</version>
             <exclusions>
                 <exclusion>
                     <groupId>jdom</groupId>
@@ -72,11 +78,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>jfree</groupId>
             <artifactId>jfreechart</artifactId>
             <version>${jfree.v}</version>
         </dependency>
+
         <dependency>
             <groupId>edu-jhu-nlp-wikipedia</groupId>
             <artifactId>wikixmlj</artifactId>
@@ -88,6 +96,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
@@ -98,11 +107,13 @@
             <artifactId>lucene-queryparser</artifactId>
             <version>${lucene.v}</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <version>${lucene.v}</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
@@ -118,37 +129,44 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.v}</version>
         </dependency>
+
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup.v}</version>
         </dependency>
+
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-compiler</artifactId>
             <version>${scala.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-reflect</artifactId>
             <version>${scala.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_2.10</artifactId>
             <version>${scalatest.v}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-swing</artifactId>
             <version>${scala.version}</version>
         </dependency>
+
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
