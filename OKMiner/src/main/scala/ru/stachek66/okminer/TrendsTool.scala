@@ -28,7 +28,10 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
   keyphrases.IndexProperties.index
   TechCategories.acceptableTopics
 
-  val dummy = "dummy42word"
+  /**
+   * the non-existing word that won't match anything
+   */
+  private val dummy = "dummy42word"
 
   /**
    * Provided with some text, returns most valuable wiki-trends.
@@ -43,7 +46,6 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
     val tokens =
       for {
         word <- filtered
-        if !VerbDetector.isVerb(word)
         tokenized <- Tokenizer.tokenize(word).headOption
       } yield {
         if (Vocabulary.normalizedWords.contains(tokenized)) word

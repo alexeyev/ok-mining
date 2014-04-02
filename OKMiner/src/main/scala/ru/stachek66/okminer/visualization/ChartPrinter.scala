@@ -26,8 +26,8 @@ object ChartPrinter {
     chart.getChart.getXYPlot.getDomainAxis.asInstanceOf[NumberAxis].setTickUnit(new NumberTickUnit(1))
 
     try {
-      ChartUtilities.saveChartAsPNG(file, chart.getChart, 900, 400)
-      log.info("Image for trend [%s] printed successfully.".format(chart.getChart.getTitle.getText))
+      ChartUtilities.saveChartAsPNG(file, chart.getChart, 1500, 800)
+      log.info(s"Image for trend [${chart.getChart.getTitle.getText}] printed successfully.")
     }
     catch {
       case e: Exception => {

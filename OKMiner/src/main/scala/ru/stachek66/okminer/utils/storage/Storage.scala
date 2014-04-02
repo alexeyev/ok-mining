@@ -62,7 +62,6 @@ object Storage {
           s"group by year, company, trend ")
 
       new Iterator[(String, String, Int)]() {
-
         // because the first row set is always 'special'
         var hNext = rowSet.next()
 
@@ -77,6 +76,7 @@ object Storage {
             throw new Exception("No more data!")
           }
         }
+
         def hasNext: Boolean = hNext
       }
     }
@@ -87,8 +87,7 @@ object Storage {
       dropDb()
       log.info("DB dropped successfully")
     } catch {
-      case e: Exception =>
-        log.error("There was no DB")
+      case e: Exception => log.error("There was no DB")
     }
     createDb()
     handler(H2Dao)
