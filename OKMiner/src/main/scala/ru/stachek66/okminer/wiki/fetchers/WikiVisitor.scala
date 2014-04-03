@@ -22,6 +22,10 @@ class WikiVisitor(file: File, clog: CounterLogger) {
 
   private val wxsp = WikiXMLParserFactory.getSAXParser(file.getAbsolutePath)
 
+  /**
+   * Allows to process all wiki-pages found in the provided dump
+   * @param handler wiki-pages processor
+   */
   def visit(handler: WikiPage => Unit) {
     try {
       wxsp.setPageCallback(

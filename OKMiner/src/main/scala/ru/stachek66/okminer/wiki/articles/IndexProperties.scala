@@ -9,7 +9,7 @@ import ru.stachek66.okminer.Meta
  * @author alexeyev
  */
 object IndexProperties {
-  //todo: rewrite
+
   val textField = "text"
   val titleField = "title"
   val idField = "id"

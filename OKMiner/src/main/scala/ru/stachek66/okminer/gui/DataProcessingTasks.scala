@@ -5,7 +5,7 @@ import java.security.InvalidParameterException
 import ru.stachek66.okminer.{CorpusProcessorWriter, GraphsTool}
 
 /**
- * All important calls for computing are provided by this class.
+ * All important GUI's calls for computing are provided by this class.
  * @author alexeyev
  */
 private[gui] object DataProcessingTasks {
@@ -28,7 +28,6 @@ private[gui] object DataProcessingTasks {
 
   /**
    * Drawing yearly graphs provided with reports
-   *
    * @param reports reports directory
    */
   def drawGraphs(reports: Option[File]) {

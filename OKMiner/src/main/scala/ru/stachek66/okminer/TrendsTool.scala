@@ -2,21 +2,18 @@ package ru.stachek66.okminer
 
 import categories.TechCategories
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.language.russian.{VerbDetector, StopWordsFilter, Lexer, Tokenizer}
+import ru.stachek66.okminer.language.russian.{StopWordsFilter, Lexer, Tokenizer}
 import ru.stachek66.okminer.wiki._
 import ru.stachek66.okminer.wiki.translation.Translator
 import ru.stachek66.okminer.wiki.vocabulary.Vocabulary
-import scala.concurrent.duration._
-import scala.concurrent._
-import scala.concurrent.Await
-import scala.util.{Success, Failure, Try}
-import ru.stachek66.okminer.Meta.singleContext
 
 /**
  * Trends extraction.
  * @author alexeyev
  */
-private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = SmoothedKeyphrasenessCalculator,
+private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator =
+                                  if (JsonConfigReader.config.useKeyPhrasenessThreshold) SmoothedKeyphrasenessCalculator
+                                  else DummyKeyPhrasenessCalculator,
                                   translator: Translator = new Translator()) {
 
   private val log = LoggerFactory.getLogger("trends-tool")
@@ -41,7 +38,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
   def extractTrends(text: String): Iterable[(Double, String, String, String)] = {
 
     val splitted = Lexer.split(text)
-    val filtered = splitted.map(t => if (StopWordsFilter.getList.contains(t)) dummy else t)
+    val filtered = splitted.map(t => if (StopWordsFilter.stopList.contains(t)) dummy else t)
 
     val tokens =
       for {
@@ -59,28 +56,15 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator = Smooth
     }
 
     def buildResults(phrases: Iterable[String]): Iterable[(String, Double)] = {
-
       phrases.map {
         phrase => {
-          val kp = future[Double](kpCalculator.getKeyPhraseness(phrase))
-          val res =
-            Try {
-              Await.result(kp, 10 seconds)
-            } match {
-              case Failure(e) => {
-                log.debug("Takes too long: %s".format(phrase))
-                None
-              }
-              case Success(kps) => {
-                if (kps > 0) {
-                  Some((phrase, kps))
-                } else None
-              }
-            }
-          res
+          val kp = kpCalculator.getKeyPhraseness(phrase)
+          if (kp > 0) {
+            Some((phrase, kp))
+          } else None
         }
-      }
-    }.flatten.toSet
+      }.flatten.toSet
+    }
 
     val dResults: Iterable[(String, Double)] = {
       buildResults(

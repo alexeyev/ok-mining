@@ -13,6 +13,10 @@ class LuceneNER(searcher: Searcher) extends NER {
 
   private val log = LoggerFactory.getLogger("ner")
 
+  /**
+   * @param sourceText text in Russian language
+   * @return a list of extracted organizations
+   */
   def extractAllCompanies(sourceText: String): Set[String] = {
 
     val tokens =

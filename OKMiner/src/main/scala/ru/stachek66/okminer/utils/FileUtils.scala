@@ -8,10 +8,18 @@ import java.io.File
  */
 object FileUtils {
 
-  def asStringWithoutNewLines(file: File) =
-    io.Source.fromFile(file)("UTF-8").getLines().mkString(" ")
+  /**
+   * Turns newlines into spaces
+   * @param file target file
+   * @return resulting string
+   */
+  def asStringWithoutNewLines(file: File) = io.Source.fromFile(file)("UTF-8").getLines().mkString(" ")
 
-  def asString(file: File) =
-    io.Source.fromFile(file)("UTF-8").getLines().mkString("\n")
+  /**
+   * Returns file as string without any modifications
+   * @param file target file
+   * @return resulting string
+   */
+  def asString(file: File) = io.Source.fromFile(file)("UTF-8").getLines().mkString("\n")
 
 }

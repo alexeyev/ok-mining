@@ -1,6 +1,7 @@
 <configuration>
 
     <appender name="TFA" class="ru.stachek66.okminer.gui.utils.TextFieldAppender2">
+
         <encoder>
             <pattern>%logger{5} %msg%n</pattern>
         </encoder>

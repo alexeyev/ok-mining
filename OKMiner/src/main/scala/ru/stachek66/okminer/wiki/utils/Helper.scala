@@ -24,6 +24,10 @@ object Helper {
     list.toMap
   }
 
+  /**
+   * Getting links without pipes.
+   * E.g.: [ [ Красота ] ]
+   */
   private def getNonPipeLinks(text: String): Iterable[String] = {
     val m = linkPattern.matcher(text)
     val list = ArrayBuffer[String]()
@@ -33,6 +37,10 @@ object Helper {
     list.toList
   }
 
+  /**
+   * Normal link forms
+   * @param text irredular form
+   */
   def getTitleFormLinkSet(text: String): Iterable[String] = {
     val pipeLinks = getPipeLinksMap(text)
     (
@@ -41,6 +49,9 @@ object Helper {
       ).toSet
   }
 
+  /**
+   * Returns all links given the surface form of one
+   */
   def getAllFormsLinkSet(text: String): Iterable[String] = {
     val pipeLinks = getPipeLinksMap(text)
     (
@@ -50,5 +61,8 @@ object Helper {
       ).toSet
   }
 
+  /**
+   * Checking if WikiPage IS an article
+   */
   def isCoolPage(page: WikiPage) = !page.isRedirect && !page.isSpecialPage && !page.isDisambiguationPage && !page.isStub
 }

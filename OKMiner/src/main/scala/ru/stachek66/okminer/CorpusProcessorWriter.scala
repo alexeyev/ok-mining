@@ -4,7 +4,8 @@ import java.io.File
 import ner.tree.InvertedRadixTreeNER
 import org.slf4j.LoggerFactory
 import utils.{StatsFileIO, CounterLogger}
-import utils.storage.Storage
+import utils.storage.StoredBag
+import scala._
 
 /**
  * A tool for processing the whole corpus:
@@ -23,31 +24,43 @@ object CorpusProcessorWriter {
    * @param corpus corpus directory; it should contain folders with names matching "\\d{1,4}" with texts in them
    * @param reportsDirectory directory for writing tsv reports into
    */
-  def processCorpus(corpus: File, reportsDirectory: File) {
+  def processCorpus(corpus: File, reportsDirectory: File, bag: Option[StoredBag] = None) {
 
     reportsDirectory.mkdirs()
 
-    Storage.withDao {
-      dao => {
-        clog.getLogger.info("Dao opened.")
-        for {
-        // choosing appropriate directories
-          directory <- corpus.listFiles().toIterable
-          if directory.isDirectory &&
-            yearPattern.matcher(directory.getName).matches() &&
-            directory.listFiles().nonEmpty
-        } {
-          val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 10, "%s files processed")
-          log.getLogger.info("I'm parsing " + directory.getName)
-          // carrying out the core task
-          //                      val data = processor.extractFromYearDirectory(directory, List(log, clog))
-          processor.flushFromYearDirectory(directory, List(log, clog), dao)
-          // writing everything down
-          val data = dao.getStats(directory.getName.toInt)
-          StatsFileIO.writeToFile(data, new File(s"${reportsDirectory.getAbsolutePath}/${directory.getName}.tsv"))
-          log.getLogger.info("Done with it!")
-        }
+    def doProcessing(getData: (File, List[CounterLogger]) => TraversableOnce[(String, String, Int)]) {
+      for {
+      // choosing appropriate directories
+        directory <- corpus.listFiles().toIterable
+        if directory.isDirectory &&
+          yearPattern.matcher(directory.getName).matches() &&
+          directory.listFiles().nonEmpty
+      } {
+        val log = new CounterLogger(LoggerFactory.getLogger(directory.getName + "-processor"), 10, "%s files processed")
+        log.getLogger.info("I'm parsing " + directory.getName)
+        // carrying out the core task
+        val data = getData(directory, List(log, clog))
+        StatsFileIO.writeToFile(data, new File(s"${reportsDirectory.getAbsolutePath}/${directory.getName}.tsv"))
+        log.getLogger.info("Done with it!")
       }
+    }
+
+    bag match {
+      case None => doProcessing {
+        //doing it all in memory
+        case (directory, loggers) => processor.extractFromYearDirectory(directory, loggers)
+      }
+      case Some(storedBag) =>
+        storedBag.withDao {
+          dao =>
+          // flushing results after reading each file
+            doProcessing {
+              case (directory, loggers) => {
+                processor.flushFromYearDirectory(directory, loggers, dao)
+                dao.getStats(directory.getName.toInt)
+              }
+            }
+        }
     }
   }
 }

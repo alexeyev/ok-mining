@@ -3,11 +3,11 @@ package ru.stachek66.okminer.wiki.articles
 import org.apache.lucene.index.{Term, IndexReader}
 import org.apache.lucene.search.{Query, PhraseQuery, TopScoreDocCollector, IndexSearcher}
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.language.russian.Tokenizer
+import ru.stachek66.okminer.language.russian.Lexer
 import scala.util.{Success, Try, Failure}
 
 /**
- * Searching for keyphrases in the whole text collection.
+ * Searching for phrases in the whole wiki-articles' collection
  * @author alexeyev
  */
 class PhraseSearcher(index: Index) {
@@ -27,13 +27,15 @@ class PhraseSearcher(index: Index) {
 
   private val searcher = new IndexSearcher(reader)
 
+  /**
+   * A total number of indexed wiki-articles
+   */
   val totalDocs = searcher.collectionStatistics(IndexProperties.textField).docCount()
 
   private def buildQuery(keyphrase: String): Query = {
     val pq = new PhraseQuery()
-    //todo: bug: tokenizer must not do stemming
-    val splitted = Tokenizer.tokenize(keyphrase)
-//    log.debug("Query: [%s]".format(splitted.mkString(" ")))
+    val splitted = Lexer.split(keyphrase)
+    log.debug("Query: [%s]".format(splitted.mkString(" ")))
     for (t <- splitted) {
       pq.add(new Term(IndexProperties.textField, t))
     }
@@ -41,6 +43,9 @@ class PhraseSearcher(index: Index) {
     pq
   }
 
+  /**
+   * Returns a number of times a keyphrase was found in the index
+   */
   def getHitsCount(keyphrase: String): Int = {
     val pq = buildQuery(keyphrase)
     val collector = TopScoreDocCollector.create(500, true)
@@ -48,6 +53,9 @@ class PhraseSearcher(index: Index) {
     collector.topDocs().scoreDocs.length
   }
 
+  /**
+   * Returns the result of searching the given keyphrase
+   */
   def tryPhrase(keyphrase: String) = {
     val pq = buildQuery(keyphrase)
     val collector = TopScoreDocCollector.create(500000, true)

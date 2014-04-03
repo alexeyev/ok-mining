@@ -13,6 +13,11 @@ import ru.stachek66.okminer.utils.CounterLogger
 import ru.stachek66.okminer.wiki._
 
 
+/**
+ * Russian-to-English translation index
+ * @param mapFile text file with mapping Russian titles on English ones
+ * @param destDirectory directory for flushing the index into
+ */
 class Index(mapFile: File = parsed("ru_en"), destDirectory: File = indices("ru_en")) {
 
   import IndexProperties._
@@ -58,8 +63,14 @@ class Index(mapFile: File = parsed("ru_en"), destDirectory: File = indices("ru_e
     new IndexSearcher(r)
   }
 
+  /**
+   * Searcher accessor method
+   */
   def withSearcher[T](action: IndexSearcher => T): T = action(searcher)
 
+  /**
+   * Writer accessor method
+   */
   def withWriter(action: IndexWriter => Unit) {
     val writer = new IndexWriter(indexDir, new IndexWriterConfig(Meta.luceneVersion, analyzer))
     action(writer)
@@ -86,6 +97,9 @@ class Index(mapFile: File = parsed("ru_en"), destDirectory: File = indices("ru_e
   }
 }
 
+/**
+ * Forced index building
+ */
 object Index {
   def main(args: Array[String]) {
     new Index()

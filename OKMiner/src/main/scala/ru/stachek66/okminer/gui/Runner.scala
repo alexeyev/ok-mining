@@ -42,30 +42,35 @@ object Runner extends SimpleSwingApplication {
       }
     )
 
+    // call for starting reports building
     val reportsButton = new Button {
       this.text = "Build!"
     }
 
+    // call for starting graphs drawing
     val graphsButton = new Button {
       this.text = "Draw!"
     }
 
+    // call for opening the chosen destination folder
     val openDestButton = new Button {
       this.text = "Open destination"
     }
 
+    // text area used for logging
     val logsArea = LogTextArea
 
+    // a scrollable container for text
     val scrollPane = new ScrollPane(
       new BorderPanel {
         add(logsArea, BorderPanel.Position.Center)
       }) {
-      border = Swing.LineBorder(java.awt.Color.BLACK) //(40, 20, 20, 20, java.awt.Color.BLACK)
-
+      border = Swing.LineBorder(java.awt.Color.BLACK)
     }
 
     val defaultPosition = BorderPanel.Position.Center
 
+    // filling the frame with components and setting layout
     contents = new GridPanel(1, 2) {
 
       val buttonsPanel = new BoxPanel(Orientation.Vertical) {
@@ -102,8 +107,8 @@ object Runner extends SimpleSwingApplication {
       contents += buttonsPanel
       contents += scrollPane
     }
-    // adding listeners
 
+    // adding listeners
     listenTo(corpusDirectory.button)
     listenTo(destDirectory.button)
     listenTo(reportsButton)
@@ -111,14 +116,16 @@ object Runner extends SimpleSwingApplication {
     listenTo(openDestButton)
 
     // reactive behaviour setting
-
     reactions += {
+      // "setting corpus" action
       case ButtonClicked(button)
         if button.equals(corpusDirectory.button) => corpusDirectory.actOnClick()
 
+      // "choosing destination" action
       case ButtonClicked(button)
         if button.equals(destDirectory.button) => destDirectory.actOnClick()
 
+      // "building reports" action
       case ButtonClicked(button) if button.equals(reportsButton) =>
         concurrent.future {
           button.enabled = false
@@ -134,6 +141,7 @@ object Runner extends SimpleSwingApplication {
             button.enabled = true
         }
 
+      // "graphs drawing" action
       case ButtonClicked(button) if button.equals(graphsButton) =>
         concurrent.future {
           button.enabled = false
@@ -148,6 +156,7 @@ object Runner extends SimpleSwingApplication {
             Dialog.showMessage(button, "Graphs flushing done!", "Message", Dialog.Message.Info)
         }
 
+      // "open destination" action
       case ButtonClicked(button) if button.equals(openDestButton) =>
         try {
           Desktop.getDesktop.open(destDirectory.getFile.getOrElse(throw new IllegalArgumentException))

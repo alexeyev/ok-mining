@@ -11,6 +11,7 @@ import org.slf4j.Logger
  * @author alexeyev
  */
 class CounterLogger(log: Logger, step: Int, pattern: String) {
+
   if (step < 1) throw new IllegalArgumentException("Step must be a positive integer.")
 
   def getLogger = log
@@ -20,6 +21,8 @@ class CounterLogger(log: Logger, step: Int, pattern: String) {
     tick()
     result
   }
+
+  def getCurrentCount = counter
 
   private def tick() {
     counter += 1
@@ -36,8 +39,6 @@ class CounterLogger(log: Logger, step: Int, pattern: String) {
       prevCounter = counter
     }
   }
-
-  def getCurrentCount = counter
 
   @volatile
   private var counter: Long = 0

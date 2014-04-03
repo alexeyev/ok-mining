@@ -7,6 +7,8 @@ import ru.stachek66.okminer.utils.{CounterLogger, FileUtils}
 import scala.util._
 
 /**
+ * Cleaning articles from HTML markup using
+ * awesome org.jsoup.
  * @author alexeyev
  */
 object LentaArticleCleaner extends App {

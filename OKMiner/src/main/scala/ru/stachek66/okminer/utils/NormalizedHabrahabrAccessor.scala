@@ -19,6 +19,9 @@ object NormalizedHabrahabrAccessor {
     "%s companies normalized"
   )
 
+  /**
+   * Normalized (lemmatized) companies' names from habrahabr.ru.
+   */
   @tailrec
   def getNormalizedStream: InputStream = {
     if (parsedHabrahabr.exists() && parsedHabrahabr.length() > 0) {

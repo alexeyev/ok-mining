@@ -12,7 +12,7 @@ import java.util.Date
  * Provides access to H2-based Data Access Object.
  * @author alexeyev
  */
-object Storage {
+object Storage extends StoredBag {
 
   private val log = LoggerFactory.getLogger("local-storage")
 
@@ -30,16 +30,19 @@ object Storage {
 
   private val table = "stats"
 
-  private def createDb() {
+  protected def createDb() {
     jdbc.execute(
       s"create table $table (id bigint auto_increment primary key, year int, trend varchar(400), company varchar(100))")
   }
 
-  private def dropDb() {
+  protected def dropDb() {
     jdbc.execute(s"drop table $table")
   }
 
-  private object H2Dao extends Dao {
+  /**
+   * DAO over H2 embedded database.
+   */
+  protected object H2Dao extends Dao {
 
     def put(data: Iterable[(Int, String, String)]) {
 
@@ -61,7 +64,9 @@ object Storage {
           s"where year = $year " +
           s"group by year, company, trend ")
 
+      // a special implementation of iterator over the database cursor
       new Iterator[(String, String, Int)]() {
+
         // because the first row set is always 'special'
         var hNext = rowSet.next()
 
@@ -82,15 +87,5 @@ object Storage {
     }
   }
 
-  def withDao(handler: Dao => Unit) {
-    try {
-      dropDb()
-      log.info("DB dropped successfully")
-    } catch {
-      case e: Exception => log.error("There was no DB")
-    }
-    createDb()
-    handler(H2Dao)
-    dropDb()
-  }
+  protected def getMyDao = H2Dao
 }

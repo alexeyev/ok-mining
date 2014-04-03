@@ -11,6 +11,10 @@ import ru.stachek66.okminer.utils.CounterLogger
 class LinksFetcher extends Fetcher[Iterable[String]] {
   private val log = LoggerFactory.getLogger("wiki-k-fetcher")
 
+  /**
+   * Allows to do anything with the text link or title
+   * @param handler function processing the given link
+   */
   override def fetch(handler: Iterable[String] => Unit) {
     new WikiVisitor(new CounterLogger(log, 1000, "%s links got")).visit {
       page => {

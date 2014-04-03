@@ -1,6 +1,6 @@
 package ru.stachek66.okminer.ner.indexing
 
-import java.io.{InputStream, Closeable}
+import java.io.Closeable
 import org.apache.lucene.store.RAMDirectory
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.ru.RussianAnalyzer
@@ -30,9 +30,12 @@ class RAMIndex extends Closeable {
   }
 
   {
+    // making sure index is filled
     val iw = new IndexWriter(dir, config)
     log.info("Filling companies' index...")
-    accessSources(line => addToIndex(iw, line.trim))
+    accessSources {
+      line => addToIndex(iw, line.trim)
+    }
     iw.commit()
     iw.close()
     log.info("Indexing done.")

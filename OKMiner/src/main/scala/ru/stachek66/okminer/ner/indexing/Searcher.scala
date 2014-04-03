@@ -7,6 +7,7 @@ import org.apache.lucene.sandbox.queries.SlowFuzzyQuery
 import org.apache.lucene.search._
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.Meta
+import ru.stachek66.okminer.language.russian.Tokenizer
 
 /**
  * Searching companies' names.
@@ -18,6 +19,12 @@ class Searcher {
   private val index = new RAMIndex()
   private val log = LoggerFactory.getLogger("company-searcher-experimental")
 
+  /**
+   * "Fuzzy search", which means Levenstein distance search.
+   * @param freeTextQuery query in natural Russian language
+   * @param maxEditDistance max allowable eedit distance
+   * @return pairs: (distance, company-document)
+   */
   @deprecated
   def fuzzyFind(freeTextQuery: String, maxEditDistance: Int): Iterable[(Float, Document)] = {
 
@@ -57,7 +64,10 @@ class Searcher {
   }
 
   /**
-   * Exact match
+   * Default vector-model Lucene search.
+   * @param freeTextQuery request in Russian language
+   * @param relevanceThreshold tf-idf-like measure threshold
+   * @return a list of pairs (score, document)
    */
   @deprecated // since March; should use strict match
   def magicFind(freeTextQuery: String, relevanceThreshold: Float): Iterable[(Float, Document)] = {
@@ -86,18 +96,17 @@ class Searcher {
   }
 
   /**
-   * Exact match
+   * Exact match queries.
+   * @param freeTextQuery company name to be searched for
+   * @return matched companies
    */
   def strictFind(freeTextQuery: String): Iterable[(Float, Document)] = {
-
-    val terms = freeTextQuery.split(" ")
 
     index.withSearcher {
       searcher => {
         val qp = new QueryParser(Meta.luceneVersion, IndexProperties.companyField, index.analyzer)
         val q = qp.createMinShouldMatchQuery(IndexProperties.companyField, freeTextQuery, 1.0f)
         val collector = TopScoreDocCollector.create(1000, true)
-        //        println("query ->" + freeTextQuery)
         if (q == null) {
           log.error(s"Query is null for freetext [$freeTextQuery]")
           Iterable.empty
@@ -112,7 +121,10 @@ class Searcher {
               }
             ).filter {
               case (score, doc) => {
-                doc.getValues(IndexProperties.companyField).head.split("[\\s'-\\.,:;!\\?]").size == terms.size
+                doc.
+                  getValues(IndexProperties.companyField).
+                  head.split("[\\s'-\\.,:;!\\?]").
+                  size == Tokenizer.tokenize(freeTextQuery).size
               }
             }
           if (!hits.isEmpty)

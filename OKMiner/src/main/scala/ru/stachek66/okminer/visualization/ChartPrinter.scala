@@ -15,6 +15,9 @@ object ChartPrinter {
 
   private val log = LoggerFactory.getLogger("image-printer")
 
+  /**
+   * Given a chart and a file, does the drawing into PNG file
+   */
   def print(chart: ChartGenerator.Chart, file: File) {
 
     val renderer: XYItemRenderer = new XYSplineRenderer

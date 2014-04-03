@@ -10,10 +10,10 @@ import ru.stachek66.okminer.wiki.fetchers.TextFetcher
 import scala.util.{Success, Failure, Try}
 
 /**
+ * Wikipedia articles index
  * @author alexeyev
  */
 class Index extends IndexHolder {
-  //todo: make safe
 
   private val log = LoggerFactory.getLogger(this.getClass)
 
@@ -50,6 +50,9 @@ class Index extends IndexHolder {
   }
 }
 
+/**
+ * Index building
+ */
 object Index {
   def main(args: Array[String]) {
     new Index().doIndex()

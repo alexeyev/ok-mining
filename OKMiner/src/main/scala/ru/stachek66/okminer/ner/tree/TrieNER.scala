@@ -7,24 +7,29 @@ import scala.collection.JavaConversions._
 import ru.stachek66.okminer.ner.{HeuristicsHelper, NER}
 
 /**
- * Using Trie for finding all required substrings in the text.
+ * Using Trie for finding all required substrings (that is, organizations) in the text.
  * @author alexeyev
  */
-@deprecated // since April, use InvertedRadixTreeNER instead
+@deprecated // since April, using InvertedRadixTreeNER helps to extract companies more efficiently
 class TrieNER extends NER {
 
   import TrieNER._
 
+  /**
+   * @param sourceText text in Russian
+   * @return recognized companies, if any
+   */
   def extractAllCompanies(sourceText: String): Set[String] = {
     val normalizedText = normalize(
       HeuristicsHelper.replaceCommas(
         HeuristicsHelper.replaceUrls(sourceText)))
 
-    normalizedText.tails.flatMap(tail => {
-      val matcch = trie.foundPrefixes(tail)
-      for (top <- matcch)
-      yield tail.substring(0, top).trim
-    }).toSet
+    normalizedText.tails.flatMap(
+      tail => {
+        val matcch = trie.foundPrefixes(tail)
+        for (top <- matcch)
+        yield tail.substring(0, top).trim
+      }).toSet
   }
 
 }
@@ -38,6 +43,9 @@ object TrieNER {
 
   private def normalize(sourceText: String) = " " + Lexer.split(sourceText.replaceAll("ё", "е")).mkString(" ") + " " // space as a special delimiter
 
+  /**
+   * All companies represented as a trie
+   */
   private val trie = {
     val ttrie = new Trie()
     accessSources {
@@ -48,5 +56,4 @@ object TrieNER {
     }
     ttrie
   }
-
 }

@@ -1,6 +1,7 @@
 package ru.stachek66.okminer.visualization
 
 /**
+ * Some tuneable parameters can be set here
  * @author alexeyev
  */
 case class Config(

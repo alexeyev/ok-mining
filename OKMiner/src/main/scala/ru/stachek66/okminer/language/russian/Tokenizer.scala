@@ -11,7 +11,7 @@ import org.apache.lucene.analysis.ru.RussianAnalyzer
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * Tokenization + stemming provided by Lucene RussianAnalyzer
+ * Tokenization + stemming provided by Lucene RussianAnalyzer (a default one)
  * @author alexeyev
  */
 object Tokenizer {

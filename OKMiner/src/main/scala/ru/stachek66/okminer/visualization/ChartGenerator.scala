@@ -5,14 +5,28 @@ import org.jfree.chart.{JFreeChart, ChartFactory}
 import org.jfree.data.xy.{XYSeriesCollection, XYSeries}
 
 /**
+ * Given a data model, builds the corresponding jfree chart.
+ * Points are scattered around the true points with the fixed coefficient.
  * @author alexeyev
  */
 object ChartGenerator {
+
+  /**
+   * Coefficient setting the scattering.
+   * Must be less than 1.0.
+   */
+  private val scattering = 0.2
+
+  require(scattering < 1)
 
   class Chart(jFreeChart: JFreeChart) {
     private[visualization] def getChart = jFreeChart
   }
 
+  /**
+   * @param data model in concern
+   * @return resulting chart
+   */
   def buildChart(data: Model): Chart = {
 
     val dataset: XYSeriesCollection = new XYSeriesCollection
@@ -21,7 +35,7 @@ object ChartGenerator {
       val series = new XYSeries(company)
       for ((year: Int, score: Float) <- yearToScore) {
         // scattering hack
-        series.add(year + math.random / 5, score + math.random / 5)
+        series.add(year + (math.random - 0.5) * scattering, score + (math.random - 0.5) * scattering)
       }
       dataset.addSeries(series)
     }

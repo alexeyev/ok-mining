@@ -17,6 +17,9 @@ trait IndexHolder extends Closeable {
 
   protected def doIndex(): Unit
 
+  /**
+   * Safe index directory getting
+   */
   def accessIndex: org.apache.lucene.store.Directory = Try {
     IndexReader.open(indexDir)
   } match {

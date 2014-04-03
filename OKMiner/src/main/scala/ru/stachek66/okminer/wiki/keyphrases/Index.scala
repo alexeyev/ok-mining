@@ -8,6 +8,7 @@ import ru.stachek66.okminer.wiki.IndexHolder
 import ru.stachek66.okminer.wiki.fetchers.LinksFetcher
 
 /**
+ * Index over wiki-links and titles
  * @author alexeyev
  */
 class Index extends IndexHolder {
@@ -48,6 +49,9 @@ class Index extends IndexHolder {
   }
 }
 
+/**
+ * Index building
+ */
 object Index {
   def main(args: Array[String]) {
     new Index().doIndex()

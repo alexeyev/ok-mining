@@ -10,7 +10,7 @@ import org.apache.lucene.queryparser.classic.QueryParser
 import ru.stachek66.okminer.Meta
 
 /**
- * Wiki links and titles search provider.
+ * Wiki links and titles search provider
  * @author alexeyev
  */
 class Searcher(index: Index) {
@@ -35,11 +35,14 @@ class Searcher(index: Index) {
   private def buildQuery(keyphrase: String) = {
     val qp = new QueryParser(Meta.luceneVersion, keyphrase, IndexProperties.analyzer)
     qp.setPhraseSlop(0)
-    qp.createMinShouldMatchQuery(IndexProperties.textField, keyphrase, 1.0f)
-    //    log.debug("Query: [%s]".format(splitted.mkString(" ")))
-
+    val query = qp.createMinShouldMatchQuery(IndexProperties.textField, keyphrase, 1.0f)
+    log.debug(s"Query: [$keyphrase]")
+    query
   }
 
+  /**
+   * Returns the number of times the keyphrase was found
+   */
   def getHitsCount(keyphrase: String): Int = {
     val pq = buildQuery(keyphrase)
     val collector = TopScoreDocCollector.create(5000, true)
@@ -47,7 +50,10 @@ class Searcher(index: Index) {
     collector.topDocs().scoreDocs.length
   }
 
-  private def tryPhrase(keyphrase: String): Iterable[String] = {
+  /**
+   * Returns the keyphrase search result.
+   */
+  private[keyphrases] def tryPhrase(keyphrase: String): Iterable[String] = {
     val pq = buildQuery(keyphrase)
     val l = keyphrase.split(" ").length
     val collector = TopScoreDocCollector.create(500000, true)
@@ -61,18 +67,7 @@ class Searcher(index: Index) {
     } yield {
       (scoreDoc.score, link)
     }
-    log.info(keyphrase + " => " + res.toString())
+    log.debug(keyphrase + " => " + res.toString())
     res.map(_._2)
-  }
-}
-
-object Searcher {
-  def main(args: Array[String]) {
-    val s = new Searcher(new Index())
-    println(s.tryPhrase("облачное хранилище"))
-    println(s.tryPhrase("облачное вычисления"))
-    println(s.tryPhrase("интернет вещица"))
-    println(s.tryPhrase("интернет вещей"))
-    println(s.tryPhrase("смартфон "))
   }
 }

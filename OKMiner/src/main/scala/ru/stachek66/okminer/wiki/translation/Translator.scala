@@ -3,7 +3,7 @@ package ru.stachek66.okminer.wiki.translation
 
 /**
  * Translation tool; given an article name in Russian.
- * looks it up in the translations index.
+ * looks it up in the translations index; takes top-1.
  * @author alexeyev
  */
 class Translator(index: Index = new Index()) {

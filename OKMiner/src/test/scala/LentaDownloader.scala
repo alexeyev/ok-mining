@@ -9,6 +9,7 @@ import scala.annotation.tailrec
 import scala.util._
 
 /**
+ * Downloading pages provided with a set of links.
  * @author alexeyev
  */
 object LentaDownloader extends App {

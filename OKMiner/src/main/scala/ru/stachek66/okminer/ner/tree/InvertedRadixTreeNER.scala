@@ -17,6 +17,10 @@ class InvertedRadixTreeNER extends NER {
 
   import InvertedRadixTreeNER._
 
+  /**
+   * @param sourceText text in natural language
+   * @return recognized companies
+   */
   def extractAllCompanies(sourceText: String): Set[String] = {
     clog.getLogger.debug("Normalizing text...")
     val normalizedText = normalizeText(
@@ -46,6 +50,9 @@ object InvertedRadixTreeNER {
       " ", // space as a special delimiter
       sourceText)
 
+  /**
+   * All normalized companies represented as inverted radix tree
+   */
   private val tree = {
     val tree = new ConcurrentInvertedRadixTree[String](new DefaultCharArrayNodeFactory())
 

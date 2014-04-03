@@ -35,7 +35,7 @@ object Tool extends App {
     }
   }
 
-  val enToRuResult = future {
+  val enToRuResult = {
 
     val enIdToRuTitle = LangLinksSQLParser.idToRuTitle
 
@@ -48,7 +48,7 @@ object Tool extends App {
     }
   }
 
-  Await.result(Future.sequence(List(ruToEnResult, enToRuResult)), Meta.maxDuration)
+  Await.result(ruToEnResult, Meta.maxDuration)
   fw.close()
 
 

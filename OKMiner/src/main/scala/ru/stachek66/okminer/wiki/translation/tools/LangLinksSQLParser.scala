@@ -10,7 +10,7 @@ import scala.util.{Success, Failure, Try}
 import ru.stachek66.okminer.utils.CounterLogger
 
 /**
- * Parsing langlinks dump.
+ * Parsing langlinks dump
  * @author alexeyev
  */
 private[tools] object LangLinksSQLParser {

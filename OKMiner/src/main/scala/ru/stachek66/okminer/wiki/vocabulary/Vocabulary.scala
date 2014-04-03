@@ -64,9 +64,4 @@ object Vocabulary {
     fw.close()
     log.info("Flushing done.")
   }
-
-  def main(args: Array[String]) {
-    log.info("Checking if vocabulary is present")
-    println(normalizedWords)
-  }
 }
