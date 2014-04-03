@@ -1,0 +1,13 @@
+My thesis project files.
+
+I'm trying to find out which companies/people are associated with which tech trends on the Web. The tool I'm trying to make work is to be able to extract NEs and trends from a document.
+
+Like: NE "Google" in the context of "Robotics".
+
+So, having a corpus of tech blog posts with timestamps one will be able to find out which company does something in some field at a given period of time. Poo-tee-weet?
+-------
+
+works started in autumn
+
+3.01.2014: moved from OK-mining to Russian trends mining
+30.03.2014: coding like hell
