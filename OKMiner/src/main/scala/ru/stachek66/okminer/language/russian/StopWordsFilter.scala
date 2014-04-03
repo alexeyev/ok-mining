@@ -35,7 +35,7 @@ object StopWordsFilter {
     words.map(_.replace("ё", "е")).
       filter(word =>
       word.length > 1 &&
-        !numberPattern.matcher(word).matches() &&
+//        !numberPattern.matcher(word).matches() &&
         !stopList.contains(word.toLowerCase))
   }
 }

@@ -76,9 +76,9 @@ class GraphsTool(drawConfig: DrawingConfig = DrawingConfig()) {
       case (trend, map) => Model(trend, Conversions.toImmutable(map))
     }
 
-    if (!models.isEmpty) {
+    if (models.size != 0) {
       val tasks =
-        for (subSet <- models.grouped(models.size / cores))
+        for (subSet <- models.grouped(models.size / cores + 1))
         yield scala.concurrent.future {
           subSet.foreach {
             model => {

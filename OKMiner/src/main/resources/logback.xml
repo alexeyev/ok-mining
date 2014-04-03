@@ -13,9 +13,18 @@
         </encoder>
     </appender>
 
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>tech-trends.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <root level="info">
-        <appender-ref ref="STDOUT" />
+        <!--<appender-ref ref="STDOUT" />-->
         <appender-ref ref="TFA" />
+        <appender-ref ref="FILE" />
     </root>
 
 </configuration>
