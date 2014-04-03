@@ -76,16 +76,18 @@ class GraphsTool(drawConfig: DrawingConfig = DrawingConfig()) {
       case (trend, map) => Model(trend, Conversions.toImmutable(map))
     }
 
-    val tasks =
-      for (subSet <- models.grouped(models.size / cores))
-      yield scala.concurrent.future {
-        subSet.foreach {
-          model => {
-            val chart = ChartGenerator.buildChart(model)
-            ChartPrinter.print(chart, new File(dest.getAbsolutePath + "/" + model.trend.replaceAll("[\\s\\.\\(\\)]", "_") + ".png"))
+    if (!models.isEmpty) {
+      val tasks =
+        for (subSet <- models.grouped(models.size / cores))
+        yield scala.concurrent.future {
+          subSet.foreach {
+            model => {
+              val chart = ChartGenerator.buildChart(model)
+              ChartPrinter.print(chart, new File(dest.getAbsolutePath + "/" + model.trend.replaceAll("[\\s\\.\\(\\)]", "_") + ".png"))
+            }
           }
         }
-      }
-    Await.result(Future.sequence(tasks), Duration(2, TimeUnit.DAYS))
+      Await.result(Future.sequence(tasks), Duration(2, TimeUnit.DAYS))
+    }
   }
 }

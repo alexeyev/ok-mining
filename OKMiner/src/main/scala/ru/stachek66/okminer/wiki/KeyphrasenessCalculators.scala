@@ -14,7 +14,6 @@ trait KeyphrasenessCalculator {
 /**
  * Keyohraseness as tf with smoothing (+ 1 at denominator).
  */
-@deprecated // since April, filtering by category eliminates problem of ranking introduction necessity
 object SmoothedKeyphrasenessCalculator extends KeyphrasenessCalculator {
 
   private val phraseSearcher = new articles.PhraseSearcher(articles.IndexProperties.index)

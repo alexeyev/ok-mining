@@ -15,7 +15,9 @@ object JsonConfigReader {
 
   val config: Config = try {
     val j = new JSONObject(FileUtils.asStringWithoutNewLines(new File("config.json")))
-    Config(useKeyPhrasenessThreshold = j.getBoolean("use-keyphraseness"))
+    val conf = Config(useKeyPhrasenessThreshold = j.getBoolean("use-keyphraseness"))
+    log.info("Config found")
+    conf
   } catch {
     case e: Exception =>
       log.error("No config found, using default")

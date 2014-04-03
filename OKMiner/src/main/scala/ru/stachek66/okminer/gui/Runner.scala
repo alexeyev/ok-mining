@@ -150,7 +150,7 @@ object Runner extends SimpleSwingApplication {
         } onComplete {
           case Failure(e) =>
             Dialog.showMessage(button, "Something went wrong while drawing graphs: " + e.getMessage, "Error", Dialog.Message.Error)
-            log.debug("Please fix me", e)
+            log.info("Please fix me", e)
             button.enabled = true
           case Success(_) =>
             Dialog.showMessage(button, "Graphs flushing done!", "Message", Dialog.Message.Info)

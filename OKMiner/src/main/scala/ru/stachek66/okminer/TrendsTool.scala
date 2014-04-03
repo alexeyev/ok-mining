@@ -19,6 +19,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator =
   private val log = LoggerFactory.getLogger("trends-tool")
 
   log.info("Getting ready...")
+  log.info("Keyphraseness calculator = " + kpCalculator.getClass)
 
   //making sure these guys are ready
   articles.IndexProperties.index
@@ -83,7 +84,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator =
 
     log.debug("Duples:\n" + translation.mkString("\n"))
 
-    (
+    val result = (
       for {
         (score, terms, optTranslation) <- translation
         (ru, en) <- optTranslation
@@ -94,5 +95,8 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator =
           (score, terms, ru, TechCategories.acceptableTopics(normalizedEnglish)))
       }
       ).flatten
+
+    if (JsonConfigReader.config.useKeyPhrasenessThreshold) result.take(5)
+    else result
   }
 }
