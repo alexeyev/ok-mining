@@ -3,7 +3,7 @@ package ru.stachek66.okminer
 import java.io.File
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.utils.{Conversions, StatsFileIO}
-import ru.stachek66.okminer.visualization.{Config, ChartPrinter, ChartGenerator, Model}
+import ru.stachek66.okminer.visualization.{DrawingConfig, ChartPrinter, ChartGenerator, Model}
 import scala.collection.mutable.{Map => mMap}
 import ru.stachek66.okminer.Meta.singleContext
 import concurrent.{Future, Await}
@@ -14,7 +14,7 @@ import concurrent.duration.Duration
  * Drawing graphs by reports.
  * @author alexeyev
  */
-class GraphsTool(drawConfig: Config = Config()) {
+class GraphsTool(drawConfig: DrawingConfig = DrawingConfig()) {
 
   private val log = LoggerFactory.getLogger("graphs-drawing")
 
