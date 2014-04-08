@@ -84,7 +84,7 @@ object TechCategories {
     So we start from category Technology and go down no more than 5 levels,
     filling child-to-parent map.
      */
-    pr(technologyId, sp = 0, maxDepth = 5, {
+    pr(technologyId, sp = 0, maxDepth = 8, {
       case (topic, parent) => parentMap.put(topic, parent)
     }, None)
 

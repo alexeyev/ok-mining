@@ -77,7 +77,9 @@ private[okminer] class OneYearProcessor(ner: NER = new LuceneNER(new Searcher),
         }
       else Iterable[File]()
 
-    val groupedFiles = files.grouped(files.size / cores)
+    val groupedFiles =
+      if (files.size / cores == 0) List(files)
+      else files.grouped(files.size / cores)
 
     Await.result(
       Future.sequence(

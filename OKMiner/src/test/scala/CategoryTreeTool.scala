@@ -1,4 +1,7 @@
+import java.util.concurrent.TimeUnit
+import java.util.Date
 import org.slf4j.LoggerFactory
+import ru.stachek66.okminer.MutableChainMap
 import ru.stachek66.okminer.utils.CounterLogger
 
 /**
@@ -8,7 +11,8 @@ object CategoryTreeTool extends App {
 
   case class Node(id: Long, t: String)
 
-  val map = collection.mutable.Map[Int, (String, Array[Int])]()
+  val idMap = new MutableChainMap[Int, Int]()
+  val idToTextMap = collection.mutable.Map.empty[Int, String]
 
   private val clog = new CounterLogger(
     LoggerFactory.getLogger("tax-tool"),
@@ -37,22 +41,31 @@ object CategoryTreeTool extends App {
 
       if (unknown == 1) {
         val (parents, restt) = getByHead(rest)
-//        val (children, _) = getByHead(restt)
-        map.put(-id, (text, parents.map(-_).toArray))
+        for (parent <- parents) idMap.put(parent, -id)
+        idToTextMap.put(-id, "*" + text)
       } else if (unknown == 0) {
         val (parents, restt) = getByHead(rest)
         val (children, _) = getByHead(restt)
-        map.put(id, (text, children.toArray))
+        idMap.put(id, children)
+        idToTextMap.put(id, text)
       }
     }
   }
 
-  def pr(id: Int, sp: Int, maxDepth: Int): Unit = if (maxDepth >= sp) {
-    for ((t, ch) <- map.get(id)) {
-      println("|>" + (0 to sp).map(v => "*").mkString + t)
-      for (c <- ch) pr(c, sp + 1, maxDepth)
+  def pr(id: Int, sp: Int, maxDepth: Int, act: String => Unit): Unit = if (maxDepth >= sp) {
+    for {
+      title <- idToTextMap.get(id)
+      children = idMap.get(id)
+    } {
+      act(title)
+      for (c <- children) pr(c, sp + 1, maxDepth, act)
     }
   }
 
-  pr(-3, 0, 2)
+  val a = new Date()
+  pr(384712, 0, 7, title => println("wow such " + title))
+  val b = new Date()
+
+  println("it took " + TimeUnit.SECONDS.convert(b.getTime - a.getTime, TimeUnit.MILLISECONDS))
+
 }

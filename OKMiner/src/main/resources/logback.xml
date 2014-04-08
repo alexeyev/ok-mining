@@ -21,8 +21,8 @@
         </encoder>
     </appender>
 
-    <root level="info">
-        <!--<appender-ref ref="STDOUT" />-->
+    <root level="debug">
+        <appender-ref ref="STDOUT" />
         <appender-ref ref="TFA" />
         <appender-ref ref="FILE" />
     </root>

@@ -29,7 +29,7 @@ object ChartPrinter {
     chart.getChart.getXYPlot.getDomainAxis.asInstanceOf[NumberAxis].setTickUnit(new NumberTickUnit(1))
 
     try {
-      ChartUtilities.saveChartAsPNG(file, chart.getChart, 1500, 800)
+      ChartUtilities.saveChartAsPNG(file, chart.getChart, 1000, 500)
       log.info(s"Image for trend [${chart.getChart.getTitle.getText}] printed successfully.")
     }
     catch {

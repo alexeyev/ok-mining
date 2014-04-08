@@ -91,10 +91,23 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator =
         normalizedEnglish = categories.Utils.norm(en)
         if TechCategories.acceptableTopics.contains(normalizedEnglish)
       } yield {
-        Iterable((score, terms, ru, normalizedEnglish),
-          (score, terms, ru, TechCategories.acceptableTopics(normalizedEnglish)))
+        var topic: Option[String] = Some(normalizedEnglish)
+        val buffer = collection.mutable.ArrayBuffer[String]()
+        var maxUpper = 3
+        while (topic.isDefined && maxUpper >= 0) {
+          maxUpper -= 1
+          buffer += topic.get
+          topic = TechCategories.acceptableTopics.get(topic.get)
+        }
+        buffer.map {
+          case entopic =>
+            (score, terms, ru, entopic)
+        }
       }
       ).flatten
+
+
+    log.debug("After filtering:\n" + result.mkString("\n"))
 
     if (JsonConfigReader.config.useKeyPhrasenessThreshold) result.take(5)
     else result
