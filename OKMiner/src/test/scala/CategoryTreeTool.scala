@@ -1,8 +1,7 @@
 import java.util.concurrent.TimeUnit
 import java.util.Date
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.MutableChainMap
-import ru.stachek66.okminer.utils.CounterLogger
+import ru.stachek66.okminer.utils.{MutableChainMap, CounterLogger}
 
 /**
  * @author alexeyev
