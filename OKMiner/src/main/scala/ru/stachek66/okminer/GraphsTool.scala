@@ -2,7 +2,7 @@ package ru.stachek66.okminer
 
 import java.io.File
 import org.slf4j.LoggerFactory
-import ru.stachek66.okminer.utils.{Conversions, StatsFileIO}
+import utils.{CounterLogger, Conversions, StatsFileIO}
 import ru.stachek66.okminer.visualization.{DrawingConfig, ChartPrinter, ChartGenerator, Model}
 import scala.collection.mutable.{Map => mMap}
 import ru.stachek66.okminer.Meta.singleContext
@@ -17,6 +17,7 @@ import concurrent.duration.Duration
 class GraphsTool(drawConfig: DrawingConfig = DrawingConfig()) {
 
   private val log = LoggerFactory.getLogger("graphs-drawing")
+  private val clog = new CounterLogger(log, 5, "%s charts formed")
 
   /**
    * Drawing graphs by *.tsv reports from one directory and storing them at another one
@@ -41,13 +42,20 @@ class GraphsTool(drawConfig: DrawingConfig = DrawingConfig()) {
       }
     }
 
+    log.info("Building...")
+
+    val years = collection.mutable.ArrayBuffer.empty[Int]
     for {
       file <- {
         val files = src.listFiles()
         log.info(s"Dir $src contains ${files.size} files.")
-        files
+        files.filter(_.isFile)
       }
-      (triples, year) = StatsFileIO.readFromFile(file)
+      (triples, year) = {
+        val (t, y) = StatsFileIO.readFromFile(file)
+        years += y
+        (t, y)
+      }
       (trend, company, count) <- triples
     } {
       init(trend, company)
@@ -56,25 +64,35 @@ class GraphsTool(drawConfig: DrawingConfig = DrawingConfig()) {
       megamap(trend).put(company, map)
     }
 
+    log.info("Adding zeroes...")
+
+    // adding zeroes
+    for {
+      year <- years.min to years.max
+      (trend, compMap) <- megamap
+      (comp, yearMap) <- compMap
+      if !yearMap.keySet.contains(year)
+    } yearMap.put(year, 0)
+
+    log.info("Filtering...")
+
     //filter
-    val filteredMegaMap = for {
+    val models = for {
       (trend, companiesMap) <- megamap
       if companiesMap.exists {
         case (company, yearMap) =>
-          drawConfig.yearsAppropriate(yearMap.toMap.keySet)
+          drawConfig.yearsAppropriate(yearMap.toMap)
       }
       newCompaniesMap = companiesMap.filter {
         case (company, yearMap) =>
-          drawConfig.sufficientNumberOfYears(yearMap.toMap.keySet)
+          drawConfig.sufficientNumberOfYears(yearMap.toMap)
       }
-    } yield trend -> newCompaniesMap
+    } yield Model(trend, newCompaniesMap)
+
 
     val cores = Runtime.getRuntime.availableProcessors()
-    log.info("Available cores: " + cores)
 
-    val models = filteredMegaMap.map {
-      case (trend, map) => Model(trend, Conversions.toImmutable(map))
-    }
+    log.info("Available cores: " + cores + ". Printing...")
 
     if (models.size != 0) {
       val tasks =

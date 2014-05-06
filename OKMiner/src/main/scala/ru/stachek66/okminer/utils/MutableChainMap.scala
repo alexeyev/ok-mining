@@ -9,10 +9,10 @@ class MutableChainMap[A, B] {
 
   import collection._
 
-  private val map = collection.mutable.Map[A, mutable.Set[B]]() withDefaultValue mutable.Set.empty[B]
+  private val map = mutable.Map[A, List[B]]() withDefaultValue List.empty[B]
 
   def put(key: A, value: B) {
-    map.put(key, map(key) + value)
+    map.put(key, value :: map(key))
   }
 
   def put(key: A, values: Iterable[B]) {
@@ -20,4 +20,6 @@ class MutableChainMap[A, B] {
   }
 
   def get(key: A): Iterable[B] = map(key)
+
+  def iterator = map.iterator
 }

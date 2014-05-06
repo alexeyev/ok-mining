@@ -21,7 +21,7 @@ object StatsFileIO {
     data.toSeq.sortBy(_._2).foreach {
       case (trend, company, count) => {
         val line = "%s\t%s\t%s".format(company, trend, count)
-        log.debug(line)
+        //log.debug(line)
         fw.write(line + "\n")
       }
     }

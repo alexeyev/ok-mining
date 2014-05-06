@@ -10,6 +10,7 @@ import cc.mallet.types.InstanceList
 import scala.collection.JavaConversions._
 
 /**
+ * Mallet NER experiment
  * @author alexeyev
  */
 object MalletBenchmark extends App {
@@ -32,16 +33,12 @@ object MalletBenchmark extends App {
   val iter = new FileIterator(texts, Pattern.compile("(.*)"))
   instanceList.addThruPipe(iter)
 
-
-  val il = instanceList.clone().asInstanceOf[InstanceList]
-  //  instanceList.iterator().foreach(i => println(i.getData.asInstanceOf[FeatureSequence]))
-
   instanceList.iterator().foreach {
     instance => {
       println(instance.getData)
       instance.unLock()
       val labeled = crf.transduce(instance)
-      println("eee " + labeled.getData)
+      println(labeled.getData)
       //        label
     }
   }

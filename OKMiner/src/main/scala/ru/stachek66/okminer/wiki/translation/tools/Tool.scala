@@ -20,16 +20,18 @@ object Tool extends App {
   private val fw = new FileWriter("parsed/ru-en-titles.tsv")
   val start = new Date()
 
-  val ruToEnResult = future {
+  val ruToEnResult = {//future {
 
     val ruIdToEnTitle = LangLinksSQLParser.idToEnTitle
+
+    println(ruIdToEnTitle)
 
     PageSQLParser.parseDump(PageSQLParser.rudump, "utf8") {
       (id, title) => {
         if (ruIdToEnTitle.keySet.contains(id)) {
-          synchronized {
+          //synchronized {
             fw.write("%s\t%s\n".format(title, ruIdToEnTitle(id)))
-          }
+          //}
         }
       }
     }
@@ -41,16 +43,16 @@ object Tool extends App {
 
     PageSQLParser.parseDump(PageSQLParser.endump, "utf8") {
       (id, title) => {
-        if (enIdToRuTitle.keySet.contains(id)) synchronized {
-          fw.write("%s\t%s\n".format(enIdToRuTitle(id), title))
+        if (enIdToRuTitle.keySet.contains(id)) {//synchronized {
+          val ruTitle = enIdToRuTitle(id).replaceAll("Категория:", "").replaceAll("Шаблон:", "")
+          fw.write("%s\t%s\n".format(ruTitle, title))
         }
       }
     }
   }
 
-  Await.result(ruToEnResult, Meta.maxDuration)
+//  Await.result(ruToEnResult, Meta.maxDuration)
   fw.close()
-
 
   log.info("Sorting...")
 

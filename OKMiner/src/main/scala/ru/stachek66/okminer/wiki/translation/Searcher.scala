@@ -44,7 +44,8 @@ object Searcher {
             scoreDoc <- collector.topDocs().scoreDocs.toIterable
             //            if threshold.filter(_ > scoreDoc.score).isEmpty
             doc = searcher.doc(scoreDoc.doc)
-            if splSize(doc.get(IndexProperties.ru)) < querySize + 1
+            distance = splSize(doc.get(IndexProperties.ru)) - querySize
+            if distance >= 0 && distance < 1
           } yield (scoreDoc.score, (doc.getField(ru).stringValue(), doc.getField(en).stringValue()))
 
         } catch {

@@ -29,7 +29,7 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator =
   /**
    * the non-existing word that won't match anything
    */
-  private val dummy = "dummy42word"
+  private val dummy = "dummyword"
 
   /**
    * Provided with some text, returns most valuable wiki-trends.
@@ -39,16 +39,24 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator =
   def extractTrends(text: String): Iterable[(Double, String, String, String)] = {
 
     val splitted = Lexer.split(text)
+
+    //    println(splitted)
+
     val filtered = splitted.map(t => if (StopWordsFilter.stopList.contains(t)) dummy else t)
+
+    //    println(filtered)
 
     val tokens =
       for {
         word <- filtered
         tokenized <- Tokenizer.tokenize(word).headOption
       } yield {
+        //        print("[" + tokenized + "] ")
         if (Vocabulary.normalizedWords.contains(tokenized)) word
         else dummy
       }
+    //    println()
+    //    println(tokens)
 
     val allDuples = tokens.zip(if (tokens.isEmpty) Seq() else tokens.tail)
 
@@ -82,7 +90,9 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator =
       case (terms, score) => (score, terms, translator.translate(terms))
     }
 
-    log.debug("Duples:\n" + translation.mkString("\n"))
+    log.trace("Duples:\n" + translation.mkString("\n"))
+
+    log.debug("Translation done.")
 
     val result = (
       for {
@@ -91,13 +101,16 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator =
         normalizedEnglish = categories.Utils.norm(en)
         if TechCategories.acceptableTopics.contains(normalizedEnglish)
       } yield {
-        var topic: Option[String] = Some(normalizedEnglish)
+        var topics: Iterable[String] = TechCategories.acceptableTopics(normalizedEnglish)
         val buffer = collection.mutable.ArrayBuffer[String]()
-        var maxUpper = 3
-        while (topic.isDefined && maxUpper >= 0) {
+        var maxUpper = 1
+        while (topics.nonEmpty && maxUpper >= 0) {
           maxUpper -= 1
-          buffer += topic.get
-          topic = TechCategories.acceptableTopics.get(topic.get)
+          buffer ++= topics
+          topics = topics.flatMap {
+            topic =>
+              TechCategories.acceptableTopics(topic)
+          }
         }
         buffer.map {
           case entopic =>
@@ -105,7 +118,6 @@ private[okminer] class TrendsTool(kpCalculator: KeyphrasenessCalculator =
         }
       }
       ).flatten
-
 
     log.debug("After filtering:\n" + result.mkString("\n"))
 

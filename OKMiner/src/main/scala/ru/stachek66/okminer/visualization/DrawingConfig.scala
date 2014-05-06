@@ -5,6 +5,9 @@ package ru.stachek66.okminer.visualization
  * @author alexeyev
  */
 case class DrawingConfig(
-                   yearsAppropriate: Set[Int] => Boolean = years => years.size > 1,
-                   sufficientNumberOfYears: Set[Int] => Boolean = years => years.size > 1
-                   )
+                          yearsAppropriate: Map[Int, Float] => Boolean = {
+                            map => map.keySet.filter(year => map(year) > 0).size > 1
+                          },
+                          sufficientNumberOfYears: Map[Int, Float] => Boolean = {
+                            map => map.keySet.filter(year => map(year) > 0).size > 1
+                          })

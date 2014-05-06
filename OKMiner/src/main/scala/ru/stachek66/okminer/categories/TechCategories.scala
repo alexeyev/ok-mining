@@ -2,8 +2,8 @@ package ru.stachek66.okminer.categories
 
 import org.slf4j.LoggerFactory
 import ru.stachek66.okminer.utils.{MutableChainMap, CounterLogger}
-import java.io._
 import java.util.zip.GZIPInputStream
+import java.io.{FileOutputStream, OutputStreamWriter, BufferedWriter}
 
 /**
  * Extracting and holding category taxonomy from wikipedia dump.
@@ -14,13 +14,15 @@ object TechCategories {
 
   private val technologyId = 384712
   private val log = LoggerFactory.getLogger("taxonomy-tool")
-  private val clog = new CounterLogger(log, 500000, "%s lines processed")
+  private val clog = new CounterLogger(log, 100000, "%s lines processed")
 
+  /**
+   * Nota bene! Out-Of-Memory-Danger: > 2 GB required
+   */
   private def parseDump() {
 
     // a bit of redundancy
     val chMap = new MutableChainMap[Int, Int]()
-    val psMap = new MutableChainMap[Int, Int]()
     val idToText = collection.mutable.Map[Int, String]()
 
     var counter = 0
@@ -49,9 +51,8 @@ object TechCategories {
           //        val (children, _) = getByHead(restt)
           for (parent <- parents) {
             chMap.put(parent, -id)
-            psMap.put(-id, parent)
           }
-          idToText.put(-id, text)
+          idToText.put(-id, "*" + text)
         } else
         // category tree
         if (unknown == 0) {
@@ -59,7 +60,6 @@ object TechCategories {
           val (parents, restt) = getByHead(rest)
           val (children, _) = getByHead(restt)
           chMap.put(id, children)
-          psMap.put(id, parents)
           idToText.put(id, text)
         }
       }
@@ -72,46 +72,58 @@ object TechCategories {
      * @param maxDepth maximum depth of a search tree
      * @param onEach action to be applied to each visited node
      */
-    def pr(id: Int, sp: Int, maxDepth: Int, onEach: Int => Unit): Unit =
+    def pr(id: Int, sp: Int, maxDepth: Int, onEach: (Int, Option[Int]) => Unit, parent: Option[Int]): Unit =
       if (maxDepth >= sp) {
-        val children = chMap.get(id)
-        onEach(id)
-        log.debug("|>" + (0 to sp).map(v => ". ").mkString + id)
+        onEach(id, parent)
+        //log.debug("|>" + (0 to sp).map(v => ". ").mkString + id)
         for {
-          c <- children
+          c <- chMap.get(id)
           //hack due to loops
           if c != id
-        } pr(c, sp + 1, maxDepth, onEach)
+        } pr(c, sp + 1, maxDepth, onEach, Some(id))
       }
 
+    log.info("Filling the map")
+
+    val psMap = new MutableChainMap[Int, Int]()
     /*
     So we start from category Technology and go down no more than K levels,
     filling child-to-parent map.
      */
-    pr(technologyId, sp = 0, maxDepth = 8, {
-      id => println(psMap.get(id))
-    })
+    pr(technologyId, sp = 0, maxDepth = 5, {
+      case (id, pt) => psMap.put(id, pt)
+    }, None)
+
+    log.info("Writing to file")
 
     /*
      * Flushing child-to-parent map to file.
      */
-    //    val fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(parsed), "UTF-8"))
-    //    for {(element, parent) <- parentMap} {
-    //      fw.write(s"$element\t${parent.getOrElse("_")}\n")
-    //    }
-    //    System.gc()
-    //    fw.close()
+    val fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(parsed), "UTF-8"))
+    for {
+      (id, parents) <- psMap.iterator
+      element = idToText(id)
+      textParents = parents.map(idToText(_)).toSet
+    } {
+      if (element.startsWith("*"))
+        fw.write(s"${element.tail}\t${textParents.mkString("\t")}\n")
+      else
+        fw.write(s"$element\t${(textParents + element).mkString("\t")}\n")
+    }
+    System.gc()
+    fw.close()
+    log.info("Subtree flushed.")
   }
 
   /**
    * Getting child-to-parent map from preprocessed file.
    */
-  private def fromParsed: Map[String, String] =
+  private def fromParsed: Map[String, Array[String]] =
     io.Source.fromFile(parsed)("UTF-8").getLines().
       map(
       line => clog.execute {
         val splitted = line.trim.split("\t")
-        splitted(0) -> splitted(1)
+        splitted.head -> splitted.tail
       }
     ).toMap
 
@@ -119,7 +131,7 @@ object TechCategories {
    * All English categories with acceptable BFS-distance from
    * "Technology" mapped on their parent nodes
    */
-  lazy val acceptableTopics: Map[String, String] = {
+  val acceptableTopics: Map[String, Array[String]] = {
     if (!parsed.exists() || parsed.length() <= 0) {
       log.info("Will have to parse wiki-graph dump...")
       parseDump()
@@ -128,10 +140,6 @@ object TechCategories {
     val set = fromParsed
     log.info("Topics got.")
     set
-  }
-
-  override def main(args: Array[String]) {
-    parseDump()
-  }
+  } withDefaultValue Array.empty[String]
 }
 

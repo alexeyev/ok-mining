@@ -3,7 +3,7 @@ package ru.stachek66.okminer.visualization
 import java.awt.Color
 import java.io.File
 import org.jfree.chart.ChartUtilities
-import org.jfree.chart.renderer.xy.{XYSplineRenderer, XYItemRenderer}
+import org.jfree.chart.renderer.xy.{DefaultXYItemRenderer, XYItemRenderer}
 import org.slf4j.LoggerFactory
 import org.jfree.chart.axis.{NumberTickUnit, NumberAxis}
 
@@ -20,7 +20,7 @@ object ChartPrinter {
    */
   def print(chart: ChartGenerator.Chart, file: File) {
 
-    val renderer: XYItemRenderer = new XYSplineRenderer
+    val renderer: XYItemRenderer = new DefaultXYItemRenderer()
     chart.getChart.getXYPlot.setRenderer(renderer)
     chart.getChart.getXYPlot.setBackgroundPaint(Color.white)
     chart.getChart.getXYPlot.setRangeGridlinePaint(Color.gray)
