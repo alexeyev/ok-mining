@@ -12,7 +12,7 @@ object EvalPrepTool2 extends App {
 
   println(dir.isDirectory)
 
-  val fw = new FileWriter("../../Desktop/trends-eval.tsv")
+  val fw = new FileWriter("../../Desktop/trends-eval-sorted2.tsv")
 
   var counter = 0
 
@@ -21,7 +21,7 @@ object EvalPrepTool2 extends App {
     if (counter <= 100 && text.size < 2000 && text.size > 50) {
       counter += 1
       val trends = new TrendsTool().extractTrends(text).map(_._4).toSet
-      fw.write(text + "\t" + trends.mkString(",") + "\n")
+      fw.write(text + "\t" + trends.toSeq.sorted.mkString(",") + "\n")
     }
   }
   fw.close()

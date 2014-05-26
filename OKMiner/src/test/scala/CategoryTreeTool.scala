@@ -41,7 +41,7 @@ object CategoryTreeTool extends App {
       if (unknown == 1) {
         val (parents, restt) = getByHead(rest)
         for (parent <- parents) idMap.put(parent, -id)
-        idToTextMap.put(-id, "*" + text)
+        idToTextMap.put(-id, text)//"*" + text)
       } else if (unknown == 0) {
         val (parents, restt) = getByHead(rest)
         val (children, _) = getByHead(restt)
