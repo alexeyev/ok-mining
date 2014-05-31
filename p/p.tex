@@ -1,5 +1,4 @@
 \documentclass{beamer}
-
 \usepackage{fontspec}
 \usepackage{xunicode}
 \usepackage{xltxtra}
@@ -15,6 +14,7 @@
 \usepackage{listings}
 
 \renewcommand*{\inserttotalframenumber}{\pageref{lastframe}}
+\beamertemplatenavigationsymbolsempty
 
 \lstdefinestyle{mycode}{
   belowcaptionskip=1\baselineskip,
@@ -34,9 +34,16 @@
     \usebeamerfont{footline}%
     \usebeamercolor[fg]{footline}%
     \hspace{1em}%
-    {\small\color{black}{\insertframenumber/\inserttotalframenumber}}
+     {\small\color{black}{\insertframenumber/\inserttotalframenumber}} 
 
 }
+
+%\setbeamertemplate{footline}{
+%   \begin{beamercolorbox}[leftskip=.3cm,rightskip=.3cm]{author in head/foot}
+%   \color{black}{А.M.~Алексеев\vspace{0.1cm}\newline Комплекс программ для автоматизации анализа популярности технологических областей %\newline в корпусе текстов русскоязычных электронных медиа}%
+%   \end{beamercolorbox}
+%   \vspace*{0.1cm}
+%} 
 
 \defbeamertemplate*{title page}{customized}[1][]{
 
@@ -69,13 +76,12 @@
 
 \begin{document}
 
-%\addtocounter{totalframenumber}{-1}
-
 %1. Титульный слайд
 % Генерируется автоматичсеки
 
 {
 \setbeamertemplate{navigation symbols}{} 
+\setbeamertemplate{footline}{} 
 \frame{\titlepage}
 }
 %2. Структура доклада
@@ -85,6 +91,7 @@
         \item Введение
         \item Объект автоматизации
         \item Цель и задачи
+        \item Актуальность
         \item Данные и выбранный инструментарий
         \item Методы и комплекс программ
         \item Формальные признаки
@@ -93,21 +100,24 @@
 \end{frame}
 
 %%%3. Описание предметной области и формулировка проблемы, ее актуальность
+
 \begin{frame}\frametitle{Введение}
 
 \begin{itemize}
-\item Маркетологические Интернет-исследования на основе текстов на ЕЯ
+\item Маркетологические Интернет-исследования на основе текстов на ествественном языке
 \item Объём данных слишком велик для <<ручного>> анализа
 \item Богатый инструментарий для английского языка
 \end{itemize}
-
 \end{frame}
 
 %4. Объект и предмет исследования ЛИБО объект автоматизации (зависит от типа дипломного проекта)
-\begin{frame}
-\textbf{Объект автоматизации}\\~\\
-Подсчёт случаев совместных упоминаний технологических областей и наименований организаций в разное время во влиятельных СМИ\\~\\
-\textbf{Цель}\\~\\
+
+\begin{frame} \frametitle{Объект автоматизации}
+Подсчёт случаев совместных упоминаний технологических областей и наименований организаций в разное время в электронных медиа
+\end{frame}
+
+
+\begin{frame}\frametitle{Цель}
 Разработка комплекса программ, способного установить взаимосвязь упоминаний технологических областей и наименований
 организаций в блогах или новостях на русском языке на основе корпуса текстов электронных медиа 
 \end{frame}
@@ -131,7 +141,15 @@
 \end{figure}
 \end{frame}
 
+%\begin{frame}\frametitle{Актуальность}
+%\begin{itemize}
+%    \item Нет бесплатного инструмента, решающего в точности такую задачу для русского языка
+%    \item Проект HP Labs, в котором решают аналогичную задачу
+%\end{itemize}
+%\end{frame}
+
 %6. (Подходы к решению, решения, использованный инструментарий)
+
 \begin{frame}\frametitle{Источники данных}
 
 \begin{itemize}
@@ -165,13 +183,15 @@
 
 %7. Программный комплекс/программа: состав, архитектура, диаграммы
 %классов, структура БД, фуекциональность, результаты работы и пр.
+
 \begin{frame}\frametitle{Извлечение наименований организаций}
 \begin{enumerate}
 \item Токенизация
 \item Стемминг
-\item Поиск подстрок из сформированного списка нормализованных наименований организаций
+\item Поиск подстрок из сформированного списка предобработанных наименований организаций
 \end{enumerate}
-Стемминг --- один из видов нормализации токенов; как правило, под этим термином понимают эвристический процесс «отрезания» окончаний слов
+Стемминг --- один из видов нормализации токенов; как правило, под этим термином понимают эвристический процесс «отрезания» окончаний слов\\~\\
+Токенизация --- задача разбиения текста на семантически ценные последовательности символов, возможно, с удалением некоторых символов (например, пунктуации) 
 \end{frame}
 
 \begin{frame}\frametitle{Извлечение технологических областей~[1]}
@@ -179,7 +199,7 @@
         \begin{enumerate}
 		\item Токенизация
 		\item Фильтрация по списку стоп-слов
-		\item Фильтрация по списку нормализованных слов, встречавшихся в текстах ссылок и заголовков Википедии
+		\item Фильтрация по списку слов, встречавшихся в текстах ссылок и заголовков Википедии
         \end{enumerate}
 
 \end{frame}
@@ -207,21 +227,26 @@
 
 \end{frame}
 
-\begin{frame}\frametitle{Примеры графиков [1]}
+\begin{frame}\frametitle{Пример результата работы}
 \begin{figure}[ht]
 \begin{center}
-\includegraphics[width=4.5in]{space.png}
+\includegraphics[width=4.5in]{space2.png}
+\end{center}
+\end{figure}
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[width=4.5in]{big_names.png}
 \end{center}
 \end{figure}
 \end{frame}
 
-\begin{frame}\frametitle{Примеры графиков [2]}
-\begin{figure}[ht]
-\begin{center}
-\includegraphics[width=4.5in]{film.png}
-\end{center}
-\end{figure}
-\end{frame}
+%\begin{frame}\frametitle{Примеры графиков [2]}
+%\begin{figure}[ht]
+%\begin{center}
+%\includegraphics[width=4.5in]{film.png}
+%\end{center}
+%\end{figure}
+%\end{frame}
 
 \begin{frame}\frametitle{Пример графического интерфейса}
 \begin{figure}[ht]
@@ -230,7 +255,6 @@
 \end{center}
 \end{figure}
 \end{frame}
-
 
 \begin{frame}\frametitle{Использованный инструментарий}
 
@@ -248,11 +272,16 @@
 \end{frame}
 
 
-\begin{frame}\frametitle{Формальные признаки}
+\begin{frame}\frametitle{Результаты}
 \begin{itemize}
+    \item Автоматизированы 
+    \begin{itemize}
+        \item извлечение технологических областей и наименований организаций
+        \item построение отчётов и их визуализация
+    \end{itemize}
+    \item Более 5000 строк программного кода на Scala, Java и Python и XML-разметки
     \item Подход представлен на <<СПИСОК-2014>>
     \item Доклад принят на <<НСМВ-2014>>
-    \item Более 5000 строк программного кода на Scala, Java и Python и XML-разметки
 \end{itemize}
 \end{frame}
 
@@ -263,11 +292,10 @@
 \frame{\titlepage\label{lastframe}}
 }
 
-{
-
-\setbeamertemplate{navigation symbols}{} 
-\begin{frame}\frametitle{Выбор значимых технологических областей}
-$$\textrm{keyphraseness}=\frac{\textrm{Freq}_{link}}{\textrm{Freq}_{body}}$$
-\end{frame}
-}
+%{
+%\setbeamertemplate{navigation symbols}{} 
+%\begin{frame}\frametitle{Выбор значимых технологических областей}
+%$$\textrm{keyphraseness}=\frac{\textrm{Freq}_{link}}{\textrm{Freq}_{body}}$$
+%\end{frame}
+%}
 \end{document}
